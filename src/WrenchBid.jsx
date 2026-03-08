@@ -309,10 +309,17 @@ export default function WrenchBid() {
   const toastTimer = useRef(null);
   const finalRef = useRef("");
   const interimRef = useRef("");
+  const transcriptRef = useRef(""); // always mirrors transcript state
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
   }, [history]);
+
+  // Always use this instead of setTranscript directly so transcriptRef stays in sync
+  const updateTranscript = (text) => {
+    transcriptRef.current = text;
+    setTranscript(text);
+  };
 
   useEffect(() => {
     try { localStorage.setItem("wb_biz", JSON.stringify(biz)); } catch {}
@@ -387,7 +394,9 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
-    console.log("startRec called, finalRef:", finalRef.current);
+    // Always resync finalRef to what's actually on screen before starting
+    finalRef.current = transcriptRef.current;
+    interimRef.current = "";
     try {
       const tokenRes = await fetch("/api/deepgram-token");
       if (!tokenRes.ok) { ping("Voice setup failed"); return; }
@@ -441,7 +450,7 @@ export default function WrenchBid() {
           } else {
             interimRef.current = text;
           }
-          setTranscript(finalRef.current + interimRef.current);
+          updateTranscript(finalRef.current + interimRef.current);
         } catch {}
       };
 
@@ -470,7 +479,7 @@ export default function WrenchBid() {
     if (interimRef.current) {
       finalRef.current += interimRef.current + " ";
       interimRef.current = "";
-      setTranscript(finalRef.current);
+      updateTranscript(finalRef.current);
     }
     setStep("idle");
   };
@@ -554,7 +563,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); setTranscript(""); setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); updateTranscript(""); finalRef.current = ""; interimRef.current = ""; setStep("idle"); setClientPhone(""); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -671,7 +680,7 @@ export default function WrenchBid() {
               <textarea
                 className="tx-box"
                 value={transcript}
-                onChange={e => setTranscript(e.target.value)}
+                onChange={e => { transcriptRef.current = e.target.value; setTranscript(e.target.value); }}
                 placeholder="Your words appear here as you speak... or type directly"
                 rows={4}
                 style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
@@ -681,7 +690,7 @@ export default function WrenchBid() {
 
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
-                  setTranscript("");
+                  updateTranscript("");
                   finalRef.current = "";
                   interimRef.current = "";
                 }}>Clear</button>
