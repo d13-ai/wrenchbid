@@ -475,61 +475,58 @@ export default function WrenchBid() {
 
   /* ─── Render ────────────────────────────────────────────────────────────── */
 
-  /* Auth modal */
-  const AuthModal = () => (
-    <div className="auth-overlay">
-      <div className="auth-box">
-        <div className="auth-hd">
-          <div className="auth-logo">Wrench<em>Bid</em></div>
-          <div className="auth-tagline">Voice-to-quote for tradespeople</div>
-        </div>
-        <div className="auth-stripe" />
-        <div className="auth-bd">
-          <div className="auth-tabs">
-            <button className={`auth-tab ${authMode === "signin" ? "on" : ""}`} onClick={() => { setAuthMode("signin"); setAuthError(""); }}>Sign In</button>
-            <button className={`auth-tab ${authMode === "signup" ? "on" : ""}`} onClick={() => { setAuthMode("signup"); setAuthError(""); }}>Create Account</button>
-          </div>
-          {authError && <div className="auth-err">{authError}</div>}
-          <div className="auth-field">
-            <label>Email</label>
-            <input type="email" value={authEmail} onChange={e => setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email" />
-          </div>
-          <div className="auth-field">
-            <label>Password</label>
-            <input
-              type="password"
-              value={authPassword}
-              onChange={e => setAuthPassword(e.target.value)}
-              placeholder={authMode === "signup" ? "Min 6 characters" : "Your password"}
-              autoComplete={authMode === "signup" ? "new-password" : "current-password"}
-              onKeyDown={e => e.key === "Enter" && (authMode === "signup" ? handleSignUp() : handleSignIn())}
-            />
-          </div>
-          <button
-            className="btn btn-cta btn-full"
-            onClick={authMode === "signup" ? handleSignUp : handleSignIn}
-            disabled={authLoading || !authEmail || !authPassword}
-          >
-            {authLoading ? "Please wait..." : authMode === "signup" ? "Create Account" : "Sign In"}
-          </button>
-          <div className="auth-foot">
-            {authMode === "signin" ? "New to WrenchBid? " : "Already have an account? "}
-            <button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={() => { setAuthMode(authMode === "signin" ? "signup" : "signin"); setAuthError(""); }}>
-              {authMode === "signin" ? "Create a free account" : "Sign in"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   if (!authReady) return <div className="app" style={{alignItems:"center",justifyContent:"center"}}><div className="loader" style={{width:200}} /></div>;
 
   return (
     <div className="app">
 
       {/* Auth modal — shown when not signed in */}
-      {!user && <AuthModal />}
+      {!user && (
+        <div className="auth-overlay">
+          <div className="auth-box">
+            <div className="auth-hd">
+              <div className="auth-logo">Wrench<em>Bid</em></div>
+              <div className="auth-tagline">Voice-to-quote for tradespeople</div>
+            </div>
+            <div className="auth-stripe" />
+            <div className="auth-bd">
+              <div className="auth-tabs">
+                <button className={`auth-tab ${authMode === "signin" ? "on" : ""}`} onClick={() => { setAuthMode("signin"); setAuthError(""); }}>Sign In</button>
+                <button className={`auth-tab ${authMode === "signup" ? "on" : ""}`} onClick={() => { setAuthMode("signup"); setAuthError(""); }}>Create Account</button>
+              </div>
+              {authError && <div className="auth-err">{authError}</div>}
+              <div className="auth-field">
+                <label>Email</label>
+                <input type="email" value={authEmail} onChange={e => setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email" />
+              </div>
+              <div className="auth-field">
+                <label>Password</label>
+                <input
+                  type="password"
+                  value={authPassword}
+                  onChange={e => setAuthPassword(e.target.value)}
+                  placeholder={authMode === "signup" ? "Min 6 characters" : "Your password"}
+                  autoComplete={authMode === "signup" ? "new-password" : "current-password"}
+                  onKeyDown={e => e.key === "Enter" && (authMode === "signup" ? handleSignUp() : handleSignIn())}
+                />
+              </div>
+              <button
+                className="btn btn-cta btn-full"
+                onClick={authMode === "signup" ? handleSignUp : handleSignIn}
+                disabled={authLoading || !authEmail || !authPassword}
+              >
+                {authLoading ? "Please wait..." : authMode === "signup" ? "Create Account" : "Sign In"}
+              </button>
+              <div className="auth-foot">
+                {authMode === "signin" ? "New to WrenchBid? " : "Already have an account? "}
+                <button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={() => { setAuthMode(authMode === "signin" ? "signup" : "signin"); setAuthError(""); }}>
+                  {authMode === "signin" ? "Create a free account" : "Sign in"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <header className="hdr">
