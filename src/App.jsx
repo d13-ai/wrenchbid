@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 /* ─── Supabase ────────────────────────────────────────────────────────────── */
@@ -307,8 +307,7 @@ export default function WrenchBid() {
   const [toast, setToast] = useState(null);
   const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
-  const finalRef = useRef("");
-  const resultOffsetRef = useRef(0); // desktop: skip results before last Clear
+  const displayRef = useRef(""); // always mirrors transcript — safe to read in async/closures
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
@@ -385,68 +384,87 @@ export default function WrenchBid() {
     toastTimer.current = setTimeout(() => setToast(null), 2800);
   };
 
-  /* ── Voice ── */
-  const startRec = useCallback(() => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { ping("Voice not supported — try Chrome on desktop/Android"); return; }
-    const isAndroid = /android/i.test(navigator.userAgent);
+  /* ── Voice (Deepgram) ── */
+  const startRec = async () => {
+    const base = displayRef.current;
+    window._debugBase = base; // store globally so we can check in console
+    const base2 = transcript;
+    alert("SPEAK tapped. displayRef=" + JSON.stringify(base) + " transcript=" + JSON.stringify(base2));
+    let sessionFinal = "";
+    let active = true;
 
-    const r = new SR();
-    r.continuous = !isAndroid;
-    r.interimResults = true;
-    r.lang = "en-US";
-    r.maxAlternatives = 1;
-    finalRef.current = "";
-    resultOffsetRef.current = 0;
+    try {
+      const tokenRes = await fetch("/api/deepgram-token");
+      if (!tokenRes.ok) { ping("Voice setup failed"); return; }
+      const { token } = await tokenRes.json();
+      if (!token) { ping("Voice token missing"); return; }
 
-    r.onresult = (e) => {
-      let interim = "";
-      if (isAndroid) {
-        for (let i = 0; i < e.results.length; i++) {
-          if (e.results[i].isFinal) finalRef.current += e.results[i][0].transcript + " ";
-          else interim = e.results[i][0].transcript;
-        }
-      } else {
-        // Desktop: rebuild finals starting from offset (skips cleared results)
-        let finals = "";
-        for (let i = resultOffsetRef.current; i < e.results.length; i++) {
-          if (e.results[i].isFinal) {
-            finals += e.results[i][0].transcript + " ";
-            resultOffsetRef._lastFinalIndex = i + 1; // track how many finals we've seen
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch {
+        ping("Mic access denied — check browser permissions");
+        return;
+      }
+
+      const ws = new WebSocket(
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=300&no_delay=true",
+        ["token", token]
+      );
+
+      ws.onopen = () => {
+        if (!active) { ws.close(); stream.getTracks().forEach(t => t.stop()); return; }
+        const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"]
+          .find(t => MediaRecorder.isTypeSupported(t)) || "";
+        const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+        mr.ondataavailable = (e) => {
+          if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
+        };
+        mr.start(100);
+        recognitionRef.current = {
+          ws, mediaRecorder: mr, stream,
+          stop: () => { active = false; }
+        };
+        setStep("recording");
+      };
+
+      ws.onmessage = (e) => {
+        if (!active) return;
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type !== "Results") return;
+          const text = msg.channel?.alternatives?.[0]?.transcript;
+          if (!text) return;
+          if (msg.is_final) {
+            sessionFinal += text + " ";
+            
+            displayRef.current = base + sessionFinal; setTranscript(base + sessionFinal);
           } else {
-            interim = e.results[i][0].transcript;
+            displayRef.current = base + sessionFinal + text; setTranscript(base + sessionFinal + text);
           }
-        }
-        finalRef.current = finals;
-      }
-      setTranscript(finalRef.current + interim);
-    };
+        } catch {}
+      };
 
-    r.onerror = (e) => {
-      if (e.error === "no-speech") return;
-      setStep("idle");
-      ping("Mic error: " + e.error);
-    };
-
-    r.onend = () => {
-      if (isAndroid && recognitionRef.current === r) {
-        // Android: auto-restart to keep recording going
-        try { r.start(); } catch {}
-      } else {
+      ws.onerror = () => { if (active) ping("Voice connection error — try again"); };
+      ws.onclose = () => {
+        if (!active) return;
         setStep(s => s === "recording" ? "idle" : s);
-      }
-    };
+      };
 
-    recognitionRef.current = r;
-    r.start();
-    setStep("recording");
-    setTranscript("");
-  }, [step]);
+    } catch {
+      ping("Could not start recording");
+      setStep("idle");
+    }
+  };
 
   const stopRec = () => {
-    const r = recognitionRef.current;
-    recognitionRef.current = null; // clear first so onend doesn't restart
-    r?.stop();
+    const ref = recognitionRef.current;
+    if (!ref) return;
+    recognitionRef.current = null;
+    ref.stop(); // flushes interim and sets active=false
+    ref.mediaRecorder?.stop();
+    ref.stream?.getTracks().forEach(t => t.stop());
+    ref.ws?.close();
     setStep("idle");
   };
 
@@ -526,7 +544,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); setTranscript(""); setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); displayRef.current = ""; setTranscript(""); setStep("idle"); setClientPhone(""); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -643,7 +661,7 @@ export default function WrenchBid() {
               <textarea
                 className="tx-box"
                 value={transcript}
-                onChange={e => setTranscript(e.target.value)}
+                onChange={e => { displayRef.current = e.target.value; setTranscript(e.target.value); }}
                 placeholder="Your words appear here as you speak... or type directly"
                 rows={4}
                 style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
@@ -653,9 +671,7 @@ export default function WrenchBid() {
 
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
-                  setTranscript("");
-                  finalRef.current = "";
-                  resultOffsetRef.current = resultOffsetRef._lastFinalIndex || 0;
+                  displayRef.current = ""; setTranscript("");
                 }}>Clear</button>
                 <button
                   className="btn btn-cta"
