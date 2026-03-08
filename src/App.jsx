@@ -389,52 +389,49 @@ export default function WrenchBid() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { ping("Voice not supported — try Chrome on desktop/Android"); return; }
     const isAndroid = /android/i.test(navigator.userAgent);
+
     const r = new SR();
-    r.continuous = !isAndroid; // Android doesn't support continuous properly
+    r.continuous = !isAndroid;
     r.interimResults = true;
     r.lang = "en-US";
     r.maxAlternatives = 1;
     finalRef.current = "";
+
     r.onresult = (e) => {
       let interim = "";
-      for (let i = 0; i < e.results.length; i++) {
-        const t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) {
-          if (isAndroid) {
-            // On Android each session only has the new utterance
-            finalRef.current += t + " ";
-          } else {
-            finalRef.current = "";
-            for (let j = 0; j < e.results.length; j++) {
-              if (e.results[j].isFinal) finalRef.current += e.results[j][0].transcript + " ";
-            }
-            break;
-          }
-        } else {
-          interim = t;
+      if (isAndroid) {
+        // Android: each session only contains the new utterance, append to finalRef
+        for (let i = 0; i < e.results.length; i++) {
+          if (e.results[i].isFinal) finalRef.current += e.results[i][0].transcript + " ";
+          else interim = e.results[i][0].transcript;
         }
+      } else {
+        // Desktop: rebuild finals from full result list each event
+        let finals = "";
+        for (let i = 0; i < e.results.length; i++) {
+          if (e.results[i].isFinal) finals += e.results[i][0].transcript + " ";
+          else interim = e.results[i][0].transcript;
+        }
+        finalRef.current = finals;
       }
       setTranscript(finalRef.current + interim);
     };
+
     r.onerror = (e) => {
-      if (e.error === "no-speech") return; // ignore no-speech on Android
+      if (e.error === "no-speech") return;
       setStep("idle");
       ping("Mic error: " + e.error);
     };
+
     r.onend = () => {
-      // On Android, auto-restart while still in recording state
       if (isAndroid && recognitionRef.current === r) {
+        // Android: auto-restart to keep recording going
         try { r.start(); } catch {}
       } else {
         setStep(s => s === "recording" ? "idle" : s);
       }
     };
-    recognitionRef.current = r;
-    r.start();
-    setStep("recording");
-    setTranscript("");
-    r.onerror = (e) => { setStep("idle"); ping("Mic error: " + e.error); };
-    r.onend = () => { if (step === "recording") setStep("idle"); };
+
     recognitionRef.current = r;
     r.start();
     setStep("recording");
