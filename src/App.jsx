@@ -522,7 +522,7 @@ export default function WrenchBid() {
             </div>
           )}
           {history.length > 0 && (
-            <div>
+            <>
               <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}>
                 <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 14px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>Clear All</button>
               </div>
@@ -531,7 +531,7 @@ export default function WrenchBid() {
                   <div onClick={() => { setQuote(q); setStep("preview"); setTab("new"); }}>
                     <div className="h-top">
                       <div className="h-client">{q.clientName || "No client name"}</div>
-                      <div className="h-total">{$$(q.grandTotal)}</div>
+                      <div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div>
                     </div>
                     <div className="h-job">{q.jobTitle}</div>
                     <div className="h-foot">
@@ -541,12 +541,11 @@ export default function WrenchBid() {
                   </div>
                   <button
                     onClick={e => { e.stopPropagation(); setHistory(h => h.filter((_,j) => j !== i)); }}
-                    style={{position:"absolute",top:10,right:10,background:"none",border:"none",cursor:"pointer",fontSize:16,color:"var(--muted)",lineHeight:1,padding:"2px 4px",borderRadius:3}}
-                    title="Delete quote"
-                  >🗑</button>
+                    style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",lineHeight:1,padding:"4px 6px",borderRadius:3}}
+                  >✕</button>
                 </div>
               ))}
-            </div>
+            </>
           )}
         </div>
       )}
