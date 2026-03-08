@@ -121,6 +121,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .chip{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:2px}
 .chip.sent{background:#e6f7ee;color:var(--green)}
 .chip.draft{background:var(--amber-light);color:var(--amber-deep)}
+.chip.saved{background:#e8f0fe;color:#1a56b0}
 
 /* Setup */
 .field{margin-bottom:14px}
@@ -330,7 +331,18 @@ export default function WrenchBid() {
     navigator.clipboard.writeText(lines).then(() => ping("Copied to clipboard ✓"));
   };
 
+  const saveQuote = () => {
+    saveToHistory("saved");
+    ping("Quote saved ✓");
+  };
+
   const newQuote = () => { setQuote(null); setTranscript(""); setStep("idle"); setClientPhone(""); };
+  const clearHistory = () => {
+    if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
+      setHistory([]);
+      ping("History cleared");
+    }
+  };
 
   /* ─── Render ────────────────────────────────────────────────────────────── */
   return (
@@ -429,7 +441,16 @@ export default function WrenchBid() {
                       Date<span>{quote.date}</span>
                     </div>
                     <div className="qdoc-meta-cell" style={{textAlign:"right"}}>
-                      Valid<span>{quote.validDays} days</span>
+                      Valid
+                      <span style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:4,marginTop:3}}>
+                        <input
+                          type="number"
+                          value={quote.validDays}
+                          onChange={e => setQuote(q => ({...q, validDays: Number(e.target.value)}))}
+                          style={{width:44,padding:"2px 6px",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",background:"var(--paper)",border:"1.5px solid var(--rule)",borderRadius:3,outline:"none",textAlign:"center"}}
+                        />
+                        <span style={{fontWeight:600,fontSize:14,color:"var(--ink)",letterSpacing:0,textTransform:"none"}}>days</span>
+                      </span>
                     </div>
                   </div>
 
@@ -482,8 +503,9 @@ export default function WrenchBid() {
               </div>
 
               <div className="btn-row" style={{marginBottom:8}}>
-                <button className="btn btn-ghost" onClick={copyText}>📋 Copy Quote</button>
-                <button className="btn btn-ghost" onClick={newQuote}>+ New Quote</button>
+                <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save Quote</button>
+                <button className="btn btn-ghost" onClick={copyText}>📋 Copy</button>
+                <button className="btn btn-ghost" onClick={newQuote}>+ New</button>
               </div>
             </>
           )}
@@ -498,7 +520,11 @@ export default function WrenchBid() {
               <div className="empty-icon">📋</div>
               <p>No quotes yet.<br /><strong>Tap "New Quote"</strong> to get started.</p>
             </div>
-          ) : history.map((q, i) => (
+          ) : <>
+            <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}>
+              <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 14px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>🗑 Clear All</button>
+            </div>
+            {history.map((q, i) => (
             <div className="h-item" key={i} onClick={() => { setQuote(q); setStep("preview"); setTab("new"); }}>
               <div className="h-top">
                 <div className="h-client">{q.clientName || "No client name"}</div>
@@ -511,6 +537,7 @@ export default function WrenchBid() {
               </div>
             </div>
           ))}
+          </>
         </div>
       )}
 
