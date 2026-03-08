@@ -395,7 +395,7 @@ export default function WrenchBid() {
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
     // Always resync finalRef to what's actually on screen before starting
-    console.log("startRec: transcriptRef=", JSON.stringify(transcriptRef.current));
+    alert("startRec fired. transcriptRef=" + JSON.stringify(transcriptRef.current) + " finalRef=" + JSON.stringify(finalRef.current));
     finalRef.current = transcriptRef.current;
     interimRef.current = "";
     try {
