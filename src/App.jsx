@@ -405,7 +405,7 @@ export default function WrenchBid() {
       }
 
       const ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=300&no_delay=true",
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=100&no_delay=true&punctuate=true",
         ["token", token]
       );
 
@@ -417,7 +417,7 @@ export default function WrenchBid() {
         mr.ondataavailable = (e) => {
           if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
-        mr.start(100);
+        mr.start(250);
         recognitionRef.current = {
           ws, mediaRecorder: mr, stream,
           stop: () => { active = false; }
