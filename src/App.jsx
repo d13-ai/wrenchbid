@@ -355,12 +355,14 @@ export default function WrenchBid() {
                 </button>
               </div>
 
-              <div className="tx-box">
-                {transcript
-                  ? <>{transcript}{step === "recording" && <span className="tx-cursor" />}</>
-                  : <span className="tx-ph">Your words appear here as you speak...</span>
-                }
-              </div>
+              <textarea
+                className="tx-box"
+                value={transcript}
+                onChange={e => setTranscript(e.target.value)}
+                placeholder="Your words appear here as you speak... or type directly"
+                rows={4}
+                style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"transparent",color:"var(--paper)"}}
+              />{step === "recording" && <span className="tx-cursor" />}
 
               {step === "processing" && <div className="loader" />}
 
