@@ -19,7 +19,7 @@ const CSS = `
   --shadow:0 4px 24px rgba(0,0,0,0.12);
 }
 body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;line-height:1.4}
-.app{max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;align-items:stretch;background:var(--paper);position:relative}
+.app{width:100%;max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--paper);position:relative}
 
 /* Header */
 .hdr{background:var(--ink);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
