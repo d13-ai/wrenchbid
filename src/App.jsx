@@ -102,6 +102,23 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .qdoc-notes{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.6;padding-top:12px;border-top:1px solid var(--rule)}
 .qdoc-notes strong{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber-deep);margin-bottom:4px}
 
+/* Editable fields */
+.editable{background:none;border:none;border-bottom:1.5px dashed var(--rule);outline:none;font-family:inherit;color:inherit;width:100%;cursor:text;transition:border-color .15s}
+.editable:focus{border-bottom-color:var(--amber);background:var(--amber-light)}
+.editable-name{font-size:14px;font-weight:500}
+.editable-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.5px;width:100%;padding:2px 0}
+.editable-amt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-align:right;width:70px}
+.editable-num{width:50px;text-align:center;font-size:11px}
+.editable-meta{font-size:14px;font-weight:600}
+
+/* Editable fields */
+.editable{background:none;border:none;border-bottom:1.5px dashed var(--rule);outline:none;font-family:inherit;color:inherit;width:100%;cursor:text;transition:border-color .15s}
+.editable:focus{border-bottom-color:var(--amber);background:var(--amber-light)}
+.editable-name{font-size:14px;font-weight:500}
+.editable-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.5px;width:100%;padding:2px 0}
+.editable-amt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-align:right;width:70px}
+.editable-meta{font-size:14px;font-weight:600}
+
 /* Send */
 .send-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .send-row{display:flex;gap:8px;margin-bottom:10px}
@@ -436,7 +453,14 @@ export default function WrenchBid() {
 
                   <div className="qdoc-meta-row">
                     <div className="qdoc-meta-cell">
-                      To<span>{quote.clientName || "—"}</span>
+                      To<span>
+                        <input
+                          className="editable editable-meta"
+                          value={quote.clientName || ""}
+                          onChange={e => setQuote(q => ({...q, clientName: e.target.value}))}
+                          placeholder="Client name"
+                        />
+                      </span>
                     </div>
                     <div className="qdoc-meta-cell" style={{textAlign:"right"}}>
                       Quote #<span>{quote.qNum}</span>
@@ -462,29 +486,59 @@ export default function WrenchBid() {
                   </div>
 
                   <div className="sec-label">Scope of Work</div>
-                  <div className="qdoc-job">{quote.jobTitle}</div>
+                  <div className="qdoc-job">
+                    <input
+                      className="editable editable-title"
+                      value={quote.jobTitle || ""}
+                      onChange={e => setQuote(q => ({...q, jobTitle: e.target.value}))}
+                      placeholder="Job title"
+                    />
+                  </div>
 
                   <div className="sec-label">Line Items</div>
                   <div className="li-table">
                     {quote.lineItems.map((li, i) => (
                       <div className="li-row" key={i}>
-                        <div>
-                          <div className="li-name">{li.desc}</div>
+                        <div style={{flex:1,marginRight:8}}>
+                          <input
+                            className="editable editable-name"
+                            value={li.desc}
+                            onChange={e => setQuote(q => {
+                              const items = [...q.lineItems];
+                              items[i] = {...items[i], desc: e.target.value};
+                              return {...q, lineItems: items};
+                            })}
+                          />
                           {li.qty !== 1 && (
                             <div className="li-sub">{li.qty} {li.unit} × {$$(li.rate)}</div>
                           )}
                         </div>
-                        <div className="li-amt">{$$(li.total)}</div>
+                        <input
+                          className="editable editable-amt"
+                          value={li.total}
+                          type="number"
+                          onChange={e => setQuote(q => {
+                            const items = [...q.lineItems];
+                            items[i] = {...items[i], total: parseFloat(e.target.value) || 0};
+                            const subtotal = items.reduce((s, l) => s + l.total, 0);
+                            const tax = subtotal > 150 ? parseFloat((subtotal * (q.taxRate/100)).toFixed(2)) : 0;
+                            return {...q, lineItems: items, subtotal: parseFloat(subtotal.toFixed(2)), tax, grandTotal: parseFloat((subtotal + tax).toFixed(2))};
+                          })}
+                        />
                       </div>
                     ))}
                   </div>
 
-                  {quote.notes && (
-                    <div className="qdoc-notes">
-                      <strong>Notes</strong>
-                      {quote.notes}
-                    </div>
-                  )}
+                  <div className="qdoc-notes">
+                    <strong>Notes</strong>
+                    <input
+                      className="editable"
+                      style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}}
+                      value={quote.notes || ""}
+                      onChange={e => setQuote(q => ({...q, notes: e.target.value}))}
+                      placeholder="Payment terms, warranty, etc."
+                    />
+                  </div>
 
                   <div className="totals">
                     <div className="total-row"><span>Subtotal</span><span>{$$(quote.subtotal)}</span></div>
@@ -496,7 +550,6 @@ export default function WrenchBid() {
                 </div>
               </div>
 
-              {/* Send */}
               <div className="send-lbl">Send to Client</div>
               <div className="send-row">
                 <input
