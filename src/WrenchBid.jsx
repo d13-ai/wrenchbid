@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 /* ─── Supabase ────────────────────────────────────────────────────────────── */
@@ -307,7 +307,6 @@ export default function WrenchBid() {
   const [toast, setToast] = useState(null);
   const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
-  const accumulatedRef = useRef(""); // always mirrors transcript state exactly
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
@@ -385,9 +384,8 @@ export default function WrenchBid() {
   };
 
   /* ── Voice (Deepgram) ── */
-  const startRec = useCallback(async () => {
-    // Capture what's already on screen — new words will append to this
-    const base = accumulatedRef.current;
+  const startRec = async () => {
+    const base = transcript; // read current transcript directly — no stale closure
     let sessionFinal = "";
     let active = true;
 
@@ -425,7 +423,7 @@ export default function WrenchBid() {
             active = false;
             // Flush any unconfirmed interim into accumulated before stopping
             const final = base + sessionFinal;
-            accumulatedRef.current = final;
+            
             setTranscript(final);
           }
         };
@@ -441,7 +439,7 @@ export default function WrenchBid() {
           if (!text) return;
           if (msg.is_final) {
             sessionFinal += text + " ";
-            accumulatedRef.current = base + sessionFinal;
+            
             setTranscript(base + sessionFinal);
           } else {
             setTranscript(base + sessionFinal + text);
@@ -459,7 +457,7 @@ export default function WrenchBid() {
       ping("Could not start recording");
       setStep("idle");
     }
-  }, []);
+  };
 
   const stopRec = () => {
     const ref = recognitionRef.current;
@@ -548,7 +546,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); setTranscript(""); accumulatedRef.current = ""; setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); setTranscript(""); setStep("idle"); setClientPhone(""); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -665,7 +663,7 @@ export default function WrenchBid() {
               <textarea
                 className="tx-box"
                 value={transcript}
-                onChange={e => { accumulatedRef.current = e.target.value; setTranscript(e.target.value); }}
+                onChange={e => setTranscript(e.target.value)}
                 placeholder="Your words appear here as you speak... or type directly"
                 rows={4}
                 style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
@@ -676,7 +674,6 @@ export default function WrenchBid() {
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
                   setTranscript("");
-                  accumulatedRef.current = "";
                 }}>Clear</button>
                 <button
                   className="btn btn-cta"
