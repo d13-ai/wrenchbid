@@ -406,10 +406,7 @@ export default function WrenchBid() {
         ["token", token]
       );
 
-      // Clear only interim — keep finalRef so transcript accumulates across stop/start
-      interimRef.current = "";
-
-      let mr;
+      let stopped = false;
 
       ws.onopen = () => {
         const mimeType = [
@@ -424,13 +421,13 @@ export default function WrenchBid() {
           if (ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
         mr.start(100);
-        recognitionRef.current = { ws, mediaRecorder: mr, stream };
+        recognitionRef.current = { ws, mediaRecorder: mr, stream, stop: () => { stopped = true; } };
+        interimRef.current = "";
         setStep("recording");
       };
 
       ws.onmessage = (e) => {
-        // Ignore messages from old sessions
-        if (recognitionRef.current?.ws !== ws) return;
+        if (stopped) return;
         try {
           const msg = JSON.parse(e.data);
           if (msg.type !== "Results") return;
@@ -446,13 +443,12 @@ export default function WrenchBid() {
         } catch {}
       };
 
-      ws.onerror = () => ping("Voice connection error — try again");
+      ws.onerror = () => { if (!stopped) ping("Voice connection error — try again"); };
       ws.onclose = (e) => {
-        // Only update step if this is still the active session
-        if (recognitionRef.current?.ws !== ws) return;
+        if (stopped) return; // user manually stopped — don't touch anything
         if (e.code === 1008 || e.code === 4000) ping("Voice auth failed — check API key in Vercel");
         interimRef.current = "";
-        setTranscript(finalRef.current); // clear any dangling interim
+        setTranscript(finalRef.current);
         setStep(s => s === "recording" ? "idle" : s);
       };
 
@@ -465,10 +461,13 @@ export default function WrenchBid() {
   const stopRec = () => {
     const ref = recognitionRef.current;
     if (!ref) return;
+    recognitionRef.current = null;
+    ref.stop?.(); // set stopped = true in closure
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
-    recognitionRef.current = null;
+    interimRef.current = "";
+    setTranscript(finalRef.current); // drop any dangling interim
     setStep("idle");
   };
 
