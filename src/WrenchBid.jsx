@@ -414,7 +414,6 @@ export default function WrenchBid() {
       ws.onopen = () => {
         if (!active) { ws.close(); stream.getTracks().forEach(t => t.stop()); return; }
         ping("🎙 Connected");
-        interimRef.current = "";
         const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"]
           .find(t => MediaRecorder.isTypeSupported(t)) || "";
         const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
@@ -466,8 +465,13 @@ export default function WrenchBid() {
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
+    // Flush interim into final so next session can append to it
+    if (interimRef.current.trim()) {
+      finalRef.current += interimRef.current.trim() + " ";
+      interimRef.current = "";
+      setTranscript(finalRef.current);
+    }
     setStep("idle");
-    // Do NOT touch transcript or refs here — leave exactly what's on screen
   };
 
   const toggleMic = () => step === "recording" ? stopRec() : startRec();
