@@ -527,16 +527,23 @@ export default function WrenchBid() {
                 <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 14px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>Clear All</button>
               </div>
               {history.map((q, i) => (
-                <div className="h-item" key={i} onClick={() => { setQuote(q); setStep("preview"); setTab("new"); }}>
-                  <div className="h-top">
-                    <div className="h-client">{q.clientName || "No client name"}</div>
-                    <div className="h-total">{$$(q.grandTotal)}</div>
+                <div className="h-item" key={i} style={{position:"relative"}}>
+                  <div onClick={() => { setQuote(q); setStep("preview"); setTab("new"); }}>
+                    <div className="h-top">
+                      <div className="h-client">{q.clientName || "No client name"}</div>
+                      <div className="h-total">{$$(q.grandTotal)}</div>
+                    </div>
+                    <div className="h-job">{q.jobTitle}</div>
+                    <div className="h-foot">
+                      <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
+                      <div className={`chip ${q.status}`}>{q.status}</div>
+                    </div>
                   </div>
-                  <div className="h-job">{q.jobTitle}</div>
-                  <div className="h-foot">
-                    <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
-                    <div className={`chip ${q.status}`}>{q.status}</div>
-                  </div>
+                  <button
+                    onClick={e => { e.stopPropagation(); setHistory(h => h.filter((_,j) => j !== i)); }}
+                    style={{position:"absolute",top:10,right:10,background:"none",border:"none",cursor:"pointer",fontSize:16,color:"var(--muted)",lineHeight:1,padding:"2px 4px",borderRadius:3}}
+                    title="Delete quote"
+                  >🗑</button>
                 </div>
               ))}
             </div>
