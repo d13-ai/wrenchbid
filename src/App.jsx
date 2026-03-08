@@ -201,7 +201,10 @@ Rules:
     })
   });
   const d = await res.json();
-  const raw = d.content[0].text.trim().replace(/```json\n?|```/g, "");
+  const text = d.content[0].text.trim();
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  const raw = text.slice(start, end + 1);
   return JSON.parse(raw);
 }
 
