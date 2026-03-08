@@ -401,7 +401,7 @@ export default function WrenchBid() {
               {step === "processing" && <div className="loader" />}
 
               <div className="btn-row">
-                <button className="btn btn-ghost" onClick={() => setTranscript("")}>Clear</button>
+                <button className="btn btn-ghost" onClick={() => { setTranscript(""); finalRef.current = ""; }}>Clear</button>
                 <button
                   className="btn btn-cta"
                   onClick={generate}
