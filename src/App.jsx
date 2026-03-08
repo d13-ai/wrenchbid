@@ -212,15 +212,29 @@ Rules:
 /* ─── App ─────────────────────────────────────────────────────────────────── */
 export default function WrenchBid() {
   const [tab, setTab] = useState("new");
-  const [biz, setBiz] = useState({ name: "Your Business", trade: "Plumber", phone: "", email: "" });
+  const [biz, setBiz] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("wb_biz")) || { name: "Your Business", trade: "Plumber", phone: "", email: "" }; }
+    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "" }; }
+  });
   const [step, setStep] = useState("idle"); // idle | recording | processing | preview
   const [transcript, setTranscript] = useState("");
   const [quote, setQuote] = useState(null);
   const [clientPhone, setClientPhone] = useState("");
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("wb_history")) || []; }
+    catch { return []; }
+  });
   const [toast, setToast] = useState(null);
   const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
+
+  useEffect(() => {
+    try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
+  }, [history]);
+
+  useEffect(() => {
+    try { localStorage.setItem("wb_biz", JSON.stringify(biz)); } catch {}
+  }, [biz]);
 
   const ping = (msg) => {
     clearTimeout(toastTimer.current);
