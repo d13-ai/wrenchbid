@@ -389,7 +389,7 @@ export default function WrenchBid() {
   const startRec = useCallback(async () => {
     try {
       const tokenRes = await fetch("/api/deepgram-token");
-      if (!tokenRes.ok) { ping("Voice setup failed — check connection"); return; }
+      if (!tokenRes.ok) { ping("Voice setup failed"); return; }
       const { token } = await tokenRes.json();
       if (!token) { ping("Voice token missing"); return; }
 
@@ -402,32 +402,32 @@ export default function WrenchBid() {
       }
 
       const ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=300&no_delay=true&filler_words=false",
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=300&no_delay=true",
         ["token", token]
       );
 
-      let stopped = false;
+      // active = false means user manually stopped, ignore all WS events
+      let active = true;
 
       ws.onopen = () => {
-        const mimeType = [
-          "audio/webm;codecs=opus",
-          "audio/webm",
-          "audio/ogg;codecs=opus",
-          "audio/ogg",
-        ].find(t => MediaRecorder.isTypeSupported(t)) || "";
+        if (!active) { ws.close(); stream.getTracks().forEach(t => t.stop()); return; }
 
-        mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+        const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"]
+          .find(t => MediaRecorder.isTypeSupported(t)) || "";
+        const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
         mr.ondataavailable = (e) => {
-          if (ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
+          if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
         mr.start(100);
-        recognitionRef.current = { ws, mediaRecorder: mr, stream, stop: () => { stopped = true; } };
-        interimRef.current = "";
+        recognitionRef.current = {
+          ws, mediaRecorder: mr, stream,
+          deactivate: () => { active = false; }
+        };
         setStep("recording");
       };
 
       ws.onmessage = (e) => {
-        if (stopped) return;
+        if (!active) return;
         try {
           const msg = JSON.parse(e.data);
           if (msg.type !== "Results") return;
@@ -443,16 +443,16 @@ export default function WrenchBid() {
         } catch {}
       };
 
-      ws.onerror = () => { if (!stopped) ping("Voice connection error — try again"); };
-      ws.onclose = (e) => {
-        if (stopped) return; // user manually stopped — don't touch anything
-        if (e.code === 1008 || e.code === 4000) ping("Voice auth failed — check API key in Vercel");
+      ws.onerror = () => { if (active) ping("Voice connection error — try again"); };
+      ws.onclose = () => {
+        if (!active) return; // manually stopped — leave transcript alone
+        // Unexpected close — clear interim and go idle
         interimRef.current = "";
         setTranscript(finalRef.current);
         setStep(s => s === "recording" ? "idle" : s);
       };
 
-    } catch (err) {
+    } catch {
       ping("Could not start recording");
       setStep("idle");
     }
@@ -462,12 +462,12 @@ export default function WrenchBid() {
     const ref = recognitionRef.current;
     if (!ref) return;
     recognitionRef.current = null;
-    ref.stop?.(); // set stopped = true in closure
+    ref.deactivate();                          // stop all WS events from firing
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
     interimRef.current = "";
-    setTranscript(finalRef.current); // drop any dangling interim
+    setTranscript(finalRef.current);           // show only confirmed finals
     setStep("idle");
   };
 
