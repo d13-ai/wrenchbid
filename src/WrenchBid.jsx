@@ -395,7 +395,6 @@ export default function WrenchBid() {
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
     // Always resync finalRef to what's actually on screen before starting
-    alert("startRec fired. transcriptRef=" + JSON.stringify(transcriptRef.current) + " finalRef=" + JSON.stringify(finalRef.current));
     finalRef.current = transcriptRef.current;
     interimRef.current = "";
     try {
@@ -458,7 +457,6 @@ export default function WrenchBid() {
       ws.onerror = () => { if (active) ping("Voice connection error — try again"); };
       ws.onclose = () => {
         if (!active) return;
-        interimRef.current = "";
         setStep(s => s === "recording" ? "idle" : s);
       };
 
@@ -476,15 +474,8 @@ export default function WrenchBid() {
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
-    // Flush interim into final, then sync transcriptRef
-    if (interimRef.current) {
-      finalRef.current += interimRef.current + " ";
-      interimRef.current = "";
-    }
-    // Always sync so startRec can read correct value
-    transcriptRef.current = finalRef.current;
-    setTranscript(finalRef.current);
     setStep("idle");
+    // Do NOT touch transcript or refs here — leave exactly what's on screen
   };
 
   const toggleMic = () => {
