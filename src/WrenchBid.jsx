@@ -411,7 +411,8 @@ export default function WrenchBid() {
 
       ws.onopen = () => {
         if (!active) { ws.close(); stream.getTracks().forEach(t => t.stop()); return; }
-        ping("🎙 Connected to Deepgram");
+        ping("🎙 Connected");
+        interimRef.current = "";
         const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"]
           .find(t => MediaRecorder.isTypeSupported(t)) || "";
         const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
@@ -464,8 +465,13 @@ export default function WrenchBid() {
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
+    // Flush any interim text into final so next session starts clean
+    if (interimRef.current) {
+      finalRef.current += interimRef.current + " ";
+      interimRef.current = "";
+      setTranscript(finalRef.current);
+    }
     setStep("idle");
-    // Never touch transcript here — leave exactly what user sees
   };
 
   const toggleMic = () => step === "recording" ? stopRec() : startRec();
