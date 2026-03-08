@@ -298,7 +298,6 @@ export default function WrenchBid() {
   const [authLoading, setAuthLoading] = useState(false);
   const [step, setStep] = useState("idle"); // idle | recording | processing | preview
   const [transcript, setTranscript] = useState("");
-  displayRef.current = transcript; // sync ref every render — safe to read from async
   const [quote, setQuote] = useState(null);
   const [clientPhone, setClientPhone] = useState("");
   const [history, setHistory] = useState(() => {
