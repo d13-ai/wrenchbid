@@ -10,10 +10,9 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --ink: #0d0d0d; --paper: #f5f0e8; --amber: #e8a020; --amber-deep: #b07010;
-      --amber-light: #fef3d0; --rule: #d0c8b8; --muted: #7a7060; --white: #ffffff;
+      --amber-light: #fef3d0; --rule: #d0c8b8; --muted: #7a7060;
     }
     body { background: var(--paper); color: var(--ink); font-family: 'Barlow', sans-serif; line-height: 1.7; }
-
     header {
       background: var(--ink); padding: 0 24px; height: 56px;
       display: flex; align-items: center; justify-content: space-between;
@@ -23,19 +22,14 @@
     .logo em { color: #fff; font-style: normal; }
     .back { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); text-decoration: none; }
     .back:hover { text-decoration: underline; }
-
     .wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
-
     .doc-title { font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
     .effective { font-size: 13px; color: var(--muted); margin-bottom: 40px; }
-
     h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--amber-deep); margin: 36px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
-
     p { font-size: 15px; color: #333; margin-bottom: 14px; }
-
+    a { color: var(--amber-deep); }
     .callout { background: var(--amber-light); border-left: 3px solid var(--amber); padding: 14px 16px; border-radius: 0 4px 4px 0; margin-bottom: 14px; }
     .callout p { margin: 0; color: var(--ink); font-weight: 500; }
-
     footer { text-align: center; padding: 32px 24px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--muted); }
     footer a { color: var(--muted); margin: 0 8px; }
     footer a:hover { color: var(--ink); }
@@ -45,7 +39,7 @@
 
 <header>
   <a class="logo" href="/">Wrench<em>Bid</em></a>
-  <a class="back" href="/">← Back to App</a>
+  <a class="back" href="/">&#8592; Back to App</a>
 </header>
 
 <div class="wrap">
@@ -78,10 +72,10 @@
 
   <h2>7. Your Rights</h2>
   <p>Depending on your location, you may have the right to: access the personal data we hold about you; request correction of inaccurate data; request deletion of your data; opt out of marketing emails; and data portability.</p>
-  <p>To exercise any of these rights, contact us at <a href="/cdn-cgi/l/email-protection#186b6d6868776a6c586f6a7d767b707a717c36796868"><span class="__cf_email__" data-cfemail="1c6f696c6c736e685c6b6e79727f747e7578327d6c6c">[email&#160;protected]</span></a>. We will respond within 30 days.</p>
+  <p>To exercise any of these rights, contact us at support@wrenchbid.app. We will respond within 30 days.</p>
 
   <h2>8. California Residents (CCPA)</h2>
-  <p>If you are a California resident, you have the right to know what personal information we collect, to request deletion, and to opt out of the sale of personal information. We do not sell personal information. To submit a request, contact <a href="/cdn-cgi/l/email-protection#7c0f090c0c130e083c0b0e19121f141e1518521d0c0c"><span class="__cf_email__" data-cfemail="2c5f595c5c435e586c5b5e49424f444e4548024d5c5c">[email&#160;protected]</span></a>.</p>
+  <p>If you are a California resident, you have the right to know what personal information we collect, to request deletion, and to opt out of the sale of personal information. We do not sell personal information. To submit a request, contact support@wrenchbid.app.</p>
 
   <h2>9. Cookies</h2>
   <p>We use essential cookies to maintain your login session. We do not use advertising or tracking cookies. You can disable cookies in your browser settings, but this may affect the functionality of the Service.</p>
@@ -91,18 +85,28 @@
 
   <h2>11. Children's and Minors' Privacy</h2>
   <p>WrenchBid is a tool designed for adult tradespeople and is not directed at children or minors. Under federal law (COPPA), we do not knowingly collect personal information from children under 13. Under Colorado law (SB 24-041, effective October 1, 2025), we extend these protections to all minors under 18.</p>
-  <p>We do not use design features intended to increase engagement of minors, and we do not process minor data for targeted advertising, sale, or profiling. If you believe a minor has provided us with personal data, contact us at <a href="mailto:support@wrenchbid.app">support@wrenchbid.app</a> and we will delete it promptly.</p>
+  <p>We do not use design features intended to increase engagement of minors, and we do not process minor data for targeted advertising, sale, or profiling. If you believe a minor has provided us with personal data, contact support@wrenchbid.app and we will delete it promptly.</p>
 
   <h2>12. Data Security</h2>
-  <p>We implement and maintain reasonable security procedures and practices appropriate to the nature of the personal information we store, consistent with Colorado law (C.R.S. § 6-1-713 and HB 18-1128). This includes encrypted storage, access controls, and secure data disposal practices. When we no longer need your personal information, we will securely delete or destroy it.</p>
+  <p>We implement and maintain reasonable security procedures and practices appropriate to the nature of the personal information we store, consistent with Colorado law (C.R.S. 6-1-713 and HB 18-1128). This includes encrypted storage, access controls, and secure data disposal practices. When we no longer need your personal information, we will securely delete or destroy it.</p>
   <p>While we take data security seriously, no system is completely secure. We cannot guarantee that unauthorized third parties will never be able to defeat our security measures.</p>
 
   <h2>13. Data Breach Notification</h2>
-  <p>In the event of a data breach that compromises your personal information, we will notify affected users as soon as possible and no later than 30 days after determining that a breach has occurred, as required by Colorado law (C.R.S. § 6-1-716). If the breach affects 500 or more Colorado residents, we will also notify the Colorado Attorney General within 30 days.</p>
+  <p>In the event of a data breach that compromises your personal information, we will notify affected users as soon as possible and no later than 30 days after determining that a breach has occurred, as required by Colorado law (C.R.S. 6-1-716). If the breach affects 500 or more Colorado residents, we will also notify the Colorado Attorney General within 30 days.</p>
   <p>Breach notifications will include: a description of what happened, the types of information involved, steps we are taking, and steps you can take to protect yourself. Notifications will be sent to the email address on file for your account.</p>
 
   <h2>14. Changes to This Policy</h2>
   <p>We may update this Privacy Policy periodically. We will notify registered users by email of material changes. Continued use of the Service constitutes acceptance of the updated policy.</p>
 
   <h2>15. Contact Us</h2>
-  <p>For priv
+  <p>For privacy-related questions or requests, contact us at support@wrenchbid.app.</p>
+</div>
+
+<footer>
+  &copy; 2026 WrenchBid &nbsp;&middot;&nbsp;
+  <a href="/terms">Terms of Service</a>
+  <a href="/privacy">Privacy Policy</a>
+</footer>
+
+</body>
+</html>
