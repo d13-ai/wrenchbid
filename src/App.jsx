@@ -144,9 +144,17 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 /* Setup */
 .field{margin-bottom:14px}
 .field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.field input,.field select{width:100%;padding:11px 14px;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
-.field input:focus,.field select:focus{border-color:var(--amber)}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amber)}
 .field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.field textarea{resize:vertical;min-height:72px;line-height:1.5}
+.field .field-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+/* Quote Terms Section */
+.qdoc-terms{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+.qdoc-terms-row{margin-bottom:8px}
+.qdoc-terms-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber-deep);margin-bottom:3px}
+.qdoc-terms-text{font-size:12px;color:var(--muted);line-height:1.6}
 
 /* Empty */
 .empty{text-align:center;padding:56px 0;color:var(--muted)}
@@ -240,8 +248,11 @@ Rules:
 export default function WrenchBid() {
   const [tab, setTab] = useState("new");
   const [biz, setBiz] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("wb_biz")) || { name: "Your Business", trade: "Plumber", phone: "", email: "" }; }
-    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "" }; }
+    try {
+      const stored = JSON.parse(localStorage.getItem("wb_biz"));
+      return stored || { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "" };
+    }
+    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "" }; }
   });
   const [step, setStep] = useState("idle"); // idle | recording | processing | preview
   const [transcript, setTranscript] = useState("");
@@ -548,6 +559,35 @@ export default function WrenchBid() {
                     />
                   </div>
 
+                  {(biz.paymentTerms || biz.warranty || biz.customTerms || biz.licenseNum) && (
+                    <div className="qdoc-terms">
+                      {biz.paymentTerms && (
+                        <div className="qdoc-terms-row">
+                          <div className="qdoc-terms-label">Payment Terms</div>
+                          <div className="qdoc-terms-text">{biz.paymentTerms}</div>
+                        </div>
+                      )}
+                      {biz.warranty && (
+                        <div className="qdoc-terms-row">
+                          <div className="qdoc-terms-label">Warranty</div>
+                          <div className="qdoc-terms-text">{biz.warranty}</div>
+                        </div>
+                      )}
+                      {biz.customTerms && (
+                        <div className="qdoc-terms-row">
+                          <div className="qdoc-terms-label">Terms & Conditions</div>
+                          <div className="qdoc-terms-text">{biz.customTerms}</div>
+                        </div>
+                      )}
+                      {biz.licenseNum && (
+                        <div className="qdoc-terms-row">
+                          <div className="qdoc-terms-label">License #</div>
+                          <div className="qdoc-terms-text">{biz.licenseNum}</div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="disclaimer">
                     <strong>Estimate only.</strong> Review all pricing before sending to clients. WrenchBid is not liable for inaccuracies in AI-generated quotes.
                   </div>
@@ -644,8 +684,45 @@ export default function WrenchBid() {
                 <label>Email</label>
                 <input type="email" value={biz.email} onChange={e => setBiz(b=>({...b,email:e.target.value}))} placeholder="you@yourbusiness.com" />
               </div>
+              <div className="field">
+                <label>License # <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>(optional)</span></label>
+                <input value={biz.licenseNum} onChange={e => setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345" />
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="card-hd">Quote Terms & Conditions</div>
+            <div className="card-bd">
+              <div className="tip" style={{marginBottom:14}}>
+                <strong>These print on every quote automatically.</strong> Fill in what applies to your business — leave blank to skip.
+              </div>
+              <div className="field">
+                <label>Payment Terms</label>
+                <textarea
+                  value={biz.paymentTerms}
+                  onChange={e => setBiz(b=>({...b,paymentTerms:e.target.value}))}
+                  placeholder="e.g. 50% deposit required before work begins. Balance due upon completion. Accepted: cash, check, Venmo, Zelle."
+                />
+              </div>
+              <div className="field">
+                <label>Warranty</label>
+                <textarea
+                  value={biz.warranty}
+                  onChange={e => setBiz(b=>({...b,warranty:e.target.value}))}
+                  placeholder="e.g. All labor warrantied for 1 year. Parts covered by manufacturer warranty only."
+                />
+              </div>
+              <div className="field">
+                <label>Additional Terms & Conditions</label>
+                <textarea
+                  value={biz.customTerms}
+                  onChange={e => setBiz(b=>({...b,customTerms:e.target.value}))}
+                  placeholder="e.g. Quote valid for stated number of days. Client is responsible for obtaining permits unless otherwise agreed. Any additional work beyond scope will require a separate written quote."
+                />
+              </div>
               <button className="btn btn-cta btn-full" onClick={() => { setTab("new"); ping("Profile saved ✓"); }}>
-                Save & Start Quoting
+                Save Profile
               </button>
             </div>
           </div>
@@ -653,6 +730,7 @@ export default function WrenchBid() {
           <div className="tip" style={{marginTop:4}}>
             <strong>Your info shows on every quote.</strong> Add your phone so clients can call you directly from the SMS quote.
           </div>
+
 
           <div className="div" />
 
