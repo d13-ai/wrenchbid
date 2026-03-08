@@ -387,6 +387,7 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
+    console.log("startRec called, finalRef:", finalRef.current);
     try {
       const tokenRes = await fetch("/api/deepgram-token");
       if (!tokenRes.ok) { ping("Voice setup failed"); return; }
@@ -474,7 +475,10 @@ export default function WrenchBid() {
     setStep("idle");
   };
 
-  const toggleMic = () => step === "recording" ? stopRec() : startRec();
+  const toggleMic = () => {
+    console.log("toggleMic", step, "finalRef:", finalRef.current, "interimRef:", interimRef.current);
+    step === "recording" ? stopRec() : startRec();
+  };
 
   /* ── Generate ── */
   const generate = async () => {
