@@ -162,6 +162,14 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--amber);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 20px;border-radius:3px;border:1px solid var(--amber);z-index:999;white-space:nowrap;animation:slideUp .25s ease}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
+/* Disclaimer */
+.disclaimer{font-size:11px;color:var(--muted);line-height:1.5;padding:10px 14px;background:var(--amber-light);border-left:3px solid var(--amber);border-radius:0 3px 3px 0;margin-bottom:12px}
+.disclaimer strong{color:var(--amber-deep)}
+
+/* Footer */
+.app-footer{text-align:center;padding:16px 20px;font-size:11px;color:var(--muted);border-top:1px solid var(--rule);margin-top:auto}
+.app-footer a{color:var(--muted);text-decoration:underline;margin:0 6px}
+
 /* Divider */
 .div{height:1px;background:var(--rule);margin:16px 0}
 
@@ -540,6 +548,10 @@ export default function WrenchBid() {
                     />
                   </div>
 
+                  <div className="disclaimer">
+                    <strong>Estimate only.</strong> Review all pricing before sending to clients. WrenchBid is not liable for inaccuracies in AI-generated quotes.
+                  </div>
+
                   <div className="totals">
                     <div className="total-row"><span>Subtotal</span><span>{$$(quote.subtotal)}</span></div>
                     {quote.tax > 0 && (
@@ -658,6 +670,12 @@ export default function WrenchBid() {
       )}
 
       {toast && <div className="toast">{toast}</div>}
+
+      <footer className="app-footer">
+        © 2026 WrenchBid &nbsp;·&nbsp;
+        <a href="https://wrenchbid.vercel.app/terms" target="_blank" rel="noopener noreferrer">Terms</a>
+        <a href="https://wrenchbid.vercel.app/privacy" target="_blank" rel="noopener noreferrer">Privacy</a>
+      </footer>
     </div>
   );
 }
