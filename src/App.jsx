@@ -487,10 +487,21 @@ export default function WrenchBid() {
   };
 
   const newQuote = () => { setQuote(null); setTranscript(""); setStep("idle"); setClientPhone(""); };
-  const clearHistory = () => {
+  const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
       ping("History cleared");
+      if (user) {
+        await supabase.from("quotes").delete().eq("user_id", user.id);
+      }
+    }
+  };
+
+  const deleteQuote = async (index) => {
+    const q = history[index];
+    setHistory(h => h.filter((_, j) => j !== index));
+    if (user && q?.qNum) {
+      await supabase.from("quotes").delete().eq("user_id", user.id).eq("quote_num", q.qNum);
     }
   };
 
@@ -814,7 +825,7 @@ export default function WrenchBid() {
                       </div>
                     </div>
                     <button
-                      onClick={e => { e.stopPropagation(); setHistory(h => h.filter((_,j) => j !== i)); }}
+                      onClick={e => { e.stopPropagation(); deleteQuote(i); }}
                       style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",lineHeight:1,padding:"4px 6px",borderRadius:3}}
                     >✕</button>
                   </div>
