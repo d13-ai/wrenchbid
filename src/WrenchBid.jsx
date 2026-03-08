@@ -388,27 +388,35 @@ export default function WrenchBid() {
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
     try {
-      // Get short-lived token from server (30s TTL — master key never leaves server)
+      // Get token from server
       const tokenRes = await fetch("/api/deepgram-token");
+      if (!tokenRes.ok) { ping("Voice setup failed — check connection"); return; }
       const { token } = await tokenRes.json();
+      if (!token) { ping("Voice token missing"); return; }
 
       // Get microphone
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch {
+        ping("Mic access denied — check browser permissions");
+        return;
+      }
 
-      // Open Deepgram WebSocket with temporary token
+      // Open Deepgram WebSocket using subprotocol auth (most reliable method)
       const ws = new WebSocket(
-        `wss://api.deepgram.com/v1/listen?token=${token}&model=nova-3&language=en-US&smart_format=true&interim_results=true&endpointing=300`
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=400&utterance_end_ms=1000",
+        ["token", token]
       );
 
+      let mr;
+
       ws.onopen = () => {
-        // Stream audio chunks to Deepgram
-        const mr = new MediaRecorder(stream, { mimeType: "audio/webm" });
+        mr = new MediaRecorder(stream);
         mr.ondataavailable = (e) => {
-          if (ws.readyState === WebSocket.OPEN && e.data.size > 0) {
-            ws.send(e.data);
-          }
+          if (ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
-        mr.start(250); // send chunks every 250ms
+        mr.start(250);
         recognitionRef.current = { ws, mediaRecorder: mr, stream };
         setStep("recording");
         finalRef.current = "";
@@ -416,26 +424,29 @@ export default function WrenchBid() {
       };
 
       ws.onmessage = (e) => {
-        const msg = JSON.parse(e.data);
-        if (msg.type !== "Results") return;
-        const alt = msg.channel?.alternatives?.[0];
-        if (!alt) return;
-        const text = alt.transcript;
-        if (!text) return;
-        if (msg.is_final) {
-          finalRef.current += text + " ";
-          interimRef.current = "";
-        } else {
-          interimRef.current = text;
-        }
-        setTranscript(finalRef.current + interimRef.current);
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type !== "Results") return;
+          const text = msg.channel?.alternatives?.[0]?.transcript;
+          if (!text) return;
+          if (msg.is_final) {
+            finalRef.current += text + " ";
+            interimRef.current = "";
+          } else {
+            interimRef.current = text;
+          }
+          setTranscript(finalRef.current + interimRef.current);
+        } catch {}
       };
 
-      ws.onerror = () => ping("Deepgram error — check connection");
-      ws.onclose = () => setStep(s => s === "recording" ? "idle" : s);
+      ws.onerror = () => ping("Voice connection error — try again");
+      ws.onclose = (e) => {
+        if (e.code === 1008 || e.code === 4000) ping("Voice auth failed — check API key in Vercel");
+        setStep(s => s === "recording" ? "idle" : s);
+      };
 
     } catch (err) {
-      ping("Mic access denied or not supported");
+      ping("Could not start recording");
       setStep("idle");
     }
   }, []);
