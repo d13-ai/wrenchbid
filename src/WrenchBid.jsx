@@ -395,6 +395,7 @@ export default function WrenchBid() {
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
     // Always resync finalRef to what's actually on screen before starting
+    console.log("startRec: transcriptRef=", JSON.stringify(transcriptRef.current));
     finalRef.current = transcriptRef.current;
     interimRef.current = "";
     try {
@@ -475,12 +476,14 @@ export default function WrenchBid() {
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
-    // Flush any interim text into final so next session starts clean
+    // Flush interim into final, then sync transcriptRef
     if (interimRef.current) {
       finalRef.current += interimRef.current + " ";
       interimRef.current = "";
-      updateTranscript(finalRef.current);
     }
+    // Always sync so startRec can read correct value
+    transcriptRef.current = finalRef.current;
+    setTranscript(finalRef.current);
     setStep("idle");
   };
 
