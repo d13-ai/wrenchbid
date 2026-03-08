@@ -405,18 +405,26 @@ export default function WrenchBid() {
 
       // Open Deepgram WebSocket using subprotocol auth (most reliable method)
       const ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=400&utterance_end_ms=1000",
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=300&no_delay=true&filler_words=false",
         ["token", token]
       );
 
       let mr;
 
       ws.onopen = () => {
-        mr = new MediaRecorder(stream);
+        // Pick best supported audio format for Deepgram
+        const mimeType = [
+          "audio/webm;codecs=opus",
+          "audio/webm",
+          "audio/ogg;codecs=opus",
+          "audio/ogg",
+        ].find(t => MediaRecorder.isTypeSupported(t)) || "";
+
+        mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
         mr.ondataavailable = (e) => {
           if (ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
-        mr.start(250);
+        mr.start(100); // smaller chunks = lower latency, better accuracy
         recognitionRef.current = { ws, mediaRecorder: mr, stream };
         setStep("recording");
         finalRef.current = "";
