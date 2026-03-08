@@ -308,6 +308,7 @@ export default function WrenchBid() {
   const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
   const finalRef = useRef("");
+  const resultOffsetRef = useRef(0); // desktop: skip results before last Clear
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
@@ -396,21 +397,25 @@ export default function WrenchBid() {
     r.lang = "en-US";
     r.maxAlternatives = 1;
     finalRef.current = "";
+    resultOffsetRef.current = 0;
 
     r.onresult = (e) => {
       let interim = "";
       if (isAndroid) {
-        // Android: each session only contains the new utterance, append to finalRef
         for (let i = 0; i < e.results.length; i++) {
           if (e.results[i].isFinal) finalRef.current += e.results[i][0].transcript + " ";
           else interim = e.results[i][0].transcript;
         }
       } else {
-        // Desktop: rebuild finals from full result list each event
+        // Desktop: rebuild finals starting from offset (skips cleared results)
         let finals = "";
-        for (let i = 0; i < e.results.length; i++) {
-          if (e.results[i].isFinal) finals += e.results[i][0].transcript + " ";
-          else interim = e.results[i][0].transcript;
+        for (let i = resultOffsetRef.current; i < e.results.length; i++) {
+          if (e.results[i].isFinal) {
+            finals += e.results[i][0].transcript + " ";
+            resultOffsetRef._lastFinalIndex = i + 1; // track how many finals we've seen
+          } else {
+            interim = e.results[i][0].transcript;
+          }
         }
         finalRef.current = finals;
       }
@@ -647,7 +652,11 @@ export default function WrenchBid() {
               {step === "processing" && <div className="loader" />}
 
               <div className="btn-row">
-                <button className="btn btn-ghost" onClick={() => { setTranscript(""); finalRef.current = ""; }}>Clear</button>
+                <button className="btn btn-ghost" onClick={() => {
+                  setTranscript("");
+                  finalRef.current = "";
+                  resultOffsetRef.current = resultOffsetRef._lastFinalIndex || 0;
+                }}>Clear</button>
                 <button
                   className="btn btn-cta"
                   onClick={generate}
