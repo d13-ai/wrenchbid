@@ -305,21 +305,14 @@ export default function WrenchBid() {
     catch { return []; }
   });
   const [toast, setToast] = useState(null);
-  const recognitionRef = useRef(null); // holds { ws, mediaRecorder, stream }
+  const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
   const finalRef = useRef("");
   const interimRef = useRef("");
-  const transcriptRef = useRef(""); // always mirrors transcript state
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
   }, [history]);
-
-  // Always use this instead of setTranscript directly so transcriptRef stays in sync
-  const updateTranscript = (text) => {
-    transcriptRef.current = text;
-    setTranscript(text);
-  };
 
   useEffect(() => {
     try { localStorage.setItem("wb_biz", JSON.stringify(biz)); } catch {}
@@ -394,8 +387,7 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
-    // Always resync finalRef to what's actually on screen before starting
-    finalRef.current = transcriptRef.current;
+    // finalRef already has the correct accumulated text — just clear interim
     interimRef.current = "";
     try {
       const tokenRes = await fetch("/api/deepgram-token");
@@ -450,7 +442,7 @@ export default function WrenchBid() {
           } else {
             interimRef.current = text;
           }
-          updateTranscript(finalRef.current + interimRef.current);
+          setTranscript(finalRef.current + interimRef.current);
         } catch {}
       };
 
@@ -478,10 +470,7 @@ export default function WrenchBid() {
     // Do NOT touch transcript or refs here — leave exactly what's on screen
   };
 
-  const toggleMic = () => {
-    console.log("toggleMic", step, "finalRef:", finalRef.current, "interimRef:", interimRef.current);
-    step === "recording" ? stopRec() : startRec();
-  };
+  const toggleMic = () => step === "recording" ? stopRec() : startRec();
 
   /* ── Generate ── */
   const generate = async () => {
@@ -557,7 +546,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); updateTranscript(""); finalRef.current = ""; interimRef.current = ""; setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); setTranscript(""); finalRef.current = ""; interimRef.current = ""; setStep("idle"); setClientPhone(""); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -674,7 +663,7 @@ export default function WrenchBid() {
               <textarea
                 className="tx-box"
                 value={transcript}
-                onChange={e => { transcriptRef.current = e.target.value; setTranscript(e.target.value); }}
+                onChange={e => { finalRef.current = e.target.value; setTranscript(e.target.value); }}
                 placeholder="Your words appear here as you speak... or type directly"
                 rows={4}
                 style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
@@ -684,7 +673,7 @@ export default function WrenchBid() {
 
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
-                  updateTranscript("");
+                  setTranscript("");
                   finalRef.current = "";
                   interimRef.current = "";
                 }}>Clear</button>
