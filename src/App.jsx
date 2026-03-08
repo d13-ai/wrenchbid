@@ -59,6 +59,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 /* Transcript */
 .tx-box{background:var(--ink);border-radius:4px;padding:14px 16px;min-height:70px;font-size:14px;line-height:1.6;color:var(--paper);margin-bottom:14px;position:relative;border:1.5px solid var(--steel)}
 .tx-ph{color:#666;font-style:italic;font-size:13px}
+.tx-box::placeholder{color:#666;font-style:italic}
 .tx-cursor{display:inline-block;width:2px;height:14px;background:var(--amber);margin-left:2px;animation:blink .8s steps(1) infinite;vertical-align:middle}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
@@ -361,8 +362,8 @@ export default function WrenchBid() {
                 onChange={e => setTranscript(e.target.value)}
                 placeholder="Your words appear here as you speak... or type directly"
                 rows={4}
-                style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"transparent",color:"var(--paper)"}}
-              />{step === "recording" && <span className="tx-cursor" />}
+                style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
+              />
 
               {step === "processing" && <div className="loader" />}
 
