@@ -12,6 +12,7 @@ if (!document.getElementById("wb-font")) {
 /* ─── Styles ──────────────────────────────────────────────────────────────── */
 const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{width:100%;min-height:100vh;}
 :root{
   --ink:#0d0d0d;--paper:#f5f0e8;--amber:#e8a020;--amber-deep:#b07010;
   --amber-light:#fef3d0;--steel:#2a2a2a;--steel2:#3d3d3d;--rule:#d0c8b8;
