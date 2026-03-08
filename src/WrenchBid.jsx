@@ -307,8 +307,7 @@ export default function WrenchBid() {
   const [toast, setToast] = useState(null);
   const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
-  const finalRef = useRef("");
-  const interimRef = useRef("");
+  const accumulatedRef = useRef(""); // always mirrors transcript state exactly
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
@@ -387,8 +386,11 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
-    // finalRef already has the correct accumulated text — just clear interim
-    interimRef.current = "";
+    // Capture what's already on screen — new words will append to this
+    const base = accumulatedRef.current;
+    let sessionFinal = "";
+    let active = true;
+
     try {
       const tokenRes = await fetch("/api/deepgram-token");
       if (!tokenRes.ok) { ping("Voice setup failed"); return; }
@@ -408,12 +410,8 @@ export default function WrenchBid() {
         ["token", token]
       );
 
-      // active = false means user manually stopped, ignore all WS events
-      let active = true;
-
       ws.onopen = () => {
         if (!active) { ws.close(); stream.getTracks().forEach(t => t.stop()); return; }
-        ping("🎙 Connected");
         const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"]
           .find(t => MediaRecorder.isTypeSupported(t)) || "";
         const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
@@ -423,7 +421,13 @@ export default function WrenchBid() {
         mr.start(100);
         recognitionRef.current = {
           ws, mediaRecorder: mr, stream,
-          deactivate: () => { active = false; }
+          stop: () => {
+            active = false;
+            // Flush any unconfirmed interim into accumulated before stopping
+            const final = base + sessionFinal;
+            accumulatedRef.current = final;
+            setTranscript(final);
+          }
         };
         setStep("recording");
       };
@@ -436,12 +440,12 @@ export default function WrenchBid() {
           const text = msg.channel?.alternatives?.[0]?.transcript;
           if (!text) return;
           if (msg.is_final) {
-            finalRef.current += text + " ";
-            interimRef.current = "";
+            sessionFinal += text + " ";
+            accumulatedRef.current = base + sessionFinal;
+            setTranscript(base + sessionFinal);
           } else {
-            interimRef.current = text;
+            setTranscript(base + sessionFinal + text);
           }
-          setTranscript(finalRef.current + interimRef.current);
         } catch {}
       };
 
@@ -461,16 +465,10 @@ export default function WrenchBid() {
     const ref = recognitionRef.current;
     if (!ref) return;
     recognitionRef.current = null;
-    ref.deactivate();
+    ref.stop(); // flushes interim and sets active=false
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
-    // Flush interim into final so next session can append to it
-    if (interimRef.current.trim()) {
-      finalRef.current += interimRef.current.trim() + " ";
-      interimRef.current = "";
-      setTranscript(finalRef.current);
-    }
     setStep("idle");
   };
 
@@ -550,7 +548,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); setTranscript(""); finalRef.current = ""; interimRef.current = ""; setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); setTranscript(""); accumulatedRef.current = ""; setStep("idle"); setClientPhone(""); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -667,7 +665,7 @@ export default function WrenchBid() {
               <textarea
                 className="tx-box"
                 value={transcript}
-                onChange={e => { finalRef.current = e.target.value; setTranscript(e.target.value); }}
+                onChange={e => { accumulatedRef.current = e.target.value; setTranscript(e.target.value); }}
                 placeholder="Your words appear here as you speak... or type directly"
                 rows={4}
                 style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
@@ -678,8 +676,7 @@ export default function WrenchBid() {
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
                   setTranscript("");
-                  finalRef.current = "";
-                  interimRef.current = "";
+                  accumulatedRef.current = "";
                 }}>Clear</button>
                 <button
                   className="btn btn-cta"
