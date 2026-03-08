@@ -387,9 +387,6 @@ export default function WrenchBid() {
   /* ── Voice (Deepgram) ── */
   const startRec = async () => {
     const base = displayRef.current;
-    window._debugBase = base; // store globally so we can check in console
-    const base2 = transcript;
-    alert("SPEAK tapped. displayRef=" + JSON.stringify(base) + " transcript=" + JSON.stringify(base2));
     let sessionFinal = "";
     let active = true;
 
