@@ -322,11 +322,17 @@ export default function WrenchBid() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthReady(true);
-      if (session?.user) loadCloudQuotes(session.user.id);
+      if (session?.user) {
+        loadCloudQuotes(session.user.id);
+        loadCloudBiz(session.user);
+      }
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) loadCloudQuotes(session.user.id);
+      if (session?.user) {
+        loadCloudQuotes(session.user.id);
+        loadCloudBiz(session.user);
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -339,7 +345,16 @@ export default function WrenchBid() {
       .order("created_at", { ascending: false });
     if (error) return;
     const cloudQuotes = (data || []).map(r => r.quote_data).filter(Boolean);
-    setHistory(cloudQuotes); // Supabase is the source of truth — replace don't merge
+    setHistory(cloudQuotes);
+  };
+
+  const loadCloudBiz = (supabaseUser) => {
+    const cloudBiz = supabaseUser?.user_metadata?.biz;
+    if (cloudBiz) setBiz(cloudBiz);
+  };
+
+  const saveBizToCloud = async (bizData) => {
+    await supabase.auth.updateUser({ data: { biz: bizData } });
   };
 
   const handleSignUp = async () => {
@@ -921,7 +936,7 @@ export default function WrenchBid() {
                   placeholder="e.g. Quote valid for stated number of days. Client is responsible for obtaining permits unless otherwise agreed. Any additional work beyond scope will require a separate written quote."
                 />
               </div>
-              <button className="btn btn-cta btn-full" onClick={() => { setTab("new"); ping("Profile saved ✓"); }}>
+              <button className="btn btn-cta btn-full" onClick={() => { setTab("new"); saveBizToCloud(biz); ping("Profile saved ✓"); }}>
                 Save Profile
               </button>
             </div>
