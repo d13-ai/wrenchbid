@@ -1,4 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+/* ─── Supabase ────────────────────────────────────────────────────────────── */
+const supabase = createClient(
+  "https://rnlrugxpnfanufevypge.supabase.co",
+  "sb_publishable_N3Csawv8SnR4gO9YV7ZQkQ_s1fPC8yI"
+);
 
 /* ─── Font Injection ──────────────────────────────────────────────────────── */
 if (!document.getElementById("wb-font")) {
@@ -181,6 +188,29 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 /* Divider */
 .div{height:1px;background:var(--rule);margin:16px 0}
 
+/* Auth Modal */
+.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-box{background:var(--white);border-radius:6px;width:100%;max-width:380px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+.auth-hd{background:var(--ink);padding:24px;text-align:center}
+.auth-logo{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;letter-spacing:3px;color:var(--amber)}
+.auth-logo em{color:var(--white);font-style:normal}
+.auth-tagline{font-size:12px;color:#888;margin-top:4px;letter-spacing:1px}
+.auth-stripe{height:4px;background:var(--amber)}
+.auth-bd{padding:24px}
+.auth-tabs{display:flex;border-bottom:2px solid var(--rule);margin-bottom:20px}
+.auth-tab{flex:1;padding:10px;background:none;border:none;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
+.auth-tab.on{color:var(--ink);border-bottom-color:var(--amber)}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.auth-field input{width:100%;padding:12px 14px;background:var(--paper);border:1.5px solid var(--rule);border-radius:3px;font-size:15px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
+.auth-field input:focus{border-color:var(--amber)}
+.auth-err{background:#fff0f0;border-left:3px solid var(--red);padding:10px 12px;font-size:13px;color:var(--red);border-radius:0 3px 3px 0;margin-bottom:14px;line-height:1.4}
+.auth-foot{text-align:center;margin-top:14px;font-size:12px;color:var(--muted)}
+.user-bar{display:flex;align-items:center;gap:8px}
+.user-email{font-size:11px;color:#888;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-signout{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:none;border:1px solid var(--steel2);color:#888;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif}
+.btn-signout:hover{border-color:var(--amber);color:var(--amber)}
+
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--rule)}
 `;
 
@@ -257,6 +287,15 @@ export default function WrenchBid() {
     }
     catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0" }; }
   });
+
+  /* ── Auth state ── */
+  const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [authMode, setAuthMode] = useState("signin"); // signin | signup
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
   const [step, setStep] = useState("idle"); // idle | recording | processing | preview
   const [transcript, setTranscript] = useState("");
   const [quote, setQuote] = useState(null);
@@ -277,6 +316,39 @@ export default function WrenchBid() {
   useEffect(() => {
     try { localStorage.setItem("wb_biz", JSON.stringify(biz)); } catch {}
   }, [biz]);
+
+  /* ── Auth listener ── */
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthReady(true);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignUp = async () => {
+    setAuthError(""); setAuthLoading(true);
+    const { error } = await supabase.auth.signUp({ email: authEmail, password: authPassword });
+    setAuthLoading(false);
+    if (error) setAuthError(error.message);
+    else ping("Welcome to WrenchBid! ✓");
+  };
+
+  const handleSignIn = async () => {
+    setAuthError(""); setAuthLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email: authEmail, password: authPassword });
+    setAuthLoading(false);
+    if (error) setAuthError(error.message);
+    else ping("Welcome back ✓");
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    ping("Signed out");
+  };
 
   const ping = (msg) => {
     clearTimeout(toastTimer.current);
@@ -377,9 +449,20 @@ export default function WrenchBid() {
     navigator.clipboard.writeText(lines).then(() => ping("Copied to clipboard ✓"));
   };
 
-  const saveQuote = () => {
-    saveToHistory("saved");
+  const saveQuote = async () => {
+    const entry = saveToHistory("saved");
     ping("Quote saved ✓");
+    if (user && entry) {
+      await supabase.from("quotes").insert({
+        user_id: user.id,
+        quote_num: entry.qNum,
+        client_name: entry.clientName,
+        job_title: entry.jobTitle,
+        grand_total: entry.grandTotal,
+        status: "saved",
+        quote_data: entry,
+      });
+    }
   };
 
   const newQuote = () => { setQuote(null); setTranscript(""); setStep("idle"); setClientPhone(""); };
@@ -391,13 +474,73 @@ export default function WrenchBid() {
   };
 
   /* ─── Render ────────────────────────────────────────────────────────────── */
+
+  /* Auth modal */
+  const AuthModal = () => (
+    <div className="auth-overlay">
+      <div className="auth-box">
+        <div className="auth-hd">
+          <div className="auth-logo">Wrench<em>Bid</em></div>
+          <div className="auth-tagline">Voice-to-quote for tradespeople</div>
+        </div>
+        <div className="auth-stripe" />
+        <div className="auth-bd">
+          <div className="auth-tabs">
+            <button className={`auth-tab ${authMode === "signin" ? "on" : ""}`} onClick={() => { setAuthMode("signin"); setAuthError(""); }}>Sign In</button>
+            <button className={`auth-tab ${authMode === "signup" ? "on" : ""}`} onClick={() => { setAuthMode("signup"); setAuthError(""); }}>Create Account</button>
+          </div>
+          {authError && <div className="auth-err">{authError}</div>}
+          <div className="auth-field">
+            <label>Email</label>
+            <input type="email" value={authEmail} onChange={e => setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email" />
+          </div>
+          <div className="auth-field">
+            <label>Password</label>
+            <input
+              type="password"
+              value={authPassword}
+              onChange={e => setAuthPassword(e.target.value)}
+              placeholder={authMode === "signup" ? "Min 6 characters" : "Your password"}
+              autoComplete={authMode === "signup" ? "new-password" : "current-password"}
+              onKeyDown={e => e.key === "Enter" && (authMode === "signup" ? handleSignUp() : handleSignIn())}
+            />
+          </div>
+          <button
+            className="btn btn-cta btn-full"
+            onClick={authMode === "signup" ? handleSignUp : handleSignIn}
+            disabled={authLoading || !authEmail || !authPassword}
+          >
+            {authLoading ? "Please wait..." : authMode === "signup" ? "Create Account" : "Sign In"}
+          </button>
+          <div className="auth-foot">
+            {authMode === "signin" ? "New to WrenchBid? " : "Already have an account? "}
+            <button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={() => { setAuthMode(authMode === "signin" ? "signup" : "signin"); setAuthError(""); }}>
+              {authMode === "signin" ? "Create a free account" : "Sign in"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!authReady) return <div className="app" style={{alignItems:"center",justifyContent:"center"}}><div className="loader" style={{width:200}} /></div>;
+
   return (
     <div className="app">
+
+      {/* Auth modal — shown when not signed in */}
+      {!user && <AuthModal />}
 
       {/* Header */}
       <header className="hdr">
         <div className="logo">Wrench<em>Bid</em></div>
-        <div className="version">Beta</div>
+        {user
+          ? <div className="user-bar">
+              <span className="user-email">{user.email}</span>
+              <button className="btn-signout" onClick={handleSignOut}>Sign Out</button>
+            </div>
+          : <div className="version">Beta</div>
+        }
       </header>
 
       {/* Tabs */}
