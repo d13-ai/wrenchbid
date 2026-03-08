@@ -322,12 +322,33 @@ export default function WrenchBid() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthReady(true);
+      if (session?.user) loadCloudQuotes(session.user.id);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) loadCloudQuotes(session.user.id);
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const loadCloudQuotes = async (userId) => {
+    const { data, error } = await supabase
+      .from("quotes")
+      .select("quote_data, created_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (error || !data?.length) return;
+    const cloudQuotes = data.map(r => r.quote_data).filter(Boolean);
+    setHistory(prev => {
+      // Merge: cloud quotes take precedence, dedup by qNum
+      const seen = new Set();
+      return [...cloudQuotes, ...prev].filter(q => {
+        if (seen.has(q.qNum)) return false;
+        seen.add(q.qNum);
+        return true;
+      });
+    });
+  };
 
   const handleSignUp = async () => {
     setAuthError(""); setAuthLoading(true);
