@@ -515,29 +515,32 @@ export default function WrenchBid() {
       {/* ─────────────── HISTORY TAB ─────────────── */}
       {tab === "history" && (
         <div className="page">
-          {history.length === 0 ? (
+          {history.length === 0 && (
             <div className="empty">
               <div className="empty-icon">📋</div>
               <p>No quotes yet.<br /><strong>Tap "New Quote"</strong> to get started.</p>
             </div>
-          ) : <>
-            <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}>
-              <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 14px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>🗑 Clear All</button>
-            </div>
-            {history.map((q, i) => (
-            <div className="h-item" key={i} onClick={() => { setQuote(q); setStep("preview"); setTab("new"); }}>
-              <div className="h-top">
-                <div className="h-client">{q.clientName || "No client name"}</div>
-                <div className="h-total">{$$(q.grandTotal)}</div>
+          )}
+          {history.length > 0 && (
+            <div>
+              <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}>
+                <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 14px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>Clear All</button>
               </div>
-              <div className="h-job">{q.jobTitle}</div>
-              <div className="h-foot">
-                <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
-                <div className={`chip ${q.status}`}>{q.status}</div>
-              </div>
+              {history.map((q, i) => (
+                <div className="h-item" key={i} onClick={() => { setQuote(q); setStep("preview"); setTab("new"); }}>
+                  <div className="h-top">
+                    <div className="h-client">{q.clientName || "No client name"}</div>
+                    <div className="h-total">{$$(q.grandTotal)}</div>
+                  </div>
+                  <div className="h-job">{q.jobTitle}</div>
+                  <div className="h-foot">
+                    <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
+                    <div className={`chip ${q.status}`}>{q.status}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-          </>
+          )}
         </div>
       )}
 
