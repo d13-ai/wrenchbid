@@ -198,7 +198,10 @@ const qNum = () => "WB-" + String(Date.now()).slice(-4);
 const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","Other"];
 
 /* ─── AI Quote Parser ─────────────────────────────────────────────────────── */
-async function aiParseQuote(transcript, bizName, trade) {
+async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate) {
+  const taxNote = taxEnabled && parseFloat(taxRate) > 0
+    ? `Apply ${taxRate}% sales tax to all quotes.`
+    : `Do NOT apply any sales tax. Set taxRate to 0 and tax to 0.`;
   const res = await fetch("/api/quote", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -219,7 +222,7 @@ Return ONLY valid JSON (no markdown, no explanation) with this exact shape:
     {"desc": "description", "qty": 1, "unit": "hrs|ea|lot|sqft", "rate": 0.00, "total": 0.00}
   ],
   "subtotal": 0.00,
-  "taxRate": 8,
+  "taxRate": 0,
   "tax": 0.00,
   "grandTotal": 0.00,
   "notes": "payment terms or warranty or null",
@@ -230,7 +233,7 @@ Rules:
 - Labor as its own line item (qty=hours, unit="hrs", rate=hourly rate)
 - Materials as its own line item (unit="lot")  
 - If flat rate given, one line item (unit="lot")
-- Apply 8% tax if total > $150, otherwise tax=0 taxRate=0
+- ${taxNote}
 - Use realistic ${trade} rates if not stated (e.g. plumber $95-125/hr)
 - Round all numbers to 2 decimal places`
       }]
@@ -250,9 +253,9 @@ export default function WrenchBid() {
   const [biz, setBiz] = useState(() => {
     try {
       const stored = JSON.parse(localStorage.getItem("wb_biz"));
-      return stored || { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "" };
+      return stored || { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0" };
     }
-    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "" }; }
+    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0" }; }
   });
   const [step, setStep] = useState("idle"); // idle | recording | processing | preview
   const [transcript, setTranscript] = useState("");
@@ -321,7 +324,7 @@ export default function WrenchBid() {
     if (!transcript.trim()) { ping("Speak a job description first"); return; }
     setStep("processing");
     try {
-      const data = await aiParseQuote(transcript, biz.name, biz.trade);
+      const data = await aiParseQuote(transcript, biz.name, biz.trade, biz.taxEnabled, biz.taxRate);
       setQuote({ ...data, qNum: qNum(), date: todayStr() });
       setStep("preview");
     } catch (e) {
@@ -687,6 +690,39 @@ export default function WrenchBid() {
               <div className="field">
                 <label>License # <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>(optional)</span></label>
                 <input value={biz.licenseNum} onChange={e => setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345" />
+              </div>
+
+              <div className="field">
+                <label>Sales Tax</label>
+                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}>
+                  <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:14,fontWeight:500,letterSpacing:0,textTransform:"none",color:"var(--ink)",margin:0}}>
+                    <input
+                      type="checkbox"
+                      checked={!!biz.taxEnabled}
+                      onChange={e => setBiz(b=>({...b,taxEnabled:e.target.checked}))}
+                      style={{width:16,height:16,accentColor:"var(--amber)",cursor:"pointer"}}
+                    />
+                    Apply sales tax to quotes
+                  </label>
+                </div>
+                {biz.taxEnabled && (
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <input
+                      type="number"
+                      min="0"
+                      max="30"
+                      step="0.1"
+                      value={biz.taxRate}
+                      onChange={e => setBiz(b=>({...b,taxRate:e.target.value}))}
+                      placeholder="e.g. 8.5"
+                      style={{width:90}}
+                    />
+                    <span style={{fontSize:14,color:"var(--muted)",fontWeight:500}}>% tax rate</span>
+                  </div>
+                )}
+                {!biz.taxEnabled && (
+                  <div className="field-hint">Tax will not appear on quotes.</div>
+                )}
               </div>
             </div>
           </div>
