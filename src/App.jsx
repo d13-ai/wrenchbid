@@ -393,16 +393,19 @@ export default function WrenchBid() {
     r.maxAlternatives = 1;
     finalRef.current = "";
     r.onresult = (e) => {
+      // Rebuild from scratch each event to avoid Android duplicate interim bug
+      let final = "";
       let interim = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
+      for (let i = 0; i < e.results.length; i++) {
         const t = e.results[i][0].transcript;
         if (e.results[i].isFinal) {
-          finalRef.current += t + " ";
+          final += t + " ";
         } else {
           interim = t;
         }
       }
-      setTranscript(finalRef.current + interim);
+      finalRef.current = final;
+      setTranscript(final + interim);
     };
     r.onerror = (e) => { setStep("idle"); ping("Mic error: " + e.error); };
     r.onend = () => { if (step === "recording") setStep("idle"); };
