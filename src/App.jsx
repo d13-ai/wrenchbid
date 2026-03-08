@@ -229,6 +229,7 @@ export default function WrenchBid() {
   const [toast, setToast] = useState(null);
   const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
+  const finalRef = useRef("");
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
@@ -250,14 +251,19 @@ export default function WrenchBid() {
     if (!SR) { ping("Voice not supported — try Chrome on desktop/Android"); return; }
     const r = new SR();
     r.continuous = true; r.interimResults = true; r.lang = "en-US";
-    let final = "";
+    r.maxAlternatives = 1;
+    finalRef.current = "";
     r.onresult = (e) => {
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const t = e.results[i][0].transcript;
-        e.results[i].isFinal ? (final += t + " ") : (interim = t);
+        if (e.results[i].isFinal) {
+          finalRef.current += t + " ";
+        } else {
+          interim = t;
+        }
       }
-      setTranscript(final + interim);
+      setTranscript(finalRef.current + interim);
     };
     r.onerror = (e) => { setStep("idle"); ping("Mic error: " + e.error); };
     r.onend = () => { if (step === "recording") setStep("idle"); };
