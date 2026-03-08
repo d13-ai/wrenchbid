@@ -19,7 +19,7 @@ const CSS = `
   --shadow:0 4px 24px rgba(0,0,0,0.12);
 }
 body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;line-height:1.4}
-.app{max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--paper);position:relative}
+.app{max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;align-items:stretch;background:var(--paper);position:relative}
 
 /* Header */
 .hdr{background:var(--ink);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
@@ -28,7 +28,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .version{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--steel2);background:var(--steel);padding:3px 8px;border-radius:3px;text-transform:uppercase}
 
 /* Tabs */
-.tabs{display:flex;border-bottom:3px solid var(--ink);background:var(--white)}
+.tabs{display:flex;width:100%;border-bottom:3px solid var(--ink);background:var(--white)}
 .tab{flex:1;padding:12px 8px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .15s}
 .tab.on{color:var(--ink);border-bottom-color:var(--amber)}
 
