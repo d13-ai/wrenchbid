@@ -387,6 +387,7 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
+    // Don't reset transcript — user clears manually with Clear button
     try {
       // Get token from server
       const tokenRes = await fetch("/api/deepgram-token");
@@ -427,8 +428,6 @@ export default function WrenchBid() {
         mr.start(100); // smaller chunks = lower latency, better accuracy
         recognitionRef.current = { ws, mediaRecorder: mr, stream };
         setStep("recording");
-        finalRef.current = "";
-        interimRef.current = "";
       };
 
       ws.onmessage = (e) => {
