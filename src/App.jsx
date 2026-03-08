@@ -337,17 +337,9 @@ export default function WrenchBid() {
       .select("quote_data, created_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
-    if (error || !data?.length) return;
-    const cloudQuotes = data.map(r => r.quote_data).filter(Boolean);
-    setHistory(prev => {
-      // Merge: cloud quotes take precedence, dedup by qNum
-      const seen = new Set();
-      return [...cloudQuotes, ...prev].filter(q => {
-        if (seen.has(q.qNum)) return false;
-        seen.add(q.qNum);
-        return true;
-      });
-    });
+    if (error) return;
+    const cloudQuotes = (data || []).map(r => r.quote_data).filter(Boolean);
+    setHistory(cloudQuotes); // Supabase is the source of truth — replace don't merge
   };
 
   const handleSignUp = async () => {
