@@ -387,15 +387,12 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = useCallback(async () => {
-    // Don't reset transcript — user clears manually with Clear button
     try {
-      // Get token from server
       const tokenRes = await fetch("/api/deepgram-token");
       if (!tokenRes.ok) { ping("Voice setup failed — check connection"); return; }
       const { token } = await tokenRes.json();
       if (!token) { ping("Voice token missing"); return; }
 
-      // Get microphone
       let stream;
       try {
         stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -404,16 +401,17 @@ export default function WrenchBid() {
         return;
       }
 
-      // Open Deepgram WebSocket using subprotocol auth (most reliable method)
       const ws = new WebSocket(
         "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=300&no_delay=true&filler_words=false",
         ["token", token]
       );
 
+      // Clear only interim — keep finalRef so transcript accumulates across stop/start
+      interimRef.current = "";
+
       let mr;
 
       ws.onopen = () => {
-        // Pick best supported audio format for Deepgram
         const mimeType = [
           "audio/webm;codecs=opus",
           "audio/webm",
@@ -425,12 +423,14 @@ export default function WrenchBid() {
         mr.ondataavailable = (e) => {
           if (ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
-        mr.start(100); // smaller chunks = lower latency, better accuracy
+        mr.start(100);
         recognitionRef.current = { ws, mediaRecorder: mr, stream };
         setStep("recording");
       };
 
       ws.onmessage = (e) => {
+        // Ignore messages from old sessions
+        if (recognitionRef.current?.ws !== ws) return;
         try {
           const msg = JSON.parse(e.data);
           if (msg.type !== "Results") return;
@@ -448,7 +448,11 @@ export default function WrenchBid() {
 
       ws.onerror = () => ping("Voice connection error — try again");
       ws.onclose = (e) => {
+        // Only update step if this is still the active session
+        if (recognitionRef.current?.ws !== ws) return;
         if (e.code === 1008 || e.code === 4000) ping("Voice auth failed — check API key in Vercel");
+        interimRef.current = "";
+        setTranscript(finalRef.current); // clear any dangling interim
         setStep(s => s === "recording" ? "idle" : s);
       };
 
