@@ -386,32 +386,25 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = async () => {
-    const baseRef = { current: displayRef.current }; // mutable so Clear updates it mid-session
+    const base = displayRef.current;
     let sessionFinal = "";
     let active = true;
-
-    // Fetch token + mic in parallel to minimize startup delay
-    let tokenData, stream;
     try {
-      [tokenData, stream] = await Promise.all([
-        fetch("/api/deepgram-token").then(r => r.json()),
-        navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true } })
+      const [tokenRes, stream] = await Promise.all([
+        fetch("/api/deepgram-token"),
+        navigator.mediaDevices.getUserMedia({ audio: true })
       ]);
-    } catch(e) {
-      ping("Mic access denied or voice setup failed");
-      return;
-    }
-    const { token } = tokenData;
-    if (!token) { ping("Voice token missing"); return; }
+      if (!tokenRes.ok) { ping("Voice setup failed"); stream.getTracks().forEach(t=>t.stop()); return; }
+      const { token } = await tokenRes.json();
+      if (!token) { ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
 
-    try {
       const ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=100&no_delay=true&punctuate=true",
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=300&no_delay=true",
         ["token", token]
       );
 
       ws.onopen = () => {
-        if (!active) { ws.close(); stream.getTracks().forEach(t => t.stop()); return; }
+        if (!active) { ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
         const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"]
           .find(t => MediaRecorder.isTypeSupported(t)) || "";
         const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
@@ -419,10 +412,7 @@ export default function WrenchBid() {
           if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
         mr.start(100);
-        recognitionRef.current = {
-          ws, mediaRecorder: mr, stream,
-          stop: () => { active = false; }
-        };
+        recognitionRef.current = { ws, mediaRecorder: mr, stream, deactivate: () => { active = false; } };
         setStep("recording");
       };
 
@@ -435,19 +425,16 @@ export default function WrenchBid() {
           if (!text) return;
           if (msg.is_final) {
             sessionFinal += text + " ";
-            
-            displayRef.current = baseRef.current + sessionFinal; setTranscript(baseRef.current + sessionFinal);
+            displayRef.current = base + sessionFinal;
+            setTranscript(base + sessionFinal);
           } else {
-            displayRef.current = baseRef.current + sessionFinal + text; setTranscript(baseRef.current + sessionFinal + text);
+            setTranscript(base + sessionFinal + text);
           }
-        } catch {}
+        } catch(e) {}
       };
 
-      ws.onerror = () => { if (active) ping("Voice connection error — try again"); };
-      ws.onclose = () => {
-        if (!active) return;
-        setStep(s => s === "recording" ? "idle" : s);
-      };
+      ws.onerror = () => { if (active) ping("Voice connection error"); };
+      ws.onclose = () => { if (active) setStep(s => s === "recording" ? "idle" : s); };
 
     } catch(e) {
       ping("Could not start recording");
@@ -459,7 +446,7 @@ export default function WrenchBid() {
     const ref = recognitionRef.current;
     if (!ref) return;
     recognitionRef.current = null;
-    ref.stop(); // flushes interim and sets active=false
+    ref.deactivate();
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
