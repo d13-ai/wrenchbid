@@ -397,13 +397,14 @@ export default function WrenchBid() {
         fetch("/api/deepgram-token").then(r => r.json()),
         navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true } })
       ]);
-    } catch {
+    } catch(e) {
       ping("Mic access denied or voice setup failed");
       return;
     }
     const { token } = tokenData;
     if (!token) { ping("Voice token missing"); return; }
 
+    try {
       const ws = new WebSocket(
         "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=100&no_delay=true&punctuate=true",
         ["token", token]
