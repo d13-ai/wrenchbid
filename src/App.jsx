@@ -386,23 +386,23 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = async () => {
-    const base = displayRef.current;
+    const baseRef = { current: displayRef.current }; // mutable so Clear updates it mid-session
     let sessionFinal = "";
     let active = true;
 
+    // Fetch token + mic in parallel to minimize startup delay
+    let tokenData, stream;
     try {
-      const tokenRes = await fetch("/api/deepgram-token");
-      if (!tokenRes.ok) { ping("Voice setup failed"); return; }
-      const { token } = await tokenRes.json();
-      if (!token) { ping("Voice token missing"); return; }
-
-      let stream;
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      } catch {
-        ping("Mic access denied — check browser permissions");
-        return;
-      }
+      [tokenData, stream] = await Promise.all([
+        fetch("/api/deepgram-token").then(r => r.json()),
+        navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true } })
+      ]);
+    } catch {
+      ping("Mic access denied or voice setup failed");
+      return;
+    }
+    const { token } = tokenData;
+    if (!token) { ping("Voice token missing"); return; }
 
       const ws = new WebSocket(
         "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&smart_format=true&interim_results=true&endpointing=100&no_delay=true&punctuate=true",
@@ -417,7 +417,7 @@ export default function WrenchBid() {
         mr.ondataavailable = (e) => {
           if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
-        mr.start(250);
+        mr.start(100);
         recognitionRef.current = {
           ws, mediaRecorder: mr, stream,
           stop: () => { active = false; }
@@ -435,9 +435,9 @@ export default function WrenchBid() {
           if (msg.is_final) {
             sessionFinal += text + " ";
             
-            displayRef.current = base + sessionFinal; setTranscript(base + sessionFinal);
+            displayRef.current = baseRef.current + sessionFinal; setTranscript(baseRef.current + sessionFinal);
           } else {
-            displayRef.current = base + sessionFinal + text; setTranscript(base + sessionFinal + text);
+            displayRef.current = baseRef.current + sessionFinal + text; setTranscript(baseRef.current + sessionFinal + text);
           }
         } catch {}
       };
@@ -541,7 +541,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); displayRef.current = ""; setTranscript(""); setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); displayRef.current = ""; setTranscript(""); sessionFinal = ""; setStep("idle"); setClientPhone(""); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -668,7 +668,7 @@ export default function WrenchBid() {
 
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
-                  displayRef.current = ""; setTranscript("");
+                  displayRef.current = ""; setTranscript(""); sessionFinal = "";
                 }}>Clear</button>
                 <button
                   className="btn btn-cta"
