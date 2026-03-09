@@ -307,7 +307,9 @@ export default function WrenchBid() {
   const [toast, setToast] = useState(null);
   const recognitionRef = useRef(null);
   const toastTimer = useRef(null);
-  const displayRef = useRef(""); // updated every render so always current
+  const displayRef = useRef("");
+  const finalRef = useRef("");
+  const interimRef = useRef(""); // updated every render so always current
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
@@ -386,8 +388,6 @@ export default function WrenchBid() {
 
   /* ── Voice (Deepgram) ── */
   const startRec = async () => {
-    const base = displayRef.current;
-    let sessionFinal = "";
     let active = true;
     try {
       const [tokenRes, stream] = await Promise.all([
@@ -424,19 +424,20 @@ export default function WrenchBid() {
           const text = msg.channel?.alternatives?.[0]?.transcript;
           if (!text) return;
           if (msg.is_final) {
-            sessionFinal += text + " ";
-            displayRef.current = base + sessionFinal;
-            setTranscript(base + sessionFinal);
+            finalRef.current += text + " ";
+            interimRef.current = "";
           } else {
-            setTranscript(base + sessionFinal + text);
+            interimRef.current = text;
           }
-        } catch(e) {}
+          displayRef.current = finalRef.current + interimRef.current;
+          setTranscript(displayRef.current);
+        } catch(err) {}
       };
 
       ws.onerror = () => { if (active) ping("Voice connection error"); };
       ws.onclose = () => { if (active) setStep(s => s === "recording" ? "idle" : s); };
 
-    } catch(e) {
+    } catch(err) {
       ping("Could not start recording");
       setStep("idle");
     }
@@ -450,6 +451,13 @@ export default function WrenchBid() {
     ref.mediaRecorder?.stop();
     ref.stream?.getTracks().forEach(t => t.stop());
     ref.ws?.close();
+    // Flush interim into final so next session appends correctly
+    if (interimRef.current) {
+      finalRef.current += interimRef.current + " ";
+      interimRef.current = "";
+      displayRef.current = finalRef.current;
+      setTranscript(finalRef.current);
+    }
     setStep("idle");
   };
 
@@ -529,7 +537,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); displayRef.current = ""; setTranscript(""); sessionFinal = ""; setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript(""); sessionFinal = ""; setStep("idle"); setClientPhone(""); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -646,7 +654,7 @@ export default function WrenchBid() {
               <textarea
                 className="tx-box"
                 value={transcript}
-                onChange={e => { displayRef.current = e.target.value; setTranscript(e.target.value); }}
+                onChange={e => { finalRef.current = e.target.value; interimRef.current = ""; displayRef.current = e.target.value; setTranscript(e.target.value); }}
                 placeholder="Your words appear here as you speak... or type directly"
                 rows={4}
                 style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
@@ -656,7 +664,7 @@ export default function WrenchBid() {
 
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
-                  displayRef.current = ""; setTranscript(""); sessionFinal = "";
+                  finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript(""); sessionFinal = "";
                 }}>Clear</button>
                 <button
                   className="btn btn-cta"
