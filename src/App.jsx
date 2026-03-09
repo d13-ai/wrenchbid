@@ -448,7 +448,7 @@ export default function WrenchBid() {
         setStep(s => s === "recording" ? "idle" : s);
       };
 
-    } catch {
+    } catch(e) {
       ping("Could not start recording");
       setStep("idle");
     }
