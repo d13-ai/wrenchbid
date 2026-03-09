@@ -386,8 +386,36 @@ export default function WrenchBid() {
     toastTimer.current = setTimeout(() => setToast(null), 2800);
   };
 
-  /* ── Voice (Deepgram) ── */
+  /* ── Voice ── */
   const startRec = async () => {
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    if (!isMobile && 'webkitSpeechRecognition' in window) {
+      // Desktop: use native Web Speech API (more accurate in Chrome)
+      const rec = new window.webkitSpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.lang = "en-US";
+      rec.onresult = (e) => {
+        let final = finalRef.current;
+        let interim = "";
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          if (e.results[i].isFinal) final += e.results[i][0].transcript + " ";
+          else interim += e.results[i][0].transcript;
+        }
+        finalRef.current = final;
+        displayRef.current = final + interim;
+        setTranscript(final + interim);
+      };
+      rec.onerror = (e) => { if (e.error !== "aborted") ping("Voice error: " + e.error); };
+      rec.onend = () => { if (recognitionRef.current?.rec === rec) setStep(s => s === "recording" ? "idle" : s); };
+      rec.start();
+      recognitionRef.current = { rec, type: "webspeech" };
+      setStep("recording");
+      return;
+    }
+
+    // Mobile: use Deepgram
     let active = true;
     try {
       const [tokenRes, stream] = await Promise.all([
@@ -412,7 +440,7 @@ export default function WrenchBid() {
           if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
         };
         mr.start(100);
-        recognitionRef.current = { ws, mediaRecorder: mr, stream, deactivate: () => { active = false; } };
+        recognitionRef.current = { ws, mediaRecorder: mr, stream, type: "deepgram", deactivate: () => { active = false; } };
         setStep("recording");
       };
 
@@ -447,16 +475,19 @@ export default function WrenchBid() {
     const ref = recognitionRef.current;
     if (!ref) return;
     recognitionRef.current = null;
-    ref.deactivate();
-    ref.mediaRecorder?.stop();
-    ref.stream?.getTracks().forEach(t => t.stop());
-    ref.ws?.close();
-    // Flush interim into final so next session appends correctly
-    if (interimRef.current) {
-      finalRef.current += interimRef.current + " ";
-      interimRef.current = "";
-      displayRef.current = finalRef.current;
-      setTranscript(finalRef.current);
+    if (ref.type === "webspeech") {
+      ref.rec.stop();
+    } else {
+      ref.deactivate();
+      ref.mediaRecorder?.stop();
+      ref.stream?.getTracks().forEach(t => t.stop());
+      ref.ws?.close();
+      if (interimRef.current) {
+        finalRef.current += interimRef.current + " ";
+        interimRef.current = "";
+        displayRef.current = finalRef.current;
+        setTranscript(finalRef.current);
+      }
     }
     setStep("idle");
   };
