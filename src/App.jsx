@@ -494,6 +494,16 @@ export default function WrenchBid() {
 
   const toggleMic = () => step === "recording" ? stopRec() : startRec();
 
+  // Pre-warm mic on desktop so tap-to-speak has no delay
+  useEffect(() => {
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (!isMobile && 'webkitSpeechRecognition' in window) {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(s => s.getTracks().forEach(t => t.stop()))
+        .catch(() => {});
+    }
+  }, []);
+
   /* ── Generate ── */
   const generate = async () => {
     if (!transcript.trim()) { ping("Speak a job description first"); return; }
