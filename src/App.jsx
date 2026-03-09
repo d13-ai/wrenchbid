@@ -399,7 +399,7 @@ export default function WrenchBid() {
       if (!token) { ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
 
       const ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&interim_results=true&endpointing=100&no_delay=true",
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&interim_results=true&endpointing=100&no_delay=true&numerals=true",
         ["token", token]
       );
 
