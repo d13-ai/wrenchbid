@@ -537,7 +537,7 @@ export default function WrenchBid() {
     }
   };
 
-  const newQuote = () => { setQuote(null); finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript(""); sessionFinal = ""; setStep("idle"); setClientPhone(""); };
+  const newQuote = () => { setQuote(null); finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript(""); setStep("idle"); setClientPhone(""); setTab("new"); };
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
