@@ -28,50 +28,26 @@ html,body,#root{width:100%;min-height:100vh;}
 }
 body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;line-height:1.4}
 .app{width:100%;max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--paper);position:relative}
-
-/* Header */
 .hdr{background:var(--ink);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .logo{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:3px;color:var(--amber);text-transform:uppercase}
 .logo em{color:var(--white);font-style:normal}
 .version{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--steel2);background:var(--steel);padding:3px 8px;border-radius:3px;text-transform:uppercase}
-
-/* Tabs */
 .tabs{display:flex;width:100%;border-bottom:3px solid var(--ink);background:var(--white)}
 .tab{flex:1;padding:10px 4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .15s}
 .tab.on{color:var(--ink);border-bottom-color:var(--amber)}
-
-/* Page */
 .page{flex:1;padding:20px;overflow-y:auto}
-
-/* Card */
 .card{background:var(--white);border:1.5px solid var(--rule);border-radius:4px;margin-bottom:16px;overflow:hidden}
 .card-hd{background:var(--ink);padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber)}
 .card-bd{padding:16px}
-
-/* Mic */
 .mic-wrap{text-align:center;padding:28px 0 20px}
 .mic-hint{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
-.mic-btn{
-  width:110px;height:110px;border-radius:50%;
-  border:2.5px solid var(--amber);background:var(--white);
-  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  cursor:pointer;transition:all .18s;
-  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--amber);
-  box-shadow:0 0 0 0 rgba(232,160,32,.4)
-}
+.mic-btn{width:110px;height:110px;border-radius:50%;border:2.5px solid var(--amber);background:var(--white);display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .18s;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--amber);box-shadow:0 0 0 0 rgba(232,160,32,.4)}
 .mic-btn:hover{background:var(--amber-light);transform:scale(1.04)}
 .mic-btn.live{border-color:var(--red);color:var(--red);background:#fff5f5;animation:sonar 1.1s ease-out infinite}
 .mic-icon{font-size:34px;line-height:1}
 @keyframes sonar{0%{box-shadow:0 0 0 0 rgba(176,48,48,.5)}70%{box-shadow:0 0 0 22px rgba(176,48,48,0)}100%{box-shadow:0 0 0 0 rgba(176,48,48,0)}}
-
-/* Transcript */
-.tx-box{background:var(--ink);border-radius:4px;padding:14px 16px;min-height:70px;font-size:14px;line-height:1.6;color:var(--paper);margin-bottom:14px;position:relative;border:1.5px solid var(--steel)}
-.tx-ph{color:#666;font-style:italic;font-size:13px}
+.tx-box{background:var(--ink);border-radius:4px;padding:14px 16px;min-height:70px;font-size:14px;line-height:1.6;color:var(--paper);margin-bottom:14px;border:1.5px solid var(--steel)}
 .tx-box::placeholder{color:#666;font-style:italic}
-.tx-cursor{display:inline-block;width:2px;height:14px;background:var(--amber);margin-left:2px;animation:blink .8s steps(1) infinite;vertical-align:middle}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* Buttons */
 .btn{padding:12px 18px;border-radius:3px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s}
 .btn:disabled{opacity:.35;cursor:not-allowed}
 .btn-cta{background:var(--amber);color:var(--ink);flex:2}
@@ -80,12 +56,8 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .btn-ghost:hover{border-color:var(--ink)}
 .btn-row{display:flex;gap:10px}
 .btn-full{width:100%;padding:14px}
-
-/* Loading */
 .loader{height:3px;background:linear-gradient(90deg,transparent 0%,var(--amber) 50%,transparent 100%);background-size:200%;animation:sweep 1s linear infinite;border-radius:2px;margin-bottom:16px}
 @keyframes sweep{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* Quote Doc */
 .qdoc{background:var(--white);border:1.5px solid var(--rule);border-radius:4px;overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
 .qdoc-hd{background:var(--ink);padding:18px 22px 16px}
 .qdoc-biz{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;letter-spacing:3px;color:var(--amber);text-transform:uppercase}
@@ -100,33 +72,24 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .li-table{width:100%;margin-bottom:16px}
 .li-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--rule)}
 .li-row:last-child{border-bottom:none}
-.li-name{font-size:14px;font-weight:500;color:var(--ink)}
 .li-sub{font-size:11px;color:var(--muted);margin-top:1px}
-.li-amt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--ink);white-space:nowrap}
 .totals{background:var(--ink);margin:0 -22px -20px;padding:16px 22px}
 .total-row{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:5px}
 .total-final{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--amber);border-top:1px solid #333;padding-top:10px;margin-top:8px;display:flex;justify-content:space-between;letter-spacing:1px}
 .qdoc-notes{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.6;padding-top:12px;border-top:1px solid var(--rule)}
 .qdoc-notes strong{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber-deep);margin-bottom:4px}
-
-/* Editable fields */
 .editable{background:none;border:none;border-bottom:1.5px dashed var(--rule);outline:none;font-family:inherit;color:inherit;width:100%;cursor:text;transition:border-color .15s}
 .editable:focus{border-bottom-color:var(--amber);background:var(--amber-light)}
 .editable-name{font-size:14px;font-weight:500}
 .editable-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.5px;width:100%;padding:2px 0}
 .editable-amt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-align:right;width:70px}
-.editable-num{width:50px;text-align:center;font-size:11px}
 .editable-meta{font-size:14px;font-weight:600}
-
-/* Send */
 .send-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .send-row{display:flex;gap:8px;margin-bottom:10px}
 .ph-input{flex:1;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;padding:12px 14px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none}
 .ph-input:focus{border-color:var(--amber)}
 .btn-sms{background:var(--amber);color:var(--ink);border:none;border-radius:3px;padding:0 18px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:background .15s}
 .btn-sms:hover{background:var(--amber-deep);color:var(--white)}
-
-/* History */
 .h-item{background:var(--white);border:1.5px solid var(--rule);border-radius:4px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
 .h-item:hover{border-color:var(--amber)}
 .h-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
@@ -139,8 +102,6 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .chip.sent{background:#e6f7ee;color:var(--green)}
 .chip.draft{background:var(--amber-light);color:var(--amber-deep)}
 .chip.saved{background:#e8f0fe;color:#1a56b0}
-
-/* Setup */
 .field{margin-bottom:14px}
 .field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
 .field input,.field select,.field textarea{width:100%;padding:11px 14px;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
@@ -148,39 +109,23 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 .field textarea{resize:vertical;min-height:72px;line-height:1.5}
 .field .field-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
-
-/* Quote Terms Section */
 .qdoc-terms{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
 .qdoc-terms-row{margin-bottom:8px}
 .qdoc-terms-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber-deep);margin-bottom:3px}
 .qdoc-terms-text{font-size:12px;color:var(--muted);line-height:1.6}
-
-/* Empty */
 .empty{text-align:center;padding:56px 0;color:var(--muted)}
 .empty-icon{font-size:44px;margin-bottom:14px}
 .empty p{font-size:14px;line-height:1.7}
 .empty strong{color:var(--ink)}
-
-/* Tip */
 .tip{background:var(--amber-light);border-left:3px solid var(--amber);padding:12px 14px;border-radius:0 3px 3px 0;font-size:13px;line-height:1.6;margin-bottom:16px;color:var(--steel)}
 .tip strong{color:var(--amber-deep)}
-
-/* Toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--amber);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 20px;border-radius:3px;border:1px solid var(--amber);z-index:999;white-space:nowrap;animation:slideUp .25s ease}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-
-/* Disclaimer */
 .disclaimer{font-size:11px;color:var(--muted);line-height:1.5;padding:10px 14px;background:var(--amber-light);border-left:3px solid var(--amber);border-radius:0 3px 3px 0;margin-bottom:12px}
 .disclaimer strong{color:var(--amber-deep)}
-
-/* Footer */
 .app-footer{text-align:center;padding:16px 20px;font-size:11px;color:var(--muted);border-top:1px solid var(--rule);margin-top:auto}
 .app-footer a{color:var(--muted);text-decoration:underline;margin:0 6px}
-
-/* Divider */
 .div{height:1px;background:var(--rule);margin:16px 0}
-
-/* Auth Modal */
 .auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
 .auth-box{background:var(--white);border-radius:6px;width:100%;max-width:380px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
 .auth-hd{background:var(--ink);padding:24px;text-align:center}
@@ -202,62 +147,29 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .user-email{font-size:11px;color:#888;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn-signout{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:none;border:1px solid var(--steel2);color:#888;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif}
 .btn-signout:hover{border-color:var(--amber);color:var(--amber)}
-
-/* Rebate Checker */
-.rc-wrap{font-family:'Barlow',sans-serif;color:#f0e6d0;background:#1a1a1a;min-height:100%}
-.rc-section{padding:16px 0}
-.rc-card{background:#242424;border:1px solid #333;border-radius:6px;margin-bottom:12px;overflow:hidden}
-.rc-card-hd{background:#2a2a2a;border-bottom:1px solid #333;padding:11px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#f0c040;display:flex;align-items:center;gap:8px}
-.rc-card-bd{padding:14px}
-.rc-q{font-size:14px;font-weight:600;color:#f0e6d0;margin-bottom:10px;line-height:1.45}
-.rc-q-sub{font-size:12px;color:#888;margin-top:-6px;margin-bottom:10px;line-height:1.5}
-.rc-opts{display:flex;flex-direction:column;gap:7px}
-.rc-opt{display:flex;align-items:center;gap:10px;background:#1e1e1e;border:1.5px solid #333;border-radius:4px;padding:10px 13px;cursor:pointer;font-size:13px;color:#ccc;transition:border-color .15s,background .15s;text-align:left;width:100%}
-.rc-opt:hover{border-color:#f0c040;background:#252000}
-.rc-opt.sel{border-color:#f0c040;background:#2a2200;color:#f0e6d0;font-weight:600}
-.rc-opt-dot{width:14px;height:14px;border-radius:50%;border:2px solid #555;flex-shrink:0;transition:all .15s}
-.rc-opt.sel .rc-opt-dot{background:#f0c040;border-color:#f0c040}
-.rc-nav{display:flex;gap:8px;margin-top:16px}
-.rc-btn{flex:1;padding:10px;border-radius:4px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity .15s}
-.rc-btn:disabled{opacity:.35;cursor:not-allowed}
-.rc-btn-cta{background:#f0c040;color:#1a1a1a}
-.rc-btn-ghost{background:#2a2a2a;color:#f0c040;border:1.5px solid #444}
-.rc-prog{display:flex;gap:4px;margin-bottom:8px}
-.rc-prog-dot{height:4px;border-radius:2px;flex:1;background:#333;transition:background .2s}
-.rc-prog-dot.done{background:#f0c040}
-.rc-prog-dot.active{background:#f0a000}
-.rc-disc{font-size:11px;color:#777;line-height:1.6;padding:10px 14px;background:#1e1800;border-left:3px solid #f0c040;border-radius:0 3px 3px 0;margin-bottom:14px}
-.rc-disc strong{color:#f0a000}
-.rc-disc a{color:#f0c040}
-.rc-result{background:#242424;border-radius:6px;margin-bottom:10px;overflow:hidden}
-.rc-result-hd{padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.rc-result-hd.green{background:#0d2a0d;border-bottom:1px solid #1a5c1a;color:#4caf50}
-.rc-result-hd.amber{background:#2a1e00;border-bottom:1px solid #5a3f00;color:#f0c040}
-.rc-result-hd.gray{background:#222;border-bottom:1px solid #333;color:#555}
-.rc-result-amt{font-size:16px;font-weight:800;font-family:'Barlow Condensed',sans-serif;white-space:nowrap}
-.rc-result-bd{padding:13px 14px;font-size:13px;line-height:1.65;color:#bbb}
-.rc-result-bd ul{margin:6px 0 0 0;padding-left:16px}
-.rc-result-bd li{margin-bottom:4px}
-.rc-result-bd a{color:#f0c040;text-decoration:underline}
-.rc-total-bar{background:#2a2200;border:1.5px solid #f0c040;border-radius:6px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.rc-total-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#f0a000}
-.rc-total-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#f0c040}
-.rc-tag{display:inline-block;font-size:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:10px;margin-right:5px;margin-bottom:4px}
-.rc-tag.req{background:#2a1a00;color:#f0a000;border:1px solid #5a3a00}
-.rc-tag.good{background:#0d2a0d;color:#4caf50;border:1px solid #1a5c1a}
-.rc-tag.warn{background:#2a0d0d;color:#ef5350;border:1px solid #5c1a1a}
-.rc-reset{width:100%;margin-top:8px;padding:9px;background:none;border:1.5px dashed #444;border-radius:4px;color:#555;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
-.rc-reset:hover{border-color:#f0c040;color:#f0c040}
-.rc-sect-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#f0a000;margin-bottom:10px;margin-top:4px}
-.rc-step-intro{text-align:center;padding:24px 20px 16px;background:#1e1e1e;border-bottom:1px solid #2a2a2a;margin-bottom:16px;border-radius:6px}
-.rc-step-intro .icon{font-size:36px;margin-bottom:10px}
-.rc-step-intro h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#f0c040;margin:0 0 6px}
-.rc-step-intro p{font-size:13px;color:#888;line-height:1.6;margin:0}
-.rc-hub-item{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:4px;padding:12px 14px;margin-bottom:8px}
-.rc-hub-item h4{margin:0 0 4px;font-size:13px;font-weight:700;color:#f0e6d0}
-.rc-hub-item p{margin:0 0 6px;font-size:12px;color:#888;line-height:1.5}
-.rc-hub-item a{font-size:12px;color:#f0c040;text-decoration:underline}
-
+/* Rebates */
+.rb-intro{background:var(--ink);border-radius:6px;padding:20px;text-align:center;margin-bottom:16px}
+.rb-intro h2{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+.rb-intro p{font-size:13px;color:#aaa;line-height:1.6}
+.rb-state-badge{display:inline-block;background:var(--amber);color:var(--ink);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-top:10px}
+.rb-disc{font-size:11px;color:var(--muted);line-height:1.6;padding:10px 14px;background:var(--amber-light);border-left:3px solid var(--amber);border-radius:0 3px 3px 0;margin-bottom:14px}
+.rb-category-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.rb-cat-btn{padding:12px 8px;border:1.5px solid var(--rule);border-radius:4px;background:var(--white);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);transition:all .15s;text-align:center}
+.rb-cat-btn:hover{border-color:var(--amber);background:var(--amber-light);color:var(--ink)}
+.rb-thinking{text-align:center;padding:40px 0;color:var(--muted)}
+.rb-spin{font-size:36px;animation:spin 1.2s linear infinite;display:inline-block;margin-bottom:12px}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.rb-result{background:var(--white);border:1.5px solid var(--rule);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.rb-result-hd{background:var(--ink);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rb-result-name{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;color:var(--amber);flex:1}
+.rb-result-amt{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--white);white-space:nowrap}
+.rb-result-bd{padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.65}
+.rb-result-bd ul{padding-left:16px;margin-top:4px}
+.rb-result-bd li{margin-bottom:3px}
+.rb-result-bd a{color:var(--amber-deep)}
+.rb-result-bd strong{color:var(--ink)}
+.rb-no-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.rb-no-state .icon{font-size:40px;margin-bottom:12px}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--rule)}
 `;
 
@@ -268,11 +180,24 @@ if (!document.getElementById("wb-css")) {
   document.head.appendChild(s);
 }
 
-/* ─── Helpers ─────────────────────────────────────────────────────────────── */
+/* ─── Constants ───────────────────────────────────────────────────────────── */
 const $$ = (n) => `$${Number(n || 0).toFixed(2)}`;
 const todayStr = () => new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 const qNum = () => "WB-" + String(Date.now()).slice(-4);
 const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","Other"];
+
+const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
+
+const REBATE_CATEGORIES = [
+  { id:"hvac", label:"🌡️ HVAC / Heat Pumps" },
+  { id:"electrical", label:"⚡ Electrical / EV Chargers" },
+  { id:"plumbing", label:"🚿 Plumbing / Water Heaters" },
+  { id:"insulation", label:"🏠 Insulation / Weatherization" },
+  { id:"solar", label:"☀️ Solar / Batteries" },
+  { id:"appliances", label:"🍳 Appliances" },
+  { id:"roofing", label:"🏗️ Roofing / Windows" },
+  { id:"all", label:"📋 All Rebates" },
+];
 
 /* ─── AI Quote Parser ─────────────────────────────────────────────────────── */
 async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate) {
@@ -285,201 +210,141 @@ async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate) {
     body: JSON.stringify({
       model: "claude-sonnet-4-20250514",
       max_tokens: 900,
-      messages: [{
-        role: "user",
-        content: `You are a quoting assistant for "${bizName}", a ${trade}. If the job description is not in English, translate it to English first before building the quote.
-
-Spoken job description: "${transcript}"
-
-Return ONLY valid JSON (no markdown, no explanation) with this exact shape:
-{
-  "clientName": "string or null",
-  "jobTitle": "short 1-line job title",
-  "lineItems": [
-    {"desc": "description", "qty": 1, "unit": "hrs|ea|lot|sqft", "rate": 0.00, "total": 0.00}
-  ],
-  "subtotal": 0.00,
-  "taxRate": 0,
-  "tax": 0.00,
-  "grandTotal": 0.00,
-  "notes": "payment terms or warranty or null",
-  "validDays": 30
-}
-
-Rules:
-- Labor as its own line item (qty=hours, unit="hrs", rate=hourly rate)
-- Materials as its own line item (unit="lot")  
-- If flat rate given, one line item (unit="lot")
-- ${taxNote}
-- Use realistic ${trade} rates if not stated (e.g. plumber $95-125/hr)
-- Round all numbers to 2 decimal places`
-      }]
+      messages: [{ role: "user", content: `You are a quoting assistant for "${bizName}", a ${trade}. If the job description is not in English, translate it to English first before building the quote.\n\nSpoken job description: "${transcript}"\n\nReturn ONLY valid JSON (no markdown, no explanation) with this exact shape:\n{\n  "clientName": "string or null",\n  "jobTitle": "short 1-line job title",\n  "lineItems": [\n    {"desc": "description", "qty": 1, "unit": "hrs|ea|lot|sqft", "rate": 0.00, "total": 0.00}\n  ],\n  "subtotal": 0.00,\n  "taxRate": 0,\n  "tax": 0.00,\n  "grandTotal": 0.00,\n  "notes": "payment terms or warranty or null",\n  "validDays": 30\n}\n\nRules:\n- Labor as its own line item (qty=hours, unit="hrs", rate=hourly rate)\n- Materials as its own line item (unit="lot")\n- If flat rate given, one line item (unit="lot")\n- ${taxNote}\n- Use realistic ${trade} rates if not stated (e.g. plumber $95-125/hr)\n- Round all numbers to 2 decimal places` }]
     })
   });
   const d = await res.json();
   const text = d.content[0].text.trim();
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
-  const raw = text.slice(start, end + 1);
-  return JSON.parse(raw);
+  return JSON.parse(text.slice(start, end + 1));
 }
 
-/* ─── Rebate Checker Component ────────────────────────────────────────────── */
-const RC_QUESTIONS = [
-  { id:"homeType", q:"What type of property is this?", sub:"Rebate availability varies by property type.", opts:[{val:"single",label:"🏠 Single-family home"},{val:"manufactured",label:"🏡 Manufactured / mobile home"},{val:"multifamily",label:"🏢 Multifamily (2–4 units)"},{val:"commercial",label:"🏗 Commercial / 5+ units"}] },
-  { id:"ownership", q:"Is the customer the owner or a renter?", sub:"Renters may qualify for HEAR with landlord consent.", opts:[{val:"owner",label:"🔑 Owner"},{val:"renter",label:"🏠 Renter (landlord consent required)"}] },
-  { id:"newConstruction", q:"Is this new construction?", sub:"HEAR/HER rebates apply to existing homes only.", opts:[{val:"no",label:"✅ Existing home / retrofit"},{val:"yes",label:"🏗 New construction"}] },
-  { id:"utility", q:"Who is the customer's electric utility provider?", sub:"Some rebates are utility-specific.", opts:[{val:"xcel",label:"⚡ Xcel Energy"},{val:"other_elec",label:"⚡ Other utility (Black Hills, LPEA, etc.)"},{val:"unknown",label:"❓ Not sure"}] },
-  { id:"systemType", q:"What type of heat pump system is being installed?", opts:[{val:"ashp_ducted",label:"🌬 Air-source HP — ducted (whole home)"},{val:"ashp_ductless",label:"💨 Air-source HP — ductless mini-split"},{val:"hpwh",label:"🚿 Heat pump water heater only"},{val:"both",label:"🔥 Space heating HP + water heater"},{val:"geothermal",label:"🌍 Geothermal (ground-source)"}] },
-  { id:"coldClimate", q:"Does the equipment meet cold-climate specs?", sub:"Cold-climate = ≥70% capacity at 5°F, COP ≥1.75, verified on NEEP database.", opts:[{val:"yes",label:"✅ Yes — cold-climate rated (NEEP verified)"},{val:"no",label:"❌ No — standard efficiency"},{val:"unknown",label:"❓ Not confirmed yet"}] },
-  { id:"heatingPct", q:"Is the system designed to meet ≥80% of annual heating needs?", sub:"Required for CO state tax credit on space-heating systems.", opts:[{val:"yes",label:"✅ Yes — primary heating system"},{val:"no",label:"❌ No — supplemental / partial only"},{val:"wh_only",label:"🚿 N/A — water heater only"}] },
-  { id:"income", q:"Does the customer's income fall within HEAR limits?", sub:"Based on HUD AMI by county & household size (2025–2026).", opts:[{val:"under80",label:"💚 Under 80% AMI — low income"},{val:"80to150",label:"🟡 80–150% AMI — moderate income"},{val:"over150",label:"⚪ Over 150% AMI — above program limit"},{val:"unknown",label:"❓ Customer hasn't checked yet"}] },
-  { id:"contractorStatus", q:"Is your company registered with the Colorado Energy Office?", sub:"CEO registration required to apply HEAR/HER rebates at point of sale.", opts:[{val:"ceo_registered",label:"✅ Yes — CEO registered (HEAR/HER)"},{val:"state_only",label:"🟡 State tax credit only (DR 1322)"},{val:"not_yet",label:"🔜 Not yet — need to register"},{val:"unsure",label:"❓ Not sure"}] },
-];
-
-function calcRebateResults(answers) {
-  const {homeType,ownership,newConstruction,utility,systemType,coldClimate,heatingPct,income,contractorStatus} = answers;
-  const results = [];
-  const isNewConst = newConstruction==="yes";
-  const hasSpaceHP = ["ashp_ducted","ashp_ductless","both","geothermal"].includes(systemType);
-  const hasWH = ["hpwh","both"].includes(systemType);
-  const isColdClimate = coldClimate==="yes";
-  const meetsHeating = heatingPct==="yes";
-  const isXcel = utility==="xcel";
-  const incomeQ = ["under80","80to150"].includes(income);
-  const isLowIncome = income==="under80";
-  const commercial = homeType==="commercial";
-  const ceoReg = contractorStatus==="ceo_registered";
-
-  // State Tax Credit
-  { let eligible=false,amount=0,notes=[],reqs=[],warnings=[];
-    if (!commercial&&!isNewConst) {
-      if (hasSpaceHP&&meetsHeating) { eligible=true; amount+=1000; reqs.push("Energy Star certified, AHRI-matched split system","Designed to meet ≥80% of annual heating needs","Contractor registered with CO Dept of Revenue, files Form DR 1322","Invoice must show: 'State of Colorado Heat Pump Discount'"); notes.push("Contractor keeps up to 2/3 ($667); must pass ≥1/3 ($333+) to customer"); }
-      if (hasWH) { eligible=true; amount+=250; notes.push("+ $250 for heat pump water heater (same DR 1322 process)"); }
-      if (hasSpaceHP&&heatingPct==="no") warnings.push("Supplemental-only system may not qualify — must cover ≥80% of heating");
-    }
-    results.push({program:"CO State Heat Pump Tax Credit",sourceUrl:"https://energyoffice.colorado.gov/hptc",source:"energyoffice.colorado.gov/hptc",eligible,amount:eligible?amount:0,amountLabel:eligible?`Up to $${amount}`:isNewConst?"New construction — verify":"Not eligible",color:eligible?"green":"gray",notes,reqs,warnings,customerPaperwork:"None — contractor handles via Form DR 1322",phase:"Available now (2026)"});
-  }
-
-  // HEAR
-  { let eligible=false,amount=0,notes=[],reqs=[],warnings=[];
-    if (!commercial&&!isNewConst&&incomeQ) {
-      eligible=true;
-      if (hasSpaceHP) { const max=isLowIncome?8000:4000; amount+=max; notes.push(`Space HP: up to $${max.toLocaleString()} (${isLowIncome?"100% cost, low-income":"50% cost, moderate-income"})`); reqs.push("ENERGY STAR certified cold-climate heat pump","Income verification BEFORE work begins","Contractor must be CEO-registered"); }
-      if (hasWH) { const max=isLowIncome?1750:875; amount+=max; notes.push(`Water heater: up to $${max.toLocaleString()}`); }
-      if (ownership==="renter") warnings.push("Landlord must sign official CEO authorization form before work");
-      if (!ceoReg) warnings.push("Register at energyoffice.colorado.gov/home-energy-rebates-contractors before any HEAR work");
-      reqs.push("Portal: portal.neighborlysoftware.com/ENERGYREBATES-CO/Participant");
-    }
-    results.push({program:"HEAR — Home Electrification & Appliance Rebate",sourceUrl:"https://energyoffice.colorado.gov/home-energy-rebates",source:"energyoffice.colorado.gov/home-energy-rebates",eligible:eligible&&incomeQ,amount:eligible&&incomeQ?amount:0,amountLabel:eligible&&incomeQ?`Up to $${amount.toLocaleString()}`:incomeQ?"Check eligibility":"Income limit exceeded",color:eligible&&incomeQ?(income==="unknown"?"amber":"green"):"gray",notes,reqs,warnings,customerPaperwork:"Income verification + CEO portal application BEFORE work starts",phase:"Available now"});
-  }
-
-  // HER
-  results.push({program:"HER — Home Efficiency Rebate",sourceUrl:"https://energyoffice.colorado.gov/home-energy-rebates",source:"energyoffice.colorado.gov/home-energy-rebates",eligible:!commercial&&!isNewConst,amount:0,amountLabel:"Up to $4,000–$8,000 (energy savings based)",color:!commercial&&!isNewConst?"amber":"gray",notes:["Rebate tied to whole-home energy savings % — requires energy assessment","Low-income households eligible for higher amounts"],reqs:["≥20% whole-home energy savings required","CEO-registered contractor required"],warnings:["HER still rolling out — confirm availability before promising to customer"],customerPaperwork:"Energy assessment + CEO portal application",phase:"Rolling out 2026"});
-
-  // Xcel
-  { let amount=0,notes=[],reqs=[],warnings=[];
-    if (isXcel) {
-      if (hasSpaceHP) { const perTon=isColdClimate?2250:1700; amount=perTon*3; notes.push(`${isColdClimate?"Cold-climate":"Standard"}: $${perTon.toLocaleString()}/ton — avg ~3 tons = $${(perTon*3).toLocaleString()}–$${(perTon*4).toLocaleString()}`); if (isColdClimate) reqs.push("≥15.2 SEER2, ≥10 EER2, ≥8.1 HSPF2, COP ≥1.75 @ 5°F","Verified on NEEP database"); else warnings.push("Cold-climate equipment earns $550/ton more"); }
-      if (hasWH) { amount+=2250; notes.push("Heat pump water heater: up to $2,250"); }
-    } else if (utility==="other_elec") warnings.push("Check with customer's utility — Black Hills, LPEA, etc. may have programs");
-    results.push({program:"Xcel Energy Heat Pump Rebate",sourceUrl:"https://co.my.xcelenergy.com/s/residential/heating-cooling/heat-pumps",source:"xcelenergy.com",eligible:isXcel&&(hasSpaceHP||hasWH),amount:isXcel?amount:0,amountLabel:isXcel&&(hasSpaceHP||hasWH)?`~$${amount.toLocaleString()} est.`:utility==="other_elec"?"Check w/ utility":"Xcel customers only",color:isXcel&&(hasSpaceHP||hasWH)?"green":utility==="other_elec"?"amber":"gray",notes,reqs,warnings,customerPaperwork:"Contractor submits to Xcel on customer's behalf",phase:"Available now"});
-  }
-  return results;
+/* ─── AI Rebate Lookup ────────────────────────────────────────────────────── */
+async function aiLookupRebates(state, category, trade) {
+  const categoryLabel = REBATE_CATEGORIES.find(c => c.id === category)?.label || category;
+  const res = await fetch("/api/quote", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2000,
+      tools: [{ type: "web_search_20250305", name: "web_search" }],
+      messages: [{ role: "user", content: `Search for current rebates, tax credits, and utility incentives in ${state} for: ${categoryLabel}.\n\nI am a ${trade} contractor. Search for:\n- ${state} state government rebate programs\n- Federal IRA rebates (HEAR, HER) available in ${state}\n- Major utility rebate programs in ${state}\n- Any notable local/municipal programs\n\nReturn ONLY a JSON array (no markdown, no explanation):\n[\n  {\n    "program": "Program name",\n    "amount": "e.g. Up to $2,000",\n    "who": "Who qualifies",\n    "requirements": ["req 1", "req 2"],\n    "howToApply": "How to apply",\n    "source": "Organization name",\n    "url": "https://...",\n    "expires": "Date or Ongoing or While funds last"\n  }\n]\n\nInclude 3-8 programs. Return [] if none found.` }]
+    })
+  });
+  const d = await res.json();
+  const allText = (d.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+  const start = allText.indexOf("[");
+  const end = allText.lastIndexOf("]");
+  if (start === -1) return [];
+  return JSON.parse(allText.slice(start, end + 1));
 }
 
-function RebateChecker() {
-  const [rcStep, setRcStep] = useState("intro");
-  const [qIndex, setQIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [results, setResults] = useState([]);
-  const currentQ = RC_QUESTIONS[qIndex];
-  const total = RC_QUESTIONS.length;
-  const select = (val) => setAnswers(p=>({...p,[currentQ.id]:val}));
-  const next = () => { if (qIndex<total-1) setQIndex(i=>i+1); else { setResults(calcRebateResults(answers)); setRcStep("results"); } };
-  const back = () => { if (qIndex>0) setQIndex(i=>i-1); else setRcStep("intro"); };
-  const reset = () => { setRcStep("intro"); setQIndex(0); setAnswers({}); setResults([]); };
-  const totalEst = results.reduce((s,r)=>s+(r.amount||0),0);
-  const eligibleCount = results.filter(r=>r.eligible).length;
+/* ─── Rebate Checker ──────────────────────────────────────────────────────── */
+function RebateChecker({ state, trade }) {
+  const [category, setCategory] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState(null);
+  const [error, setError] = useState(null);
 
-  if (rcStep==="intro") return (
-    <div className="rc-wrap">
-      <div className="rc-section">
-        <div className="rc-step-intro">
-          <div className="icon">💰</div>
-          <h2>CO Heat Pump Rebate Checker</h2>
-          <p>9 quick questions to estimate which Colorado rebates & credits your customer may qualify for. For contractor guidance only.</p>
-        </div>
-        <div className="rc-disc"><strong>⚠ Informational Only.</strong> Estimates based on program guidelines as of early 2026. Not tax or legal advice. Always verify with the <a href="https://energyoffice.colorado.gov" target="_blank" rel="noopener noreferrer">Colorado Energy Office</a>.</div>
-        <div className="rc-card">
-          <div className="rc-card-hd">📋 Programs Covered</div>
-          <div className="rc-card-bd" style={{fontSize:13,color:"#bbb",lineHeight:1.8}}>
-            <div>✅ <strong style={{color:"#f0e6d0"}}>CO State HP Tax Credit</strong> — up to $1,250 (no income req)</div>
-            <div>✅ <strong style={{color:"#f0e6d0"}}>HEAR Program</strong> — up to $9,750+ (income-qualified)</div>
-            <div>✅ <strong style={{color:"#f0e6d0"}}>HER Program</strong> — up to $8,000 (whole-home)</div>
-            <div>✅ <strong style={{color:"#f0e6d0"}}>Xcel Energy Rebates</strong> — up to $2,250/ton</div>
-          </div>
-        </div>
-        <button className="rc-btn rc-btn-cta" style={{width:"100%",marginTop:4}} onClick={()=>setRcStep("quiz")}>Start Questionnaire →</button>
-      </div>
+  const search = async (cat) => {
+    setCategory(cat);
+    setLoading(true);
+    setResults(null);
+    setError(null);
+    try {
+      const data = await aiLookupRebates(state, cat, trade);
+      setResults(data);
+    } catch(e) {
+      setError("Search failed — please try again.");
+    }
+    setLoading(false);
+  };
+
+  const reset = () => { setCategory(null); setResults(null); setError(null); };
+
+  if (!state) return (
+    <div className="rb-no-state">
+      <div className="icon">📍</div>
+      <p style={{fontSize:14,lineHeight:1.7}}>Add your state in <strong>Setup</strong> to see available rebates and incentives for your customers.</p>
     </div>
   );
 
-  if (rcStep==="quiz") {
-    const selected = answers[currentQ.id];
-    return (
-      <div className="rc-wrap">
-        <div className="rc-section">
-          <div className="rc-disc"><strong>Informational only.</strong> Verify all eligibility with CO Energy Office.</div>
-          <div className="rc-prog">{RC_QUESTIONS.map((_,i)=><div key={i} className={`rc-prog-dot ${i<qIndex?"done":i===qIndex?"active":""}`}/>)}</div>
-          <div style={{fontSize:11,color:"#555",marginBottom:14,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Question {qIndex+1} of {total}</div>
-          <div className="rc-card">
-            <div className="rc-card-hd">🔍 Eligibility Check</div>
-            <div className="rc-card-bd">
-              <div className="rc-q">{currentQ.q}</div>
-              {currentQ.sub&&<div className="rc-q-sub">{currentQ.sub}</div>}
-              <div className="rc-opts">{currentQ.opts.map(opt=>(
-                <button key={opt.val} className={`rc-opt ${selected===opt.val?"sel":""}`} onClick={()=>select(opt.val)}>
-                  <div className="rc-opt-dot"/>{opt.label}
-                </button>
-              ))}</div>
-              <div className="rc-nav">
-                <button className="rc-btn rc-btn-ghost" onClick={back} style={{flex:"0 0 80px"}}>← Back</button>
-                <button className="rc-btn rc-btn-cta" onClick={next} disabled={!selected}>{qIndex===total-1?"See Results →":"Next →"}</button>
+  return (
+    <div>
+      <div className="rb-intro">
+        <h2>💰 Rebate Finder</h2>
+        <p>Live search for current rebates, tax credits & utility incentives for your customers.</p>
+        <div className="rb-state-badge">📍 {state}</div>
+      </div>
+
+      <div className="rb-disc"><strong>⚠ Informational only.</strong> Verify all programs with the issuing agency before quoting savings to customers. Programs change frequently.</div>
+
+      {!category && !loading && !results && (
+        <>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",color:"var(--muted)",marginBottom:10}}>Select a Category</div>
+          <div className="rb-category-grid">
+            {REBATE_CATEGORIES.map(c => (
+              <button key={c.id} className="rb-cat-btn" onClick={() => search(c.id)}>{c.label}</button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {loading && (
+        <div className="rb-thinking">
+          <div className="rb-spin">⚙️</div>
+          <div style={{fontSize:13,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",color:"var(--muted)"}}>Searching live programs...</div>
+          <div style={{fontSize:12,color:"var(--muted)",marginTop:4}}>{state} · {REBATE_CATEGORIES.find(c=>c.id===category)?.label}</div>
+        </div>
+      )}
+
+      {error && (
+        <div style={{padding:14,background:"#fff0f0",border:"1.5px solid var(--red)",borderRadius:4,color:"var(--red)",fontSize:13,marginBottom:12}}>
+          {error} <button style={{background:"none",border:"none",color:"var(--red)",cursor:"pointer",fontWeight:700,textDecoration:"underline"}} onClick={reset}>Try again</button>
+        </div>
+      )}
+
+      {results && !loading && (
+        <>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:"2px",textTransform:"uppercase",color:"var(--muted)"}}>
+              {results.length} program{results.length !== 1 ? "s" : ""} found
+            </div>
+            <button className="btn btn-ghost" style={{fontSize:11,padding:"5px 12px"}} onClick={reset}>← New Search</button>
+          </div>
+
+          {results.length === 0 && (
+            <div className="empty">
+              <div className="empty-icon">🔍</div>
+              <p>No active programs found for this category in {state}.<br/>Try a different category.</p>
+            </div>
+          )}
+
+          {results.map((r, i) => (
+            <div key={i} className="rb-result">
+              <div className="rb-result-hd">
+                <div className="rb-result-name">{r.program}</div>
+                <div className="rb-result-amt">{r.amount}</div>
+              </div>
+              <div className="rb-result-bd">
+                {r.who && <div style={{marginBottom:6}}><strong>Who qualifies:</strong> {r.who}</div>}
+                {r.requirements?.length > 0 && <div style={{marginBottom:6}}><strong>Requirements:</strong><ul>{r.requirements.map((req,j)=><li key={j}>{req}</li>)}</ul></div>}
+                {r.howToApply && <div style={{marginBottom:6}}><strong>How to apply:</strong> {r.howToApply}</div>}
+                <div style={{marginTop:8,paddingTop:8,borderTop:"1px solid var(--rule)",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:6}}>
+                  <span style={{fontSize:11,color:"var(--muted)"}}>⏱ {r.expires || "Check program"}</span>
+                  {r.url && <a href={r.url} target="_blank" rel="noopener noreferrer" style={{fontSize:11,color:"var(--amber-deep)"}}>{r.source || "More info"} →</a>}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+          ))}
 
-  if (rcStep==="results") return (
-    <div className="rc-wrap">
-      <div className="rc-section">
-        <div className="rc-disc"><strong>⚠ Estimates only.</strong> Confirm with CO Energy Office and a tax professional before quoting savings.</div>
-        <div className="rc-total-bar">
-          <div><div className="rc-total-lbl">Potential Savings Est.</div><div style={{fontSize:11,color:"#888",marginTop:2}}>{eligibleCount} program{eligibleCount!==1?"s":""} likely eligible</div></div>
-          <div style={{textAlign:"right"}}><div className="rc-total-val">${totalEst.toLocaleString()}+</div><div style={{fontSize:10,color:"#888"}}>verify before presenting to customer</div></div>
-        </div>
-        {results.map((r,i)=>(
-          <div key={i} className="rc-result">
-            <div className={`rc-result-hd ${r.color}`}><span>{r.eligible?"✅":r.color==="amber"?"⚠":"○"} {r.program}</span><span className="rc-result-amt">{r.amountLabel}</span></div>
-            <div className="rc-result-bd">
-              <div style={{marginBottom:8}}><span className="rc-tag req">{r.phase}</span>{r.eligible&&<span className="rc-tag good">Likely Eligible</span>}{r.warnings.length>0&&<span className="rc-tag warn">Action Needed</span>}</div>
-              {r.notes.length>0&&<ul>{r.notes.map((n,j)=><li key={j}>{n}</li>)}</ul>}
-              {r.reqs.length>0&&<><div style={{fontWeight:700,color:"#f0e6d0",fontSize:12,marginTop:8,marginBottom:4}}>Requirements:</div><ul>{r.reqs.map((req,j)=><li key={j}>{req}</li>)}</ul></>}
-              {r.warnings.length>0&&<><div style={{fontWeight:700,color:"#ef5350",fontSize:12,marginTop:8,marginBottom:4}}>⚠ Watch out:</div><ul style={{color:"#ef9a9a"}}>{r.warnings.map((w,j)=><li key={j}>{w}</li>)}</ul></>}
-              <div style={{marginTop:8,paddingTop:8,borderTop:"1px solid #2a2a2a",fontSize:11,color:"#555"}}>📋 Customer paperwork: {r.customerPaperwork}<br/>📎 <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer">{r.source}</a></div>
-            </div>
-          </div>
-        ))}
-        <button className="rc-btn rc-btn-cta" style={{width:"100%",marginTop:8}} onClick={reset}>🔄 New Check</button>
-        <button className="rc-reset" onClick={reset}>Start Over</button>
-      </div>
+          <button className="btn btn-cta btn-full" style={{marginTop:4}} onClick={reset}>🔍 Search Another Category</button>
+        </>
+      )}
     </div>
   );
-  return null;
 }
 
 /* ─── App ─────────────────────────────────────────────────────────────────── */
@@ -488,12 +353,11 @@ export default function WrenchBid() {
   const [biz, setBiz] = useState(() => {
     try {
       const stored = JSON.parse(localStorage.getItem("wb_biz"));
-      return stored || { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0", language: "en-US" };
+      return stored || { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0", language: "en-US", state: "" };
     }
-    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0", language: "en-US" }; }
+    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0", language: "en-US", state: "" }; }
   });
 
-  /* ── Auth state ── */
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [authMode, setAuthMode] = useState("signin");
@@ -516,43 +380,26 @@ export default function WrenchBid() {
   const finalRef = useRef("");
   const interimRef = useRef("");
 
-  useEffect(() => {
-    try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
-  }, [history]);
+  useEffect(() => { try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {} }, [history]);
+  useEffect(() => { try { localStorage.setItem("wb_biz", JSON.stringify(biz)); } catch {} }, [biz]);
 
-  useEffect(() => {
-    try { localStorage.setItem("wb_biz", JSON.stringify(biz)); } catch {}
-  }, [biz]);
-
-  /* ── Auth listener ── */
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthReady(true);
-      if (session?.user) {
-        loadCloudQuotes(session.user.id);
-        loadCloudBiz(session.user);
-      }
+      if (session?.user) { loadCloudQuotes(session.user.id); loadCloudBiz(session.user); }
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) {
-        loadCloudQuotes(session.user.id);
-        loadCloudBiz(session.user);
-      }
+      if (session?.user) { loadCloudQuotes(session.user.id); loadCloudBiz(session.user); }
     });
     return () => subscription.unsubscribe();
   }, []);
 
   const loadCloudQuotes = async (userId) => {
-    const { data, error } = await supabase
-      .from("quotes")
-      .select("quote_data, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("quotes").select("quote_data, created_at").eq("user_id", userId).order("created_at", { ascending: false });
     if (error) return;
-    const cloudQuotes = (data || []).map(r => r.quote_data).filter(Boolean);
-    setHistory(cloudQuotes);
+    setHistory((data || []).map(r => r.quote_data).filter(Boolean));
   };
 
   const loadCloudBiz = (supabaseUser) => {
@@ -560,30 +407,23 @@ export default function WrenchBid() {
     if (cloudBiz) setBiz(cloudBiz);
   };
 
-  const saveBizToCloud = async (bizData) => {
-    await supabase.auth.updateUser({ data: { biz: bizData } });
-  };
+  const saveBizToCloud = async (bizData) => { await supabase.auth.updateUser({ data: { biz: bizData } }); };
 
   const handleSignUp = async () => {
     setAuthError(""); setAuthLoading(true);
     const { error } = await supabase.auth.signUp({ email: authEmail, password: authPassword });
     setAuthLoading(false);
-    if (error) setAuthError(error.message);
-    else ping("Welcome to WrenchBid! ✓");
+    if (error) setAuthError(error.message); else ping("Welcome to WrenchBid! ✓");
   };
 
   const handleSignIn = async () => {
     setAuthError(""); setAuthLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email: authEmail, password: authPassword });
     setAuthLoading(false);
-    if (error) setAuthError(error.message);
-    else ping("Welcome back ✓");
+    if (error) setAuthError(error.message); else ping("Welcome back ✓");
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    ping("Signed out");
-  };
+  const handleSignOut = async () => { await supabase.auth.signOut(); ping("Signed out"); };
 
   const ping = (msg) => {
     clearTimeout(toastTimer.current);
@@ -594,22 +434,16 @@ export default function WrenchBid() {
   /* ── Voice ── */
   const startRec = async () => {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-
     if (!isMobile && 'webkitSpeechRecognition' in window) {
       const rec = new window.webkitSpeechRecognition();
-      rec.continuous = true;
-      rec.interimResults = true;
-      rec.lang = biz.language || "en-US";
+      rec.continuous = true; rec.interimResults = true; rec.lang = biz.language || "en-US";
       rec.onresult = (e) => {
-        let final = finalRef.current;
-        let interim = "";
+        let final = finalRef.current; let interim = "";
         for (let i = e.resultIndex; i < e.results.length; i++) {
           if (e.results[i].isFinal) final += e.results[i][0].transcript + " ";
           else interim += e.results[i][0].transcript;
         }
-        finalRef.current = final;
-        displayRef.current = final + interim;
-        setTranscript(final + interim);
+        finalRef.current = final; displayRef.current = final + interim; setTranscript(final + interim);
       };
       rec.onerror = (e) => { if (e.error !== "aborted") ping("Voice error: " + e.error); };
       rec.onend = () => { if (recognitionRef.current?.rec === rec) setStep(s => s === "recording" ? "idle" : s); };
@@ -618,36 +452,22 @@ export default function WrenchBid() {
       setStep("recording");
       return;
     }
-
-    // Mobile: use Deepgram
     let active = true;
     try {
-      const [tokenRes, stream] = await Promise.all([
-        fetch("/api/deepgram-token"),
-        navigator.mediaDevices.getUserMedia({ audio: true })
-      ]);
+      const [tokenRes, stream] = await Promise.all([fetch("/api/deepgram-token"), navigator.mediaDevices.getUserMedia({ audio: true })]);
       if (!tokenRes.ok) { ping("Voice setup failed"); stream.getTracks().forEach(t=>t.stop()); return; }
       const { token } = await tokenRes.json();
       if (!token) { ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
-
-      const ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-2&language=" + (biz.language || "en-US") + "&interim_results=true&endpointing=100&no_delay=true&numerals=true",
-        ["token", token]
-      );
-
+      const ws = new WebSocket("wss://api.deepgram.com/v1/listen?model=nova-2&language=" + (biz.language || "en-US") + "&interim_results=true&endpointing=100&no_delay=true&numerals=true", ["token", token]);
       ws.onopen = () => {
         if (!active) { ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
-        const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"]
-          .find(t => MediaRecorder.isTypeSupported(t)) || "";
+        const mimeType = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"].find(t => MediaRecorder.isTypeSupported(t)) || "";
         const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
-        mr.ondataavailable = (e) => {
-          if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data);
-        };
+        mr.ondataavailable = (e) => { if (active && ws.readyState === WebSocket.OPEN && e.data.size > 0) ws.send(e.data); };
         mr.start(100);
         recognitionRef.current = { ws, mediaRecorder: mr, stream, type: "deepgram", deactivate: () => { active = false; } };
         setStep("recording");
       };
-
       ws.onmessage = (e) => {
         if (!active) return;
         try {
@@ -655,24 +475,15 @@ export default function WrenchBid() {
           if (msg.type !== "Results") return;
           const text = msg.channel?.alternatives?.[0]?.transcript;
           if (!text) return;
-          if (msg.is_final) {
-            finalRef.current += text + " ";
-            interimRef.current = "";
-          } else {
-            interimRef.current = text;
-          }
+          if (msg.is_final) { finalRef.current += text + " "; interimRef.current = ""; }
+          else { interimRef.current = text; }
           displayRef.current = finalRef.current + interimRef.current;
           setTranscript(displayRef.current);
         } catch(err) {}
       };
-
       ws.onerror = () => { if (active) ping("Voice connection error"); };
       ws.onclose = () => { if (active) setStep(s => s === "recording" ? "idle" : s); };
-
-    } catch(err) {
-      ping("Could not start recording");
-      setStep("idle");
-    }
+    } catch(err) { ping("Could not start recording"); setStep("idle"); }
   };
 
   const stopRec = () => {
@@ -682,33 +493,21 @@ export default function WrenchBid() {
     if (ref.type === "webspeech") {
       ref.rec.stop();
     } else {
-      ref.deactivate();
-      ref.mediaRecorder?.stop();
-      ref.stream?.getTracks().forEach(t => t.stop());
-      ref.ws?.close();
-      if (interimRef.current) {
-        finalRef.current += interimRef.current + " ";
-        interimRef.current = "";
-        displayRef.current = finalRef.current;
-        setTranscript(finalRef.current);
-      }
+      ref.deactivate(); ref.mediaRecorder?.stop(); ref.stream?.getTracks().forEach(t => t.stop()); ref.ws?.close();
+      if (interimRef.current) { finalRef.current += interimRef.current + " "; interimRef.current = ""; displayRef.current = finalRef.current; setTranscript(finalRef.current); }
     }
     setStep("idle");
   };
 
   const toggleMic = () => step === "recording" ? stopRec() : startRec();
 
-  // Pre-warm mic on desktop so tap-to-speak has no delay
   useEffect(() => {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
     if (!isMobile && 'webkitSpeechRecognition' in window) {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(s => s.getTracks().forEach(t => t.stop()))
-        .catch(() => {});
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(s => s.getTracks().forEach(t => t.stop())).catch(() => {});
     }
   }, []);
 
-  /* ── Generate ── */
   const generate = async () => {
     if (!transcript.trim()) { ping("Speak a job description first"); return; }
     setStep("processing");
@@ -716,13 +515,9 @@ export default function WrenchBid() {
       const data = await aiParseQuote(transcript, biz.name, biz.trade, biz.taxEnabled, biz.taxRate);
       setQuote({ ...data, qNum: qNum(), date: todayStr() });
       setStep("preview");
-    } catch (e) {
-      setStep("idle");
-      ping("Parse error — try again or rephrase");
-    }
+    } catch (e) { setStep("idle"); ping("Parse error — try again or rephrase"); }
   };
 
-  /* ── Save ── */
   const saveToHistory = (status) => {
     if (!quote) return;
     const entry = { ...quote, status, transcript, bizName: biz.name, savedAt: new Date().toISOString() };
@@ -732,37 +527,14 @@ export default function WrenchBid() {
 
   const sendSMS = () => {
     saveToHistory("sent");
-    const msg = [
-      `Hi${quote.clientName ? " " + quote.clientName : ""}! Quote from ${biz.name}.`,
-      ``,
-      `📋 ${quote.jobTitle}`,
-      `💰 Total: ${$$(quote.grandTotal)}`,
-      `📅 Valid: ${quote.validDays} days`,
-      ``,
-      biz.phone ? `📞 ${biz.phone}` : "Reply to confirm."
-    ].join("\n");
-    const p = clientPhone.replace(/\D/g, "");
-    window.open(`sms:${p}?body=${encodeURIComponent(msg)}`);
+    const msg = [`Hi${quote.clientName?" "+quote.clientName:""}! Quote from ${biz.name}.`,``,`📋 ${quote.jobTitle}`,`💰 Total: ${$$(quote.grandTotal)}`,`📅 Valid: ${quote.validDays} days`,``,biz.phone?`📞 ${biz.phone}`:"Reply to confirm."].join("\n");
+    window.open(`sms:${clientPhone.replace(/\D/g,"")}?body=${encodeURIComponent(msg)}`);
     ping("SMS app opened ✓");
   };
 
   const copyText = () => {
     saveToHistory("draft");
-    const lines = [
-      `QUOTE — ${biz.name}`,
-      `${"─".repeat(32)}`,
-      `Job: ${quote.jobTitle}`,
-      `Date: ${quote.date}   Quote #: ${quote.qNum}`,
-      ``,
-      ...quote.lineItems.map(l => `  ${l.desc.padEnd(22)} ${$$(l.total)}`),
-      ``,
-      `  Subtotal: ${$$(quote.subtotal)}`,
-      quote.tax > 0 ? `  Tax (${quote.taxRate}%): ${$$(quote.tax)}` : null,
-      `  TOTAL: ${$$(quote.grandTotal)}`,
-      ``,
-      `Valid for ${quote.validDays} days.`,
-      quote.notes ? `\nNotes: ${quote.notes}` : null,
-    ].filter(Boolean).join("\n");
+    const lines = [`QUOTE — ${biz.name}`,`${"─".repeat(32)}`,`Job: ${quote.jobTitle}`,`Date: ${quote.date}   Quote #: ${quote.qNum}`,``,...quote.lineItems.map(l=>`  ${l.desc.padEnd(22)} ${$$(l.total)}`),``,`  Subtotal: ${$$(quote.subtotal)}`,quote.tax>0?`  Tax (${quote.taxRate}%): ${$$(quote.tax)}`:null,`  TOTAL: ${$$(quote.grandTotal)}`,``,`Valid for ${quote.validDays} days.`,quote.notes?`\nNotes: ${quote.notes}`:null].filter(Boolean).join("\n");
     navigator.clipboard.writeText(lines).then(() => ping("Copied to clipboard ✓"));
   };
 
@@ -770,46 +542,30 @@ export default function WrenchBid() {
     const entry = saveToHistory("saved");
     ping("Quote saved ✓");
     if (user && entry) {
-      await supabase.from("quotes").insert({
-        user_id: user.id,
-        quote_num: entry.qNum,
-        client_name: entry.clientName,
-        job_title: entry.jobTitle,
-        grand_total: entry.grandTotal,
-        status: "saved",
-        quote_data: entry,
-      });
+      await supabase.from("quotes").insert({ user_id: user.id, quote_num: entry.qNum, client_name: entry.clientName, job_title: entry.jobTitle, grand_total: entry.grandTotal, status: "saved", quote_data: entry });
     }
   };
 
-  const newQuote = () => { setQuote(null); finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript(""); setStep("idle"); setClientPhone(""); setTab("new"); };
+  const newQuote = () => { setQuote(null); finalRef.current=""; interimRef.current=""; displayRef.current=""; setTranscript(""); setStep("idle"); setClientPhone(""); setTab("new"); };
 
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
-      setHistory([]);
-      ping("History cleared");
-      if (user) {
-        await supabase.from("quotes").delete().eq("user_id", user.id);
-      }
+      setHistory([]); ping("History cleared");
+      if (user) await supabase.from("quotes").delete().eq("user_id", user.id);
     }
   };
 
   const deleteQuote = async (index) => {
     const q = history[index];
     setHistory(h => h.filter((_, j) => j !== index));
-    if (user && q?.qNum) {
-      await supabase.from("quotes").delete().eq("user_id", user.id).eq("quote_num", q.qNum);
-    }
+    if (user && q?.qNum) await supabase.from("quotes").delete().eq("user_id", user.id).eq("quote_num", q.qNum);
   };
-
-  /* ─── Render ────────────────────────────────────────────────────────────── */
 
   if (!authReady) return <div className="app" style={{alignItems:"center",justifyContent:"center"}}><div className="loader" style={{width:200}} /></div>;
 
   return (
     <div className="app">
 
-      {/* Auth modal */}
       {!user && (
         <div className="auth-overlay">
           <div className="auth-box">
@@ -820,271 +576,107 @@ export default function WrenchBid() {
             <div className="auth-stripe" />
             <div className="auth-bd">
               <div className="auth-tabs">
-                <button className={`auth-tab ${authMode === "signin" ? "on" : ""}`} onClick={() => { setAuthMode("signin"); setAuthError(""); }}>Sign In</button>
-                <button className={`auth-tab ${authMode === "signup" ? "on" : ""}`} onClick={() => { setAuthMode("signup"); setAuthError(""); }}>Create Account</button>
+                <button className={`auth-tab ${authMode==="signin"?"on":""}`} onClick={()=>{setAuthMode("signin");setAuthError("");}}>Sign In</button>
+                <button className={`auth-tab ${authMode==="signup"?"on":""}`} onClick={()=>{setAuthMode("signup");setAuthError("");}}>Create Account</button>
               </div>
               {authError && <div className="auth-err">{authError}</div>}
-              <div className="auth-field">
-                <label>Email</label>
-                <input type="email" value={authEmail} onChange={e => setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email" />
-              </div>
-              <div className="auth-field">
-                <label>Password</label>
-                <input
-                  type="password"
-                  value={authPassword}
-                  onChange={e => setAuthPassword(e.target.value)}
-                  placeholder={authMode === "signup" ? "Min 6 characters" : "Your password"}
-                  autoComplete={authMode === "signup" ? "new-password" : "current-password"}
-                  onKeyDown={e => e.key === "Enter" && (authMode === "signup" ? handleSignUp() : handleSignIn())}
-                />
-              </div>
-              <button
-                className="btn btn-cta btn-full"
-                onClick={authMode === "signup" ? handleSignUp : handleSignIn}
-                disabled={authLoading || !authEmail || !authPassword}
-              >
-                {authLoading ? "Please wait..." : authMode === "signup" ? "Create Account" : "Sign In"}
-              </button>
-              <div className="auth-foot">
-                {authMode === "signin" ? "New to WrenchBid? " : "Already have an account? "}
-                <button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={() => { setAuthMode(authMode === "signin" ? "signup" : "signin"); setAuthError(""); }}>
-                  {authMode === "signin" ? "Create a free account" : "Sign in"}
-                </button>
-              </div>
+              <div className="auth-field"><label>Email</label><input type="email" value={authEmail} onChange={e=>setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email" /></div>
+              <div className="auth-field"><label>Password</label><input type="password" value={authPassword} onChange={e=>setAuthPassword(e.target.value)} placeholder={authMode==="signup"?"Min 6 characters":"Your password"} autoComplete={authMode==="signup"?"new-password":"current-password"} onKeyDown={e=>e.key==="Enter"&&(authMode==="signup"?handleSignUp():handleSignIn())} /></div>
+              <button className="btn btn-cta btn-full" onClick={authMode==="signup"?handleSignUp:handleSignIn} disabled={authLoading||!authEmail||!authPassword}>{authLoading?"Please wait...":authMode==="signup"?"Create Account":"Sign In"}</button>
+              <div className="auth-foot">{authMode==="signin"?"New to WrenchBid? ":"Already have an account? "}<button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={()=>{setAuthMode(authMode==="signin"?"signup":"signin");setAuthError("");}}>{authMode==="signin"?"Create a free account":"Sign in"}</button></div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Header */}
       <header className="hdr">
         <div className="logo">Wrench<em>Bid</em></div>
-        {user
-          ? <div className="user-bar">
-              <span className="user-email">{user.email}</span>
-              <button className="btn-signout" onClick={handleSignOut}>Sign Out</button>
-            </div>
-          : <div className="version">Beta</div>
-        }
+        {user ? <div className="user-bar"><span className="user-email">{user.email}</span><button className="btn-signout" onClick={handleSignOut}>Sign Out</button></div> : <div className="version">Beta</div>}
       </header>
 
-      {/* Tabs */}
       <nav className="tabs">
-        {[["new","⚡ Quote"],["history","📋 History"],["rebates","💰 Rebates"],["setup","⚙ Setup"]].map(([id, label]) => (
-          <button key={id} className={`tab ${tab === id ? "on" : ""}`} onClick={() => setTab(id)}>{label}</button>
+        {[["new","⚡ Quote"],["history","📋 History"],["rebates","💰 Rebates"],["setup","⚙ Setup"]].map(([id,label])=>(
+          <button key={id} className={`tab ${tab===id?"on":""}`} onClick={()=>setTab(id)}>{label}</button>
         ))}
       </nav>
 
-      {/* ─────────────── NEW QUOTE TAB ─────────────── */}
-      {tab === "new" && (
+      {/* ── NEW QUOTE ── */}
+      {tab==="new" && (
         <div className="page">
-
-          {step !== "preview" && (
+          {step!=="preview" && (
             <>
-              <div className="tip">
-                <strong>How it works:</strong> Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid builds the quote automatically.
-              </div>
-
+              <div className="tip"><strong>How it works:</strong> Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid builds the quote automatically.</div>
               <div className="mic-wrap">
-                <div className="mic-hint">
-                  {step === "recording" ? "🔴 Recording — tap to stop" : "Tap to start speaking"}
-                </div>
-                <button className={`mic-btn ${step === "recording" ? "live" : ""}`} onClick={toggleMic}>
-                  <div className="mic-icon">{step === "recording" ? "⏹" : "🎙"}</div>
-                  <div>{step === "recording" ? "STOP" : "SPEAK"}</div>
+                <div className="mic-hint">{step==="recording"?"🔴 Recording — tap to stop":"Tap to start speaking"}</div>
+                <button className={`mic-btn ${step==="recording"?"live":""}`} onClick={toggleMic}>
+                  <div className="mic-icon">{step==="recording"?"⏹":"🎙"}</div>
+                  <div>{step==="recording"?"STOP":"SPEAK"}</div>
                 </button>
               </div>
-
-              <textarea
-                className="tx-box"
-                value={transcript}
-                onChange={e => { finalRef.current = e.target.value; interimRef.current = ""; displayRef.current = e.target.value; setTranscript(e.target.value); }}
-                placeholder="Your words appear here as you speak... or type directly"
-                rows={4}
-                style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}
-              />
-
-              {step === "processing" && <div className="loader" />}
-
+              <textarea className="tx-box" value={transcript} onChange={e=>{finalRef.current=e.target.value;interimRef.current="";displayRef.current=e.target.value;setTranscript(e.target.value);}} placeholder="Your words appear here as you speak... or type directly" rows={4} style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}} />
+              {step==="processing" && <div className="loader" />}
               <div className="btn-row">
-                <button className="btn btn-ghost" onClick={() => {
-                  finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript("");
-                }}>Clear</button>
-                <button
-                  className="btn btn-cta"
-                  onClick={generate}
-                  disabled={!transcript.trim() || step === "processing" || step === "recording"}
-                >
-                  {step === "processing" ? "Building..." : "⚡ Build Quote"}
-                </button>
+                <button className="btn btn-ghost" onClick={()=>{finalRef.current="";interimRef.current="";displayRef.current="";setTranscript("");}}>Clear</button>
+                <button className="btn btn-cta" onClick={generate} disabled={!transcript.trim()||step==="processing"||step==="recording"}>{step==="processing"?"Building...":"⚡ Build Quote"}</button>
               </div>
-
               <div className="div" />
-
-              <div className="tip">
-                <strong>Example phrases:</strong><br />
-                "Replace water heater for John Smith, 3 hours at $105/hr, parts cost $380"<br /><br />
-                "Paint entire exterior of house, flat rate $1400, client is Maria Rodriguez"<br /><br />
-                "Unclog main drain, 1.5 hours, $75 materials"
-              </div>
+              <div className="tip"><strong>Example phrases:</strong><br/>"Replace water heater for John Smith, 3 hours at $105/hr, parts cost $380"<br/><br/>"Paint entire exterior of house, flat rate $1400, client is Maria Rodriguez"<br/><br/>"Unclog main drain, 1.5 hours, $75 materials"</div>
             </>
           )}
 
-          {step === "preview" && quote && (
+          {step==="preview" && quote && (
             <>
               <div className="qdoc">
                 <div className="qdoc-hd">
                   <div className="qdoc-biz">{biz.name}</div>
-                  <div className="qdoc-trade">{biz.trade}{biz.phone ? ` · ${biz.phone}` : ""}</div>
+                  <div className="qdoc-trade">{biz.trade}{biz.phone?` · ${biz.phone}`:""}</div>
                 </div>
                 <div className="qdoc-stripe" />
                 <div className="qdoc-body">
-
                   <div className="qdoc-meta-row">
-                    <div className="qdoc-meta-cell">
-                      To<span>
-                        <input
-                          className="editable editable-meta"
-                          value={quote.clientName || ""}
-                          onChange={e => setQuote(q => ({...q, clientName: e.target.value}))}
-                          placeholder="Client name"
-                        />
-                      </span>
-                    </div>
-                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>
-                      Quote #<span>{quote.qNum}</span>
-                    </div>
+                    <div className="qdoc-meta-cell">To<span><input className="editable editable-meta" value={quote.clientName||""} onChange={e=>setQuote(q=>({...q,clientName:e.target.value}))} placeholder="Client name" /></span></div>
+                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>Quote #<span>{quote.qNum}</span></div>
                   </div>
-
                   <div className="qdoc-meta-row" style={{marginBottom:16}}>
-                    <div className="qdoc-meta-cell">
-                      Date<span>{quote.date}</span>
-                    </div>
-                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>
-                      Valid
-                      <span style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:4,marginTop:3}}>
-                        <input
-                          type="number"
-                          value={quote.validDays}
-                          onChange={e => setQuote(q => ({...q, validDays: Number(e.target.value)}))}
-                          style={{width:44,padding:"2px 6px",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",background:"var(--paper)",border:"1.5px solid var(--rule)",borderRadius:3,outline:"none",textAlign:"center"}}
-                        />
-                        <span style={{fontWeight:600,fontSize:14,color:"var(--ink)",letterSpacing:0,textTransform:"none"}}>days</span>
-                      </span>
-                    </div>
+                    <div className="qdoc-meta-cell">Date<span>{quote.date}</span></div>
+                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>Valid<span style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:4,marginTop:3}}><input type="number" value={quote.validDays} onChange={e=>setQuote(q=>({...q,validDays:Number(e.target.value)}))} style={{width:44,padding:"2px 6px",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",background:"var(--paper)",border:"1.5px solid var(--rule)",borderRadius:3,outline:"none",textAlign:"center"}} /><span style={{fontWeight:600,fontSize:14,color:"var(--ink)",letterSpacing:0,textTransform:"none"}}>days</span></span></div>
                   </div>
-
                   <div className="sec-label">Scope of Work</div>
-                  <div className="qdoc-job">
-                    <input
-                      className="editable editable-title"
-                      value={quote.jobTitle || ""}
-                      onChange={e => setQuote(q => ({...q, jobTitle: e.target.value}))}
-                      placeholder="Job title"
-                    />
-                  </div>
-
+                  <div className="qdoc-job"><input className="editable editable-title" value={quote.jobTitle||""} onChange={e=>setQuote(q=>({...q,jobTitle:e.target.value}))} placeholder="Job title" /></div>
                   <div className="sec-label">Line Items</div>
                   <div className="li-table">
-                    {quote.lineItems.map((li, i) => (
+                    {quote.lineItems.map((li,i)=>(
                       <div className="li-row" key={i}>
                         <div style={{flex:1,marginRight:8}}>
-                          <input
-                            className="editable editable-name"
-                            value={li.desc}
-                            onChange={e => setQuote(q => {
-                              const items = [...q.lineItems];
-                              items[i] = {...items[i], desc: e.target.value};
-                              return {...q, lineItems: items};
-                            })}
-                          />
-                          {li.qty !== 1 && (
-                            <div className="li-sub">{li.qty} {li.unit} × {$$(li.rate)}</div>
-                          )}
+                          <input className="editable editable-name" value={li.desc} onChange={e=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],desc:e.target.value};return{...q,lineItems:items};})} />
+                          {li.qty!==1&&<div className="li-sub">{li.qty} {li.unit} × {$$(li.rate)}</div>}
                         </div>
-                        <input
-                          className="editable editable-amt"
-                          value={li.total}
-                          type="number"
-                          onChange={e => setQuote(q => {
-                            const items = [...q.lineItems];
-                            items[i] = {...items[i], total: parseFloat(e.target.value) || 0};
-                            const subtotal = items.reduce((s, l) => s + l.total, 0);
-                            const tax = subtotal > 150 ? parseFloat((subtotal * (q.taxRate/100)).toFixed(2)) : 0;
-                            return {...q, lineItems: items, subtotal: parseFloat(subtotal.toFixed(2)), tax, grandTotal: parseFloat((subtotal + tax).toFixed(2))};
-                          })}
-                        />
+                        <input className="editable editable-amt" value={li.total} type="number" onChange={e=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],total:parseFloat(e.target.value)||0};const subtotal=items.reduce((s,l)=>s+l.total,0);const tax=subtotal>150?parseFloat((subtotal*(q.taxRate/100)).toFixed(2)):0;return{...q,lineItems:items,subtotal:parseFloat(subtotal.toFixed(2)),tax,grandTotal:parseFloat((subtotal+tax).toFixed(2))}})} />
                       </div>
                     ))}
                   </div>
-
-                  <div className="qdoc-notes">
-                    <strong>Notes</strong>
-                    <input
-                      className="editable"
-                      style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}}
-                      value={quote.notes || ""}
-                      onChange={e => setQuote(q => ({...q, notes: e.target.value}))}
-                      placeholder="Payment terms, warranty, etc."
-                    />
-                  </div>
-
-                  {(biz.paymentTerms || biz.warranty || biz.customTerms || biz.licenseNum) && (
+                  <div className="qdoc-notes"><strong>Notes</strong><input className="editable" style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}} value={quote.notes||""} onChange={e=>setQuote(q=>({...q,notes:e.target.value}))} placeholder="Payment terms, warranty, etc." /></div>
+                  {(biz.paymentTerms||biz.warranty||biz.customTerms||biz.licenseNum)&&(
                     <div className="qdoc-terms">
-                      {biz.paymentTerms && (
-                        <div className="qdoc-terms-row">
-                          <div className="qdoc-terms-label">Payment Terms</div>
-                          <div className="qdoc-terms-text">{biz.paymentTerms}</div>
-                        </div>
-                      )}
-                      {biz.warranty && (
-                        <div className="qdoc-terms-row">
-                          <div className="qdoc-terms-label">Warranty</div>
-                          <div className="qdoc-terms-text">{biz.warranty}</div>
-                        </div>
-                      )}
-                      {biz.customTerms && (
-                        <div className="qdoc-terms-row">
-                          <div className="qdoc-terms-label">Terms & Conditions</div>
-                          <div className="qdoc-terms-text">{biz.customTerms}</div>
-                        </div>
-                      )}
-                      {biz.licenseNum && (
-                        <div className="qdoc-terms-row">
-                          <div className="qdoc-terms-label">License #</div>
-                          <div className="qdoc-terms-text">{biz.licenseNum}</div>
-                        </div>
-                      )}
+                      {biz.paymentTerms&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">Payment Terms</div><div className="qdoc-terms-text">{biz.paymentTerms}</div></div>}
+                      {biz.warranty&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">Warranty</div><div className="qdoc-terms-text">{biz.warranty}</div></div>}
+                      {biz.customTerms&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">Terms & Conditions</div><div className="qdoc-terms-text">{biz.customTerms}</div></div>}
+                      {biz.licenseNum&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">License #</div><div className="qdoc-terms-text">{biz.licenseNum}</div></div>}
                     </div>
                   )}
-
-                  <div className="disclaimer">
-                    <strong>Estimate only.</strong> Review all pricing before sending to clients. WrenchBid is not liable for inaccuracies in AI-generated quotes.
-                  </div>
-
+                  <div className="disclaimer"><strong>Estimate only.</strong> Review all pricing before sending to clients. WrenchBid is not liable for inaccuracies in AI-generated quotes.</div>
                   <div className="totals">
                     <div className="total-row"><span>Subtotal</span><span>{$$(quote.subtotal)}</span></div>
-                    {quote.tax > 0 && (
-                      <div className="total-row"><span>Tax ({quote.taxRate}%)</span><span>{$$(quote.tax)}</span></div>
-                    )}
+                    {quote.tax>0&&<div className="total-row"><span>Tax ({quote.taxRate}%)</span><span>{$$(quote.tax)}</span></div>}
                     <div className="total-final"><span>TOTAL</span><span>{$$(quote.grandTotal)}</span></div>
                   </div>
                 </div>
               </div>
-
               <div className="send-lbl">Send to Client</div>
               <div className="send-row">
-                <input
-                  className="ph-input"
-                  type="tel"
-                  placeholder="Client phone number"
-                  value={clientPhone}
-                  onChange={e => setClientPhone(e.target.value)}
-                />
+                <input className="ph-input" type="tel" placeholder="Client phone number" value={clientPhone} onChange={e=>setClientPhone(e.target.value)} />
                 <button className="btn-sms" onClick={sendSMS}>📱 SMS</button>
               </div>
-
               <div className="btn-row" style={{marginBottom:8}}>
                 <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save Quote</button>
                 <button className="btn btn-ghost" onClick={copyText}>📋 Copy</button>
@@ -1095,35 +687,23 @@ export default function WrenchBid() {
         </div>
       )}
 
-      {/* ─────────────── HISTORY TAB ─────────────── */}
-      {tab === "history" && (
+      {/* ── HISTORY ── */}
+      {tab==="history" && (
         <div className="page" style={{width:"100%"}}>
-          {history.length === 0
-            ? <div className="empty">
-                <div className="empty-icon">📋</div>
-                <p>No quotes yet.<br /><strong>Tap "New Quote"</strong> to get started.</p>
-              </div>
+          {history.length===0
+            ? <div className="empty"><div className="empty-icon">📋</div><p>No quotes yet.<br /><strong>Tap "New Quote"</strong> to get started.</p></div>
             : <div style={{width:"100%"}}>
                 <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}>
                   <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 14px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>Clear All</button>
                 </div>
-                {history.map((q, i) => (
+                {history.map((q,i)=>(
                   <div className="h-item" key={i} style={{position:"relative",width:"100%",boxSizing:"border-box"}}>
-                    <div onClick={() => { setQuote(q); setStep("preview"); setTab("new"); }}>
-                      <div className="h-top">
-                        <div className="h-client">{q.clientName || "No client name"}</div>
-                        <div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div>
-                      </div>
+                    <div onClick={()=>{setQuote(q);setStep("preview");setTab("new");}}>
+                      <div className="h-top"><div className="h-client">{q.clientName||"No client name"}</div><div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div></div>
                       <div className="h-job">{q.jobTitle}</div>
-                      <div className="h-foot">
-                        <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
-                        <div className={`chip ${q.status}`}>{q.status}</div>
-                      </div>
+                      <div className="h-foot"><div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div><div className={`chip ${q.status}`}>{q.status}</div></div>
                     </div>
-                    <button
-                      onClick={e => { e.stopPropagation(); deleteQuote(i); }}
-                      style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",lineHeight:1,padding:"4px 6px",borderRadius:3}}
-                    >✕</button>
+                    <button onClick={e=>{e.stopPropagation();deleteQuote(i);}} style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",lineHeight:1,padding:"4px 6px",borderRadius:3}}>✕</button>
                   </div>
                 ))}
               </div>
@@ -1131,45 +711,52 @@ export default function WrenchBid() {
         </div>
       )}
 
-      {/* ─────────────── REBATES TAB ─────────────── */}
-      {tab === "rebates" && (
-        <div className="page" style={{background:"#1a1a1a",padding:"16px 20px"}}>
-          <RebateChecker />
+      {/* ── REBATES ── */}
+      {tab==="rebates" && (
+        <div className="page">
+          <RebateChecker state={biz.state} trade={biz.trade} />
         </div>
       )}
 
-      {/* ─────────────── SETUP TAB ─────────────── */}
-      {tab === "setup" && (
+      {/* ── SETUP ── */}
+      {tab==="setup" && (
         <div className="page">
           <div className="card">
             <div className="card-hd">Your Business Profile</div>
             <div className="card-bd">
               <div className="field">
                 <label>Business Name</label>
-                <input value={biz.name} onChange={e => setBiz(b=>({...b,name:e.target.value}))} placeholder="Mike's Plumbing LLC" />
+                <input value={biz.name} onChange={e=>setBiz(b=>({...b,name:e.target.value}))} placeholder="Mike's Plumbing LLC" />
               </div>
               <div className="field">
                 <label>Your Trade</label>
-                <select value={biz.trade} onChange={e => setBiz(b=>({...b,trade:e.target.value}))}>
-                  {TRADES.map(t => <option key={t}>{t}</option>)}
+                <select value={biz.trade} onChange={e=>setBiz(b=>({...b,trade:e.target.value}))}>
+                  {TRADES.map(t=><option key={t}>{t}</option>)}
                 </select>
               </div>
               <div className="field">
+                <label>State</label>
+                <select value={biz.state||""} onChange={e=>setBiz(b=>({...b,state:e.target.value}))}>
+                  <option value="">Select your state...</option>
+                  {US_STATES.map(s=><option key={s} value={s}>{s}</option>)}
+                </select>
+                <div className="field-hint">Used for the Rebates finder — searches your state's current programs.</div>
+              </div>
+              <div className="field">
                 <label>Phone</label>
-                <input type="tel" value={biz.phone} onChange={e => setBiz(b=>({...b,phone:e.target.value}))} placeholder="(720) 555-0100" />
+                <input type="tel" value={biz.phone} onChange={e=>setBiz(b=>({...b,phone:e.target.value}))} placeholder="(720) 555-0100" />
               </div>
               <div className="field">
                 <label>Email</label>
-                <input type="email" value={biz.email} onChange={e => setBiz(b=>({...b,email:e.target.value}))} placeholder="you@yourbusiness.com" />
+                <input type="email" value={biz.email} onChange={e=>setBiz(b=>({...b,email:e.target.value}))} placeholder="you@yourbusiness.com" />
               </div>
               <div className="field">
                 <label>License # <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>(optional)</span></label>
-                <input value={biz.licenseNum} onChange={e => setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345" />
+                <input value={biz.licenseNum} onChange={e=>setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345" />
               </div>
-
               <div className="field">
                 <label>Voice Language / Idioma</label>
-                <select value={biz.language || "en-US"} onChange={e => setBiz(b=>({...b,language:e.target.value}))}>
+                <select value={biz.language||"en-US"} onChange={e=>setBiz(b=>({...b,language:e.target.value}))}>
                   <option value="en-US">🇺🇸 English</option>
                   <option value="es-US">🇲🇽 Spanish / Español</option>
                   <option value="pt-BR">🇧🇷 Portuguese / Português</option>
@@ -1181,38 +768,16 @@ export default function WrenchBid() {
                 </select>
                 <div className="field-hint">Speak in your language — quotes are always built in English.</div>
               </div>
-
               <div className="field">
                 <label>Sales Tax</label>
                 <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}>
                   <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:14,fontWeight:500,letterSpacing:0,textTransform:"none",color:"var(--ink)",margin:0}}>
-                    <input
-                      type="checkbox"
-                      checked={!!biz.taxEnabled}
-                      onChange={e => setBiz(b=>({...b,taxEnabled:e.target.checked}))}
-                      style={{width:16,height:16,accentColor:"var(--amber)",cursor:"pointer"}}
-                    />
+                    <input type="checkbox" checked={!!biz.taxEnabled} onChange={e=>setBiz(b=>({...b,taxEnabled:e.target.checked}))} style={{width:16,height:16,accentColor:"var(--amber)",cursor:"pointer"}} />
                     Apply sales tax to quotes
                   </label>
                 </div>
-                {biz.taxEnabled && (
-                  <div style={{display:"flex",alignItems:"center",gap:8}}>
-                    <input
-                      type="number"
-                      min="0"
-                      max="30"
-                      step="0.1"
-                      value={biz.taxRate}
-                      onChange={e => setBiz(b=>({...b,taxRate:e.target.value}))}
-                      placeholder="e.g. 8.5"
-                      style={{width:90}}
-                    />
-                    <span style={{fontSize:14,color:"var(--muted)",fontWeight:500}}>% tax rate</span>
-                  </div>
-                )}
-                {!biz.taxEnabled && (
-                  <div className="field-hint">Tax will not appear on quotes.</div>
-                )}
+                {biz.taxEnabled&&<div style={{display:"flex",alignItems:"center",gap:8}}><input type="number" min="0" max="30" step="0.1" value={biz.taxRate} onChange={e=>setBiz(b=>({...b,taxRate:e.target.value}))} placeholder="e.g. 8.5" style={{width:90}} /><span style={{fontSize:14,color:"var(--muted)",fontWeight:500}}>% tax rate</span></div>}
+                {!biz.taxEnabled&&<div className="field-hint">Tax will not appear on quotes.</div>}
               </div>
             </div>
           </div>
@@ -1220,42 +785,15 @@ export default function WrenchBid() {
           <div className="card">
             <div className="card-hd">Quote Terms & Conditions</div>
             <div className="card-bd">
-              <div className="tip" style={{marginBottom:14}}>
-                <strong>These print on every quote automatically.</strong> Fill in what applies to your business — leave blank to skip.
-              </div>
-              <div className="field">
-                <label>Payment Terms</label>
-                <textarea
-                  value={biz.paymentTerms}
-                  onChange={e => setBiz(b=>({...b,paymentTerms:e.target.value}))}
-                  placeholder="e.g. 50% deposit required before work begins. Balance due upon completion. Accepted: cash, check, Venmo, Zelle."
-                />
-              </div>
-              <div className="field">
-                <label>Warranty</label>
-                <textarea
-                  value={biz.warranty}
-                  onChange={e => setBiz(b=>({...b,warranty:e.target.value}))}
-                  placeholder="e.g. All labor warrantied for 1 year. Parts covered by manufacturer warranty only."
-                />
-              </div>
-              <div className="field">
-                <label>Additional Terms & Conditions</label>
-                <textarea
-                  value={biz.customTerms}
-                  onChange={e => setBiz(b=>({...b,customTerms:e.target.value}))}
-                  placeholder="e.g. Quote valid for stated number of days. Client is responsible for obtaining permits unless otherwise agreed."
-                />
-              </div>
-              <button className="btn btn-cta btn-full" onClick={() => { setTab("new"); saveBizToCloud(biz); ping("Profile saved ✓"); }}>
-                Save Profile
-              </button>
+              <div className="tip" style={{marginBottom:14}}><strong>These print on every quote automatically.</strong> Fill in what applies — leave blank to skip.</div>
+              <div className="field"><label>Payment Terms</label><textarea value={biz.paymentTerms} onChange={e=>setBiz(b=>({...b,paymentTerms:e.target.value}))} placeholder="e.g. 50% deposit required before work begins. Balance due upon completion." /></div>
+              <div className="field"><label>Warranty</label><textarea value={biz.warranty} onChange={e=>setBiz(b=>({...b,warranty:e.target.value}))} placeholder="e.g. All labor warrantied for 1 year. Parts covered by manufacturer warranty only." /></div>
+              <div className="field"><label>Additional Terms & Conditions</label><textarea value={biz.customTerms} onChange={e=>setBiz(b=>({...b,customTerms:e.target.value}))} placeholder="e.g. Quote valid for stated number of days. Client is responsible for obtaining permits." /></div>
+              <button className="btn btn-cta btn-full" onClick={()=>{setTab("new");saveBizToCloud(biz);ping("Profile saved ✓");}}>Save Profile</button>
             </div>
           </div>
 
-          <div className="tip" style={{marginTop:4}}>
-            <strong>Your info shows on every quote.</strong> Add your phone so clients can call you directly from the SMS quote.
-          </div>
+          <div className="tip" style={{marginTop:4}}><strong>Your info shows on every quote.</strong> Add your phone so clients can call you directly from the SMS quote.</div>
 
           <div className="div" />
 
@@ -1265,7 +803,7 @@ export default function WrenchBid() {
             ✅ Quote preview + history<br/>
             ✅ SMS delivery<br/>
             ✅ Multi-language voice input<br/>
-            ✅ CO Heat Pump Rebate Checker<br/>
+            ✅ Live rebate finder (all states, all categories)<br/>
             🔜 PDF download<br/>
             🔜 Client e-signature<br/>
             🔜 Email delivery<br/>
