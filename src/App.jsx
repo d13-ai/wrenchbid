@@ -283,9 +283,9 @@ export default function WrenchBid() {
   const [biz, setBiz] = useState(() => {
     try {
       const stored = JSON.parse(localStorage.getItem("wb_biz"));
-      return stored || { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0" };
+      return stored || { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0", language: "en-US" };
     }
-    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0" }; }
+    catch { return { name: "Your Business", trade: "Plumber", phone: "", email: "", licenseNum: "", paymentTerms: "", warranty: "", customTerms: "", taxEnabled: false, taxRate: "0", language: "en-US" }; }
   });
 
   /* ── Auth state ── */
@@ -395,7 +395,7 @@ export default function WrenchBid() {
       const rec = new window.webkitSpeechRecognition();
       rec.continuous = true;
       rec.interimResults = true;
-      rec.lang = "en-US";
+      rec.lang = biz.language || "en-US";
       rec.onresult = (e) => {
         let final = finalRef.current;
         let interim = "";
@@ -427,7 +427,7 @@ export default function WrenchBid() {
       if (!token) { ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
 
       const ws = new WebSocket(
-        "wss://api.deepgram.com/v1/listen?model=nova-2&language=en-US&interim_results=true&endpointing=100&no_delay=true&numerals=true",
+        "wss://api.deepgram.com/v1/listen?model=nova-2&language=" + (biz.language || "en-US") + "&interim_results=true&endpointing=100&no_delay=true&numerals=true",
         ["token", token]
       );
 
