@@ -812,11 +812,9 @@ function filterRebates(answers) {
   const catId = category || "all";
 
   return REBATE_DB.filter(r => {
-    // Category match
-    if (!r.categories.includes(catId) && !r.categories.includes("all") && catId !== "all") return false;
-    if (catId === "all" || r.categories.includes(catId) || r.categories.includes("all")) {
-      // If category is "all", show everything
-    }
+    // Category filter — when user picks a specific category, only show matching rebates
+    // ("all" in each rebate's categories array means it shows under the "All Programs" selection only)
+    if (catId !== "all" && !r.categories.includes(catId)) return false;
     // Renter filter — hide owner-only programs for renters
     if (ownership === "renter" && r.ownerRequired) return false;
     // Utility filter — only show Xcel programs if customer has Xcel or utility unknown
