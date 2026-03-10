@@ -251,7 +251,7 @@ const REBATE_DB = [
     howToApply:"Keep all receipts. File IRS Form 8911 with your federal tax return for the year of installation.",
     expires:"June 30, 2026 (expires unless Congress extends — install before then)",
     status:"active",
-    url:"https://www.irs.gov/credits-deductions/individuals/plug-in-electric-drive-vehicle-credit-section-30d",
+    url:"https://www.irs.gov/credits-deductions/alternative-fuel-vehicle-refueling-property-credit",
     urlLabel:"IRS.gov",
     note:"⚠ Most other federal energy tax credits (25C, solar) expired December 31, 2025 per the One Big Beautiful Bill Act."
   },
@@ -390,7 +390,7 @@ const REBATE_DB = [
     howToApply:"Call 1-855-469-4328 or contact your local Community Action Agency. Apply through Colorado's WAP portal.",
     expires:"Ongoing",
     status:"active",
-    url:"https://energyoffice.colorado.gov/weatherization",
+    url:"https://energyoffice.colorado.gov/weatherization-assistance-program",
     urlLabel:"energyoffice.colorado.gov/weatherization"
   },
   {
@@ -468,7 +468,7 @@ const REBATE_DB = [
     howToApply:"Work with an Xcel-approved participating contractor. Submit rebate application to xcelenergy.com after installation.",
     expires:"Active — amounts effective Nov 16, 2025 (subject to change)",
     status:"active",
-    url:"https://www.xcelenergy.com/programs_and_rebates/residential_programs_and_rebates/home_energy_efficiency",
+    url:"https://co.my.xcelenergy.com/s/residential/heating-cooling",
     urlLabel:"xcelenergy.com",
     canStack:"Stack with CO HEAR ($4,000–$8,000 income-qualified), CO state tax credit ($1,000), and $600 insulation bonus."
   },
@@ -681,7 +681,7 @@ const REBATE_DB = [
     howToApply:"Apply at blackhillsenergy.com or call Black Hills customer service.",
     expires:"Active through Dec 31, 2026",
     status:"active",
-    url:"https://www.blackhillsenergy.com/savings-and-programs",
+    url:"https://www.blackhillsenergy.com/efficiency-and-savings",
     urlLabel:"blackhillsenergy.com"
   },
   {
@@ -700,7 +700,7 @@ const REBATE_DB = [
     howToApply:"Apply at blackhillsenergy.com before construction begins.",
     expires:"Ongoing",
     status:"active",
-    url:"https://www.blackhillsenergy.com/savings-and-programs",
+    url:"https://www.blackhillsenergy.com/efficiency-and-savings",
     urlLabel:"blackhillsenergy.com"
   },
 
@@ -711,7 +711,7 @@ const REBATE_DB = [
     sourceLabel:"City of Denver",
     name:"Denver CARe Heat Pump Rebate",
     amount:"Up to $3,500",
-    amountNote:"Denver Climate Action Rebates (CARe). Available to Xcel Energy customers residing in Denver city limits. Stackable with Xcel and HEAR rebates.",
+    amountNote:"Denver Climate Action Rebates (CARe). ⚠️ Funding is limited — program was fully subscribed in 2025 and may be paused. Verify funding status before quoting. Stackable with Xcel and HEAR rebates.",
     categories:["hvac","all"],
     incomeRequired:false, ownerRequired:true,
     renterOk:false, utility:"xcel",
@@ -721,7 +721,7 @@ const REBATE_DB = [
     howToApply:"Apply at denvergov.org/climate. Check address eligibility first.",
     expires:"While funds last — check denvergov.org for current funding status",
     status:"active",
-    url:"https://www.denvergov.org/Government/Agencies-Departments-Offices/Agencies-Departments-Offices-Directory/Climate-Action-Sustainability-Resiliency",
+    url:"https://www.denvergov.org/Government/Agencies-Departments-Offices/Agencies-Departments-Offices-Directory/Climate-Action-Sustainability-and-Resiliency",
     urlLabel:"denvergov.org"
   },
   {
@@ -740,7 +740,7 @@ const REBATE_DB = [
     howToApply:"Apply at denvergov.org/climate after installation.",
     expires:"While funds last",
     status:"active",
-    url:"https://www.denvergov.org/Government/Agencies-Departments-Offices/Agencies-Departments-Offices-Directory/Climate-Action-Sustainability-Resiliency",
+    url:"https://www.denvergov.org/Government/Agencies-Departments-Offices/Agencies-Departments-Offices-Directory/Climate-Action-Sustainability-and-Resiliency",
     urlLabel:"denvergov.org"
   },
   {
@@ -815,8 +815,8 @@ function filterRebates(answers) {
     // Category filter — when user picks a specific category, only show matching rebates
     // ("all" in each rebate's categories array means it shows under the "All Programs" selection only)
     if (catId !== "all" && !r.categories.includes(catId)) return false;
-    // Renter filter — hide owner-only programs for renters
-    if (ownership === "renter" && r.ownerRequired) return false;
+    // Renter filter — hide programs renters cannot access (renterOk:false covers utility rebates too)
+    if (ownership === "renter" && !r.renterOk) return false;
     // Utility filter — only show Xcel programs if customer has Xcel or utility unknown
     if (r.utility === "xcel" && !isXcel && (electricUtil || gasUtil)) return false;
     if (r.utility === "blackhills" && !isBlackHills && (electricUtil || gasUtil)) return false;
@@ -928,6 +928,7 @@ function RebateWizard({ state, trade }) {
       <div className="rw-hero">
         <div className="rw-hero-title">💰 CO Rebate Finder</div>
         <div className="rw-hero-sub">Answer 5 quick questions — we'll match your customer to every available rebate in Colorado: federal, state, and utility programs.</div>
+        <div style={{fontSize:11,color:"#92400e",background:"#fff8e1",border:"1px solid #f59e0b",borderRadius:4,padding:"7px 10px",marginTop:10}}>Rebate info is for reference only. Programs change frequently. Always verify with the program administrator. WrenchBid is not liable for unavailable or denied rebates.</div>
         <div className="rw-state-pill">📍 Colorado</div>
       </div>
       <div className="tip"><strong>Why answer questions?</strong> Income level, property type, and utility provider all change what your customer qualifies for. Takes 30 seconds.</div>
@@ -956,6 +957,10 @@ function RebateWizard({ state, trade }) {
             <div style={{fontSize:28}}>💰</div>
           </div>
         )}
+
+        <div style={{background:"#fff8e1",border:"1px solid #f59e0b",borderRadius:6,padding:"10px 14px",marginBottom:14,fontSize:12,color:"#78350f",lineHeight:1.5}}>
+          <strong>⚠️ Rebate Disclaimer:</strong> WrenchBid provides this rebate information for general reference only. Program availability, amounts, and eligibility requirements change frequently and may differ from what is shown here. Some programs may be expired, paused, or fully subscribed. WrenchBid makes no warranties regarding the accuracy or availability of any rebate and is not responsible for any rebate that is denied, expired, or unavailable. Always verify directly with the program administrator before committing to a project based on rebate availability. <strong>This is not financial or legal advice.</strong>
+        </div>
 
         <div className="rw-summary">
           <div className="rw-summary-title">Search Profile</div>
