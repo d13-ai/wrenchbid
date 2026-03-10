@@ -37,7 +37,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 
 /* Tabs */
 .tabs{display:flex;width:100%;border-bottom:3px solid var(--ink);background:var(--white)}
-.tab{flex:1;padding:12px 8px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .15s}
+.tab{flex:1;padding:10px 4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .15s}
 .tab.on{color:var(--ink);border-bottom-color:var(--amber)}
 
 /* Page */
@@ -116,14 +116,6 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .editable-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.5px;width:100%;padding:2px 0}
 .editable-amt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-align:right;width:70px}
 .editable-num{width:50px;text-align:center;font-size:11px}
-.editable-meta{font-size:14px;font-weight:600}
-
-/* Editable fields */
-.editable{background:none;border:none;border-bottom:1.5px dashed var(--rule);outline:none;font-family:inherit;color:inherit;width:100%;cursor:text;transition:border-color .15s}
-.editable:focus{border-bottom-color:var(--amber);background:var(--amber-light)}
-.editable-name{font-size:14px;font-weight:500}
-.editable-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.5px;width:100%;padding:2px 0}
-.editable-amt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-align:right;width:70px}
 .editable-meta{font-size:14px;font-weight:600}
 
 /* Send */
@@ -211,6 +203,61 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .btn-signout{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:none;border:1px solid var(--steel2);color:#888;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif}
 .btn-signout:hover{border-color:var(--amber);color:var(--amber)}
 
+/* Rebate Checker */
+.rc-wrap{font-family:'Barlow',sans-serif;color:#f0e6d0;background:#1a1a1a;min-height:100%}
+.rc-section{padding:16px 0}
+.rc-card{background:#242424;border:1px solid #333;border-radius:6px;margin-bottom:12px;overflow:hidden}
+.rc-card-hd{background:#2a2a2a;border-bottom:1px solid #333;padding:11px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#f0c040;display:flex;align-items:center;gap:8px}
+.rc-card-bd{padding:14px}
+.rc-q{font-size:14px;font-weight:600;color:#f0e6d0;margin-bottom:10px;line-height:1.45}
+.rc-q-sub{font-size:12px;color:#888;margin-top:-6px;margin-bottom:10px;line-height:1.5}
+.rc-opts{display:flex;flex-direction:column;gap:7px}
+.rc-opt{display:flex;align-items:center;gap:10px;background:#1e1e1e;border:1.5px solid #333;border-radius:4px;padding:10px 13px;cursor:pointer;font-size:13px;color:#ccc;transition:border-color .15s,background .15s;text-align:left;width:100%}
+.rc-opt:hover{border-color:#f0c040;background:#252000}
+.rc-opt.sel{border-color:#f0c040;background:#2a2200;color:#f0e6d0;font-weight:600}
+.rc-opt-dot{width:14px;height:14px;border-radius:50%;border:2px solid #555;flex-shrink:0;transition:all .15s}
+.rc-opt.sel .rc-opt-dot{background:#f0c040;border-color:#f0c040}
+.rc-nav{display:flex;gap:8px;margin-top:16px}
+.rc-btn{flex:1;padding:10px;border-radius:4px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity .15s}
+.rc-btn:disabled{opacity:.35;cursor:not-allowed}
+.rc-btn-cta{background:#f0c040;color:#1a1a1a}
+.rc-btn-ghost{background:#2a2a2a;color:#f0c040;border:1.5px solid #444}
+.rc-prog{display:flex;gap:4px;margin-bottom:8px}
+.rc-prog-dot{height:4px;border-radius:2px;flex:1;background:#333;transition:background .2s}
+.rc-prog-dot.done{background:#f0c040}
+.rc-prog-dot.active{background:#f0a000}
+.rc-disc{font-size:11px;color:#777;line-height:1.6;padding:10px 14px;background:#1e1800;border-left:3px solid #f0c040;border-radius:0 3px 3px 0;margin-bottom:14px}
+.rc-disc strong{color:#f0a000}
+.rc-disc a{color:#f0c040}
+.rc-result{background:#242424;border-radius:6px;margin-bottom:10px;overflow:hidden}
+.rc-result-hd{padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rc-result-hd.green{background:#0d2a0d;border-bottom:1px solid #1a5c1a;color:#4caf50}
+.rc-result-hd.amber{background:#2a1e00;border-bottom:1px solid #5a3f00;color:#f0c040}
+.rc-result-hd.gray{background:#222;border-bottom:1px solid #333;color:#555}
+.rc-result-amt{font-size:16px;font-weight:800;font-family:'Barlow Condensed',sans-serif;white-space:nowrap}
+.rc-result-bd{padding:13px 14px;font-size:13px;line-height:1.65;color:#bbb}
+.rc-result-bd ul{margin:6px 0 0 0;padding-left:16px}
+.rc-result-bd li{margin-bottom:4px}
+.rc-result-bd a{color:#f0c040;text-decoration:underline}
+.rc-total-bar{background:#2a2200;border:1.5px solid #f0c040;border-radius:6px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.rc-total-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#f0a000}
+.rc-total-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#f0c040}
+.rc-tag{display:inline-block;font-size:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:10px;margin-right:5px;margin-bottom:4px}
+.rc-tag.req{background:#2a1a00;color:#f0a000;border:1px solid #5a3a00}
+.rc-tag.good{background:#0d2a0d;color:#4caf50;border:1px solid #1a5c1a}
+.rc-tag.warn{background:#2a0d0d;color:#ef5350;border:1px solid #5c1a1a}
+.rc-reset{width:100%;margin-top:8px;padding:9px;background:none;border:1.5px dashed #444;border-radius:4px;color:#555;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.rc-reset:hover{border-color:#f0c040;color:#f0c040}
+.rc-sect-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#f0a000;margin-bottom:10px;margin-top:4px}
+.rc-step-intro{text-align:center;padding:24px 20px 16px;background:#1e1e1e;border-bottom:1px solid #2a2a2a;margin-bottom:16px;border-radius:6px}
+.rc-step-intro .icon{font-size:36px;margin-bottom:10px}
+.rc-step-intro h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#f0c040;margin:0 0 6px}
+.rc-step-intro p{font-size:13px;color:#888;line-height:1.6;margin:0}
+.rc-hub-item{background:#1e1e1e;border:1px solid #2e2e2e;border-radius:4px;padding:12px 14px;margin-bottom:8px}
+.rc-hub-item h4{margin:0 0 4px;font-size:13px;font-weight:700;color:#f0e6d0}
+.rc-hub-item p{margin:0 0 6px;font-size:12px;color:#888;line-height:1.5}
+.rc-hub-item a{font-size:12px;color:#f0c040;text-decoration:underline}
+
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--rule)}
 `;
 
@@ -240,7 +287,7 @@ async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate) {
       max_tokens: 900,
       messages: [{
         role: "user",
-        content: `You are a quoting assistant for "${bizName}", a ${trade}. 
+        content: `You are a quoting assistant for "${bizName}", a ${trade}. If the job description is not in English, translate it to English first before building the quote.
 
 Spoken job description: "${transcript}"
 
@@ -277,6 +324,164 @@ Rules:
   return JSON.parse(raw);
 }
 
+/* ─── Rebate Checker Component ────────────────────────────────────────────── */
+const RC_QUESTIONS = [
+  { id:"homeType", q:"What type of property is this?", sub:"Rebate availability varies by property type.", opts:[{val:"single",label:"🏠 Single-family home"},{val:"manufactured",label:"🏡 Manufactured / mobile home"},{val:"multifamily",label:"🏢 Multifamily (2–4 units)"},{val:"commercial",label:"🏗 Commercial / 5+ units"}] },
+  { id:"ownership", q:"Is the customer the owner or a renter?", sub:"Renters may qualify for HEAR with landlord consent.", opts:[{val:"owner",label:"🔑 Owner"},{val:"renter",label:"🏠 Renter (landlord consent required)"}] },
+  { id:"newConstruction", q:"Is this new construction?", sub:"HEAR/HER rebates apply to existing homes only.", opts:[{val:"no",label:"✅ Existing home / retrofit"},{val:"yes",label:"🏗 New construction"}] },
+  { id:"utility", q:"Who is the customer's electric utility provider?", sub:"Some rebates are utility-specific.", opts:[{val:"xcel",label:"⚡ Xcel Energy"},{val:"other_elec",label:"⚡ Other utility (Black Hills, LPEA, etc.)"},{val:"unknown",label:"❓ Not sure"}] },
+  { id:"systemType", q:"What type of heat pump system is being installed?", opts:[{val:"ashp_ducted",label:"🌬 Air-source HP — ducted (whole home)"},{val:"ashp_ductless",label:"💨 Air-source HP — ductless mini-split"},{val:"hpwh",label:"🚿 Heat pump water heater only"},{val:"both",label:"🔥 Space heating HP + water heater"},{val:"geothermal",label:"🌍 Geothermal (ground-source)"}] },
+  { id:"coldClimate", q:"Does the equipment meet cold-climate specs?", sub:"Cold-climate = ≥70% capacity at 5°F, COP ≥1.75, verified on NEEP database.", opts:[{val:"yes",label:"✅ Yes — cold-climate rated (NEEP verified)"},{val:"no",label:"❌ No — standard efficiency"},{val:"unknown",label:"❓ Not confirmed yet"}] },
+  { id:"heatingPct", q:"Is the system designed to meet ≥80% of annual heating needs?", sub:"Required for CO state tax credit on space-heating systems.", opts:[{val:"yes",label:"✅ Yes — primary heating system"},{val:"no",label:"❌ No — supplemental / partial only"},{val:"wh_only",label:"🚿 N/A — water heater only"}] },
+  { id:"income", q:"Does the customer's income fall within HEAR limits?", sub:"Based on HUD AMI by county & household size (2025–2026).", opts:[{val:"under80",label:"💚 Under 80% AMI — low income"},{val:"80to150",label:"🟡 80–150% AMI — moderate income"},{val:"over150",label:"⚪ Over 150% AMI — above program limit"},{val:"unknown",label:"❓ Customer hasn't checked yet"}] },
+  { id:"contractorStatus", q:"Is your company registered with the Colorado Energy Office?", sub:"CEO registration required to apply HEAR/HER rebates at point of sale.", opts:[{val:"ceo_registered",label:"✅ Yes — CEO registered (HEAR/HER)"},{val:"state_only",label:"🟡 State tax credit only (DR 1322)"},{val:"not_yet",label:"🔜 Not yet — need to register"},{val:"unsure",label:"❓ Not sure"}] },
+];
+
+function calcRebateResults(answers) {
+  const {homeType,ownership,newConstruction,utility,systemType,coldClimate,heatingPct,income,contractorStatus} = answers;
+  const results = [];
+  const isNewConst = newConstruction==="yes";
+  const hasSpaceHP = ["ashp_ducted","ashp_ductless","both","geothermal"].includes(systemType);
+  const hasWH = ["hpwh","both"].includes(systemType);
+  const isColdClimate = coldClimate==="yes";
+  const meetsHeating = heatingPct==="yes";
+  const isXcel = utility==="xcel";
+  const incomeQ = ["under80","80to150"].includes(income);
+  const isLowIncome = income==="under80";
+  const commercial = homeType==="commercial";
+  const ceoReg = contractorStatus==="ceo_registered";
+
+  // State Tax Credit
+  { let eligible=false,amount=0,notes=[],reqs=[],warnings=[];
+    if (!commercial&&!isNewConst) {
+      if (hasSpaceHP&&meetsHeating) { eligible=true; amount+=1000; reqs.push("Energy Star certified, AHRI-matched split system","Designed to meet ≥80% of annual heating needs","Contractor registered with CO Dept of Revenue, files Form DR 1322","Invoice must show: 'State of Colorado Heat Pump Discount'"); notes.push("Contractor keeps up to 2/3 ($667); must pass ≥1/3 ($333+) to customer"); }
+      if (hasWH) { eligible=true; amount+=250; notes.push("+ $250 for heat pump water heater (same DR 1322 process)"); }
+      if (hasSpaceHP&&heatingPct==="no") warnings.push("Supplemental-only system may not qualify — must cover ≥80% of heating");
+    }
+    results.push({program:"CO State Heat Pump Tax Credit",sourceUrl:"https://energyoffice.colorado.gov/hptc",source:"energyoffice.colorado.gov/hptc",eligible,amount:eligible?amount:0,amountLabel:eligible?`Up to $${amount}`:isNewConst?"New construction — verify":"Not eligible",color:eligible?"green":"gray",notes,reqs,warnings,customerPaperwork:"None — contractor handles via Form DR 1322",phase:"Available now (2026)"});
+  }
+
+  // HEAR
+  { let eligible=false,amount=0,notes=[],reqs=[],warnings=[];
+    if (!commercial&&!isNewConst&&incomeQ) {
+      eligible=true;
+      if (hasSpaceHP) { const max=isLowIncome?8000:4000; amount+=max; notes.push(`Space HP: up to $${max.toLocaleString()} (${isLowIncome?"100% cost, low-income":"50% cost, moderate-income"})`); reqs.push("ENERGY STAR certified cold-climate heat pump","Income verification BEFORE work begins","Contractor must be CEO-registered"); }
+      if (hasWH) { const max=isLowIncome?1750:875; amount+=max; notes.push(`Water heater: up to $${max.toLocaleString()}`); }
+      if (ownership==="renter") warnings.push("Landlord must sign official CEO authorization form before work");
+      if (!ceoReg) warnings.push("Register at energyoffice.colorado.gov/home-energy-rebates-contractors before any HEAR work");
+      reqs.push("Portal: portal.neighborlysoftware.com/ENERGYREBATES-CO/Participant");
+    }
+    results.push({program:"HEAR — Home Electrification & Appliance Rebate",sourceUrl:"https://energyoffice.colorado.gov/home-energy-rebates",source:"energyoffice.colorado.gov/home-energy-rebates",eligible:eligible&&incomeQ,amount:eligible&&incomeQ?amount:0,amountLabel:eligible&&incomeQ?`Up to $${amount.toLocaleString()}`:incomeQ?"Check eligibility":"Income limit exceeded",color:eligible&&incomeQ?(income==="unknown"?"amber":"green"):"gray",notes,reqs,warnings,customerPaperwork:"Income verification + CEO portal application BEFORE work starts",phase:"Available now"});
+  }
+
+  // HER
+  results.push({program:"HER — Home Efficiency Rebate",sourceUrl:"https://energyoffice.colorado.gov/home-energy-rebates",source:"energyoffice.colorado.gov/home-energy-rebates",eligible:!commercial&&!isNewConst,amount:0,amountLabel:"Up to $4,000–$8,000 (energy savings based)",color:!commercial&&!isNewConst?"amber":"gray",notes:["Rebate tied to whole-home energy savings % — requires energy assessment","Low-income households eligible for higher amounts"],reqs:["≥20% whole-home energy savings required","CEO-registered contractor required"],warnings:["HER still rolling out — confirm availability before promising to customer"],customerPaperwork:"Energy assessment + CEO portal application",phase:"Rolling out 2026"});
+
+  // Xcel
+  { let amount=0,notes=[],reqs=[],warnings=[];
+    if (isXcel) {
+      if (hasSpaceHP) { const perTon=isColdClimate?2250:1700; amount=perTon*3; notes.push(`${isColdClimate?"Cold-climate":"Standard"}: $${perTon.toLocaleString()}/ton — avg ~3 tons = $${(perTon*3).toLocaleString()}–$${(perTon*4).toLocaleString()}`); if (isColdClimate) reqs.push("≥15.2 SEER2, ≥10 EER2, ≥8.1 HSPF2, COP ≥1.75 @ 5°F","Verified on NEEP database"); else warnings.push("Cold-climate equipment earns $550/ton more"); }
+      if (hasWH) { amount+=2250; notes.push("Heat pump water heater: up to $2,250"); }
+    } else if (utility==="other_elec") warnings.push("Check with customer's utility — Black Hills, LPEA, etc. may have programs");
+    results.push({program:"Xcel Energy Heat Pump Rebate",sourceUrl:"https://co.my.xcelenergy.com/s/residential/heating-cooling/heat-pumps",source:"xcelenergy.com",eligible:isXcel&&(hasSpaceHP||hasWH),amount:isXcel?amount:0,amountLabel:isXcel&&(hasSpaceHP||hasWH)?`~$${amount.toLocaleString()} est.`:utility==="other_elec"?"Check w/ utility":"Xcel customers only",color:isXcel&&(hasSpaceHP||hasWH)?"green":utility==="other_elec"?"amber":"gray",notes,reqs,warnings,customerPaperwork:"Contractor submits to Xcel on customer's behalf",phase:"Available now"});
+  }
+  return results;
+}
+
+function RebateChecker() {
+  const [rcStep, setRcStep] = useState("intro");
+  const [qIndex, setQIndex] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [results, setResults] = useState([]);
+  const currentQ = RC_QUESTIONS[qIndex];
+  const total = RC_QUESTIONS.length;
+  const select = (val) => setAnswers(p=>({...p,[currentQ.id]:val}));
+  const next = () => { if (qIndex<total-1) setQIndex(i=>i+1); else { setResults(calcRebateResults(answers)); setRcStep("results"); } };
+  const back = () => { if (qIndex>0) setQIndex(i=>i-1); else setRcStep("intro"); };
+  const reset = () => { setRcStep("intro"); setQIndex(0); setAnswers({}); setResults([]); };
+  const totalEst = results.reduce((s,r)=>s+(r.amount||0),0);
+  const eligibleCount = results.filter(r=>r.eligible).length;
+
+  if (rcStep==="intro") return (
+    <div className="rc-wrap">
+      <div className="rc-section">
+        <div className="rc-step-intro">
+          <div className="icon">💰</div>
+          <h2>CO Heat Pump Rebate Checker</h2>
+          <p>9 quick questions to estimate which Colorado rebates & credits your customer may qualify for. For contractor guidance only.</p>
+        </div>
+        <div className="rc-disc"><strong>⚠ Informational Only.</strong> Estimates based on program guidelines as of early 2026. Not tax or legal advice. Always verify with the <a href="https://energyoffice.colorado.gov" target="_blank" rel="noopener noreferrer">Colorado Energy Office</a>.</div>
+        <div className="rc-card">
+          <div className="rc-card-hd">📋 Programs Covered</div>
+          <div className="rc-card-bd" style={{fontSize:13,color:"#bbb",lineHeight:1.8}}>
+            <div>✅ <strong style={{color:"#f0e6d0"}}>CO State HP Tax Credit</strong> — up to $1,250 (no income req)</div>
+            <div>✅ <strong style={{color:"#f0e6d0"}}>HEAR Program</strong> — up to $9,750+ (income-qualified)</div>
+            <div>✅ <strong style={{color:"#f0e6d0"}}>HER Program</strong> — up to $8,000 (whole-home)</div>
+            <div>✅ <strong style={{color:"#f0e6d0"}}>Xcel Energy Rebates</strong> — up to $2,250/ton</div>
+          </div>
+        </div>
+        <button className="rc-btn rc-btn-cta" style={{width:"100%",marginTop:4}} onClick={()=>setRcStep("quiz")}>Start Questionnaire →</button>
+      </div>
+    </div>
+  );
+
+  if (rcStep==="quiz") {
+    const selected = answers[currentQ.id];
+    return (
+      <div className="rc-wrap">
+        <div className="rc-section">
+          <div className="rc-disc"><strong>Informational only.</strong> Verify all eligibility with CO Energy Office.</div>
+          <div className="rc-prog">{RC_QUESTIONS.map((_,i)=><div key={i} className={`rc-prog-dot ${i<qIndex?"done":i===qIndex?"active":""}`}/>)}</div>
+          <div style={{fontSize:11,color:"#555",marginBottom:14,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:"1px",textTransform:"uppercase"}}>Question {qIndex+1} of {total}</div>
+          <div className="rc-card">
+            <div className="rc-card-hd">🔍 Eligibility Check</div>
+            <div className="rc-card-bd">
+              <div className="rc-q">{currentQ.q}</div>
+              {currentQ.sub&&<div className="rc-q-sub">{currentQ.sub}</div>}
+              <div className="rc-opts">{currentQ.opts.map(opt=>(
+                <button key={opt.val} className={`rc-opt ${selected===opt.val?"sel":""}`} onClick={()=>select(opt.val)}>
+                  <div className="rc-opt-dot"/>{opt.label}
+                </button>
+              ))}</div>
+              <div className="rc-nav">
+                <button className="rc-btn rc-btn-ghost" onClick={back} style={{flex:"0 0 80px"}}>← Back</button>
+                <button className="rc-btn rc-btn-cta" onClick={next} disabled={!selected}>{qIndex===total-1?"See Results →":"Next →"}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (rcStep==="results") return (
+    <div className="rc-wrap">
+      <div className="rc-section">
+        <div className="rc-disc"><strong>⚠ Estimates only.</strong> Confirm with CO Energy Office and a tax professional before quoting savings.</div>
+        <div className="rc-total-bar">
+          <div><div className="rc-total-lbl">Potential Savings Est.</div><div style={{fontSize:11,color:"#888",marginTop:2}}>{eligibleCount} program{eligibleCount!==1?"s":""} likely eligible</div></div>
+          <div style={{textAlign:"right"}}><div className="rc-total-val">${totalEst.toLocaleString()}+</div><div style={{fontSize:10,color:"#888"}}>verify before presenting to customer</div></div>
+        </div>
+        {results.map((r,i)=>(
+          <div key={i} className="rc-result">
+            <div className={`rc-result-hd ${r.color}`}><span>{r.eligible?"✅":r.color==="amber"?"⚠":"○"} {r.program}</span><span className="rc-result-amt">{r.amountLabel}</span></div>
+            <div className="rc-result-bd">
+              <div style={{marginBottom:8}}><span className="rc-tag req">{r.phase}</span>{r.eligible&&<span className="rc-tag good">Likely Eligible</span>}{r.warnings.length>0&&<span className="rc-tag warn">Action Needed</span>}</div>
+              {r.notes.length>0&&<ul>{r.notes.map((n,j)=><li key={j}>{n}</li>)}</ul>}
+              {r.reqs.length>0&&<><div style={{fontWeight:700,color:"#f0e6d0",fontSize:12,marginTop:8,marginBottom:4}}>Requirements:</div><ul>{r.reqs.map((req,j)=><li key={j}>{req}</li>)}</ul></>}
+              {r.warnings.length>0&&<><div style={{fontWeight:700,color:"#ef5350",fontSize:12,marginTop:8,marginBottom:4}}>⚠ Watch out:</div><ul style={{color:"#ef9a9a"}}>{r.warnings.map((w,j)=><li key={j}>{w}</li>)}</ul></>}
+              <div style={{marginTop:8,paddingTop:8,borderTop:"1px solid #2a2a2a",fontSize:11,color:"#555"}}>📋 Customer paperwork: {r.customerPaperwork}<br/>📎 <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer">{r.source}</a></div>
+            </div>
+          </div>
+        ))}
+        <button className="rc-btn rc-btn-cta" style={{width:"100%",marginTop:8}} onClick={reset}>🔄 New Check</button>
+        <button className="rc-reset" onClick={reset}>Start Over</button>
+      </div>
+    </div>
+  );
+  return null;
+}
+
 /* ─── App ─────────────────────────────────────────────────────────────────── */
 export default function WrenchBid() {
   const [tab, setTab] = useState("new");
@@ -291,12 +496,12 @@ export default function WrenchBid() {
   /* ── Auth state ── */
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
-  const [authMode, setAuthMode] = useState("signin"); // signin | signup
+  const [authMode, setAuthMode] = useState("signin");
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
-  const [step, setStep] = useState("idle"); // idle | recording | processing | preview
+  const [step, setStep] = useState("idle");
   const [transcript, setTranscript] = useState("");
   const [quote, setQuote] = useState(null);
   const [clientPhone, setClientPhone] = useState("");
@@ -309,7 +514,7 @@ export default function WrenchBid() {
   const toastTimer = useRef(null);
   const displayRef = useRef("");
   const finalRef = useRef("");
-  const interimRef = useRef(""); // updated every render so always current
+  const interimRef = useRef("");
 
   useEffect(() => {
     try { localStorage.setItem("wb_history", JSON.stringify(history)); } catch {}
@@ -391,7 +596,6 @@ export default function WrenchBid() {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
     if (!isMobile && 'webkitSpeechRecognition' in window) {
-      // Desktop: use native Web Speech API (more accurate in Chrome)
       const rec = new window.webkitSpeechRecognition();
       rec.continuous = true;
       rec.interimResults = true;
@@ -579,6 +783,7 @@ export default function WrenchBid() {
   };
 
   const newQuote = () => { setQuote(null); finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript(""); setStep("idle"); setClientPhone(""); setTab("new"); };
+
   const clearHistory = async () => {
     if (window.confirm("Delete all saved quotes? This cannot be undone.")) {
       setHistory([]);
@@ -604,7 +809,7 @@ export default function WrenchBid() {
   return (
     <div className="app">
 
-      {/* Auth modal — shown when not signed in */}
+      {/* Auth modal */}
       {!user && (
         <div className="auth-overlay">
           <div className="auth-box">
@@ -666,7 +871,7 @@ export default function WrenchBid() {
 
       {/* Tabs */}
       <nav className="tabs">
-        {[["new","⚡ New Quote"],["history","📋 History"],["setup","⚙ Setup"]].map(([id, label]) => (
+        {[["new","⚡ Quote"],["history","📋 History"],["rebates","💰 Rebates"],["setup","⚙ Setup"]].map(([id, label]) => (
           <button key={id} className={`tab ${tab === id ? "on" : ""}`} onClick={() => setTab(id)}>{label}</button>
         ))}
       </nav>
@@ -675,7 +880,6 @@ export default function WrenchBid() {
       {tab === "new" && (
         <div className="page">
 
-          {/* Step: idle or recording */}
           {step !== "preview" && (
             <>
               <div className="tip">
@@ -705,7 +909,7 @@ export default function WrenchBid() {
 
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={() => {
-                  finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript(""); sessionFinal = "";
+                  finalRef.current = ""; interimRef.current = ""; displayRef.current = ""; setTranscript("");
                 }}>Clear</button>
                 <button
                   className="btn btn-cta"
@@ -727,10 +931,8 @@ export default function WrenchBid() {
             </>
           )}
 
-          {/* Step: preview */}
           {step === "preview" && quote && (
             <>
-              {/* Quote Document */}
               <div className="qdoc">
                 <div className="qdoc-hd">
                   <div className="qdoc-biz">{biz.name}</div>
@@ -929,6 +1131,13 @@ export default function WrenchBid() {
         </div>
       )}
 
+      {/* ─────────────── REBATES TAB ─────────────── */}
+      {tab === "rebates" && (
+        <div className="page" style={{background:"#1a1a1a",padding:"16px 20px"}}>
+          <RebateChecker />
+        </div>
+      )}
+
       {/* ─────────────── SETUP TAB ─────────────── */}
       {tab === "setup" && (
         <div className="page">
@@ -956,6 +1165,21 @@ export default function WrenchBid() {
               <div className="field">
                 <label>License # <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>(optional)</span></label>
                 <input value={biz.licenseNum} onChange={e => setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345" />
+              </div>
+
+              <div className="field">
+                <label>Voice Language / Idioma</label>
+                <select value={biz.language || "en-US"} onChange={e => setBiz(b=>({...b,language:e.target.value}))}>
+                  <option value="en-US">🇺🇸 English</option>
+                  <option value="es-US">🇲🇽 Spanish / Español</option>
+                  <option value="pt-BR">🇧🇷 Portuguese / Português</option>
+                  <option value="fr-FR">🇫🇷 French / Français</option>
+                  <option value="zh-CN">🇨🇳 Chinese / 中文</option>
+                  <option value="vi-VN">🇻🇳 Vietnamese / Tiếng Việt</option>
+                  <option value="ko-KR">🇰🇷 Korean / 한국어</option>
+                  <option value="ar-SA">🇸🇦 Arabic / العربية</option>
+                </select>
+                <div className="field-hint">Speak in your language — quotes are always built in English.</div>
               </div>
 
               <div className="field">
@@ -1020,7 +1244,7 @@ export default function WrenchBid() {
                 <textarea
                   value={biz.customTerms}
                   onChange={e => setBiz(b=>({...b,customTerms:e.target.value}))}
-                  placeholder="e.g. Quote valid for stated number of days. Client is responsible for obtaining permits unless otherwise agreed. Any additional work beyond scope will require a separate written quote."
+                  placeholder="e.g. Quote valid for stated number of days. Client is responsible for obtaining permits unless otherwise agreed."
                 />
               </div>
               <button className="btn btn-cta btn-full" onClick={() => { setTab("new"); saveBizToCloud(biz); ping("Profile saved ✓"); }}>
@@ -1033,7 +1257,6 @@ export default function WrenchBid() {
             <strong>Your info shows on every quote.</strong> Add your phone so clients can call you directly from the SMS quote.
           </div>
 
-
           <div className="div" />
 
           <div style={{fontSize:12,color:"var(--muted)",lineHeight:1.8}}>
@@ -1041,6 +1264,8 @@ export default function WrenchBid() {
             ✅ Voice-to-quote via AI<br/>
             ✅ Quote preview + history<br/>
             ✅ SMS delivery<br/>
+            ✅ Multi-language voice input<br/>
+            ✅ CO Heat Pump Rebate Checker<br/>
             🔜 PDF download<br/>
             🔜 Client e-signature<br/>
             🔜 Email delivery<br/>
