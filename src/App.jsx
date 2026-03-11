@@ -125,6 +125,32 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .app-footer a{color:var(--muted);text-decoration:underline;margin:0 6px}
 .div{height:1px;background:var(--rule);margin:16px 0}
 .auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.ob-wrap{position:fixed;inset:0;z-index:1100;background:var(--ink);display:flex;flex-direction:column;overflow:hidden}
+.ob-slides{display:flex;flex:1;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.ob-slide{min-width:100%;padding:0 28px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.ob-icon{font-size:64px;margin-bottom:20px;line-height:1}
+.ob-title{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--amber);line-height:1.1;margin-bottom:12px}
+.ob-sub{font-size:15px;color:#b0a890;line-height:1.6;max-width:300px;margin:0 auto}
+.ob-demo{background:#1a1a1a;border:1.5px solid var(--steel2);border-radius:6px;padding:14px 16px;margin:20px 0;width:100%;text-align:left}
+.ob-demo-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ob-demo-text{font-size:14px;color:#e8e0d0;line-height:1.5;min-height:44px}
+.ob-cursor{display:inline-block;width:2px;height:14px;background:var(--amber);margin-left:2px;animation:blink .7s step-end infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ob-quote-preview{background:#1a1a1a;border:1.5px solid var(--steel2);border-radius:6px;padding:14px 16px;margin:20px 0;width:100%;text-align:left}
+.ob-qrow{display:flex;justify-content:space-between;font-size:13px;color:#b0a890;padding:4px 0;border-bottom:1px solid #2a2a2a}
+.ob-qrow:last-child{border-bottom:none;color:var(--amber);font-weight:700;font-size:15px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px}
+.ob-phrases{margin:16px 0;width:100%;text-align:left;display:flex;flex-direction:column;gap:8px}
+.ob-phrase{background:#1a1a1a;border-left:3px solid var(--amber);padding:10px 14px;border-radius:0 4px 4px 0;font-size:13px;color:#e8e0d0;font-style:italic;line-height:1.4}
+.ob-dots{display:flex;gap:8px;justify-content:center;padding:16px 0}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--steel2);transition:all .3s}
+.ob-dot.on{background:var(--amber);width:24px;border-radius:4px}
+.ob-footer{padding:16px 28px 32px;display:flex;flex-direction:column;gap:10px}
+.ob-btn-main{width:100%;padding:15px;background:var(--amber);color:var(--ink);font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:4px;cursor:pointer;transition:background .15s}
+.ob-btn-main:hover{background:var(--amber-deep);color:var(--white)}
+.ob-btn-skip{background:none;border:none;color:var(--steel2);font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:4px;font-family:'Barlow Condensed',sans-serif}
+.ob-btn-skip:hover{color:#888}
+.ob-btn-next{background:none;border:1.5px solid var(--steel2);color:#b0a890;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:4px;padding:12px;cursor:pointer;transition:all .15s}
+.ob-btn-next:hover{border-color:var(--amber);color:var(--amber)}
 .auth-box{background:var(--white);border-radius:6px;width:100%;max-width:380px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
 .auth-hd{background:var(--ink);padding:24px;text-align:center}
 .auth-logo{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;letter-spacing:3px;color:var(--amber)}
@@ -1166,6 +1192,9 @@ export default function WrenchBid() {
   const [user,setUser]=useState(null);
   const [authReady,setAuthReady]=useState(false);
   const [authMode,setAuthMode]=useState("signin");
+  const [onboardDone,setOnboardDone]=useState(()=>!!localStorage.getItem("wb_onboarded"));
+  const [onboardStep,setOnboardStep]=useState(0);
+  const [onboardTyped,setOnboardTyped]=useState("");
   const [authEmail,setAuthEmail]=useState("");
   const [authPassword,setAuthPassword]=useState("");
   const [authError,setAuthError]=useState("");
@@ -1188,6 +1217,20 @@ export default function WrenchBid() {
 
   useEffect(()=>{ try{localStorage.setItem("wb_history",JSON.stringify(history));}catch{} },[history]);
   useEffect(()=>{ try{localStorage.setItem("wb_biz",JSON.stringify(biz));}catch{} },[biz]);
+
+  // Typewriter animation for onboarding screen 1
+  const DEMO_TEXT = "Replace water heater for John Smith, 3 hours at $105 an hour, parts $380";
+  useEffect(()=>{
+    if(onboardDone||onboardStep!==0) return;
+    setOnboardTyped("");
+    let i=0;
+    const interval=setInterval(()=>{
+      i++;
+      setOnboardTyped(DEMO_TEXT.slice(0,i));
+      if(i>=DEMO_TEXT.length) clearInterval(interval);
+    },38);
+    return()=>clearInterval(interval);
+  },[onboardStep,onboardDone]);
 
   // Auto-update check: compare current JS bundle hash with what's deployed
   const [updateAvailable,setUpdateAvailable]=useState(false);
@@ -1482,9 +1525,91 @@ export default function WrenchBid() {
         </div>
       )}
       {!user&&(
+        {!onboardDone&&!user&&(
+          <div className="ob-wrap">
+            {/* Slides */}
+            <div className="ob-slides" style={{transform:`translateX(-${onboardStep*100}%)`}}>
+
+              {/* Slide 1 — The hook */}
+              <div className="ob-slide">
+                <div className="ob-icon">🎙</div>
+                <div className="ob-title">Quote any job<br/>in 60 seconds</div>
+                <div className="ob-sub">Just speak the job out loud. WrenchBid builds a professional quote instantly — no typing, no templates.</div>
+                <div className="ob-demo">
+                  <div className="ob-demo-label"><span style={{width:8,height:8,borderRadius:"50%",background:"#b03030",display:"inline-block"}}/>Recording…</div>
+                  <div className="ob-demo-text">{onboardTyped}{onboardTyped.length<74&&<span className="ob-cursor"/>}</div>
+                </div>
+              </div>
+
+              {/* Slide 2 — Show the output */}
+              <div className="ob-slide">
+                <div className="ob-icon">⚡</div>
+                <div className="ob-title">Speaks trades.<br/>Builds quotes.</div>
+                <div className="ob-sub">Say it like you'd say it to a homeowner. WrenchBid understands hours, rates, materials, and client names.</div>
+                <div className="ob-quote-preview">
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,letterSpacing:2,color:"var(--amber)",marginBottom:10,textTransform:"uppercase"}}>Quote Preview</div>
+                  {[["Water Heater Replacement",""],["Labor — 3 hrs @ $105/hr","$315.00"],["Parts & Materials","$380.00"],["TOTAL","$695.00"]].map(([d,a],i)=>(
+                    <div key={i} className="ob-qrow"><span>{d}</span>{a&&<span>{a}</span>}</div>
+                  ))}
+                </div>
+                <div className="ob-phrases">
+                  <div className="ob-phrase">"Roof repair for the Johnsons, 5 hours at $90, shingles cost me $210"</div>
+                  <div className="ob-phrase">"Electrical panel upgrade, flat rate $1,800, client is Mike Torres"</div>
+                </div>
+              </div>
+
+              {/* Slide 3 — Send it */}
+              <div className="ob-slide">
+                <div className="ob-icon">📱</div>
+                <div className="ob-title">Text it to your<br/>client instantly</div>
+                <div className="ob-sub">Send a professional quote via SMS with a tap. Your client gets a link to view and save the full quote as a PDF.</div>
+                <div className="ob-demo" style={{marginTop:20}}>
+                  <div className="ob-demo-label" style={{color:"#4caf50"}}>✓ What your client receives</div>
+                  <div style={{fontSize:13,color:"#e8e0d0",lineHeight:1.7}}>
+                    Hi John! Here's your quote from <strong style={{color:"var(--amber)"}}>Smith Plumbing</strong>.<br/>
+                    📋 Water Heater Replacement<br/>
+                    💰 Total: <strong style={{color:"var(--amber)"}}>$695.00</strong><br/>
+                    📅 Valid: 30 days<br/>
+                    🔗 <span style={{color:"#64b5f6",textDecoration:"underline"}}>View full quote →</span>
+                  </div>
+                </div>
+                <div style={{fontSize:12,color:"#666",marginTop:12}}>Free to use. No credit card required.</div>
+              </div>
+            </div>
+
+            {/* Dots */}
+            <div className="ob-dots">
+              {[0,1,2].map(i=><div key={i} className={`ob-dot ${onboardStep===i?"on":""}`} onClick={()=>setOnboardStep(i)}/>)}
+            </div>
+
+            {/* Footer buttons */}
+            <div className="ob-footer">
+              {onboardStep<2?(
+                <>
+                  <button className="ob-btn-main" onClick={()=>setOnboardStep(s=>s+1)}>Next →</button>
+                  <button className="ob-btn-skip" onClick={()=>{localStorage.setItem("wb_onboarded","1");setOnboardDone(true);setAuthMode("signup");}}>Skip intro</button>
+                </>
+              ):(
+                <>
+                  <button className="ob-btn-main" onClick={()=>{localStorage.setItem("wb_onboarded","1");setOnboardDone(true);setAuthMode("signup");}}>Get Started Free →</button>
+                  <button className="ob-btn-next" onClick={()=>{localStorage.setItem("wb_onboarded","1");setOnboardDone(true);setAuthMode("signin");}}>Already have an account? Sign in</button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="auth-overlay">
           <div className="auth-box">
-            <div className="auth-hd"><div className="auth-logo">Wrench<em>Bid</em></div><div className="auth-tagline">Voice-to-quote for tradespeople</div></div>
+            <div className="auth-hd">
+                <div className="auth-logo">Wrench<em>Bid</em></div>
+                <div className="auth-tagline">Voice-to-quote for tradespeople</div>
+                <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:4}}>
+                  {["🎙 Speak the job — quote builds itself","📱 Text it to your client in one tap","💰 Free to use, works on any phone"].map((t,i)=>(
+                    <div key={i} style={{fontSize:12,color:"#888",textAlign:"left",paddingLeft:8}}>{t}</div>
+                  ))}
+                </div>
+              </div>
             <div className="auth-stripe"/>
             <div className="auth-bd">
               <div className="auth-tabs">
