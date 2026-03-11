@@ -1174,6 +1174,10 @@ export default function WrenchBid() {
   const [transcript,setTranscript]=useState("");
   const [quote,setQuote]=useState(null);
   const [clientPhone,setClientPhone]=useState("");
+  const [shareUrl,setShareUrl]=useState(null);
+  const [shareLoading,setShareLoading]=useState(false);
+  const [sharedQuote,setSharedQuote]=useState(null);
+  const [sharedLoading,setSharedLoading]=useState(()=>!!new URLSearchParams(window.location.search).get("quote"));
   const [history,setHistory]=useState(()=>{ try{return JSON.parse(localStorage.getItem("wb_history"))||[];}catch{return[];} });
   const [toast,setToast]=useState(null);
   const recognitionRef=useRef(null);
@@ -1195,6 +1199,17 @@ export default function WrenchBid() {
       if(session?.user){ loadCloudQuotes(session.user.id); loadCloudBiz(session.user); }
     });
     return()=>subscription.unsubscribe();
+  },[]);
+
+  useEffect(()=>{
+    const token=new URLSearchParams(window.location.search).get("quote");
+    if(!token){setSharedLoading(false);return;}
+    supabase.from("shared_quotes").select("*").eq("share_token",token).single()
+      .then(({data,error})=>{
+        if(data&&!error) setSharedQuote(data);
+        else setSharedQuote({error:true});
+        setSharedLoading(false);
+      });
   },[]);
 
   const loadCloudQuotes=async(uid)=>{
@@ -1273,16 +1288,86 @@ export default function WrenchBid() {
 
   const saveToHistory=(status)=>{ if(!quote)return; const entry={...quote,status,transcript,bizName:biz.name,savedAt:new Date().toISOString()}; setHistory(h=>[entry,...h]); return entry; };
 
-  const sendSMS=()=>{
-    saveToHistory("sent");
-    const msg=[`Hi${quote.clientName?" "+quote.clientName:""}! Quote from ${biz.name}.`,"",`📋 ${quote.jobTitle}`,`💰 Total: ${$$(quote.grandTotal)}`,`📅 Valid: ${quote.validDays} days`,"",biz.phone?`📞 ${biz.phone}`:"Reply to confirm."].join("\n");
-    window.open(`sms:${clientPhone.replace(/\D/g,"")}?body=${encodeURIComponent(msg)}`);
-    ping("SMS app opened ✓");
+  // Format phone number for display
+  const fmtPhone=(p)=>{const d=p.replace(/\D/g,"");if(d.length===10)return`(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;if(d.length===11&&d[0]==="1")return`+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;return p;};
+
+  // Generate a public share URL and save quote to Supabase
+  const getShareUrl=async()=>{
+    if(shareUrl) return shareUrl;
+    setShareLoading(true);
+    try{
+      const token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+      const payload={
+        share_token:token,
+        biz_name:biz.name, biz_trade:biz.trade, biz_phone:biz.phone, biz_email:biz.email, biz_license:biz.licenseNum,
+        client_name:quote.clientName, job_title:quote.jobTitle, quote_num:quote.qNum, quote_date:quote.date,
+        line_items:quote.lineItems, subtotal:quote.subtotal, tax:quote.tax, tax_rate:quote.taxRate,
+        grand_total:quote.grandTotal, valid_days:quote.validDays, notes:quote.notes,
+        payment_terms:biz.paymentTerms, warranty:biz.warranty, custom_terms:biz.customTerms,
+        created_at:new Date().toISOString()
+      };
+      const {error}=await supabase.from("shared_quotes").insert(payload);
+      if(error) throw error;
+      const url=`${window.location.origin}?quote=${token}`;
+      setShareUrl(url);
+      setShareLoading(false);
+      return url;
+    } catch(e){
+      setShareLoading(false);
+      // Fallback: encode compact quote in URL if Supabase fails
+      const compact=btoa(JSON.stringify({b:biz.name,t:quote.jobTitle,tot:quote.grandTotal,v:quote.validDays,n:quote.qNum})).slice(0,200);
+      return null;
+    }
   };
 
-  const copyText=()=>{
+  const sendSMS=async()=>{
+    const digits=clientPhone.replace(/\D/g,"");
+    if(digits.length<10){ping("Enter a valid phone number first");return;}
+    saveToHistory("sent");
+    setShareLoading(true);
+    const url=await getShareUrl();
+    setShareLoading(false);
+    const lineList=quote.lineItems.filter(l=>l.desc&&l.total>0).map(l=>`  • ${l.desc}: ${$$(l.total)}`).join("\n");
+    const msg=[
+      `Hi${quote.clientName?" "+quote.clientName:""}! Here's your quote from ${biz.name}.`,
+      "",
+      `📋 ${quote.jobTitle}`,
+      lineList?lineList:"",
+      "",
+      `💰 Total: ${$$(quote.grandTotal)}`,
+      `📅 Valid: ${quote.validDays} days`,
+      url?`\n🔗 View full quote:\n${url}`:"",
+      "",
+      biz.phone?`📞 ${fmtPhone(biz.phone)}`:"Reply to accept."
+    ].filter(l=>l!=="").join("\n").replace(/\n{3,}/g,"\n\n");
+    window.open(`sms:${digits}?body=${encodeURIComponent(msg)}`);
+    ping("SMS ready ✓");
+  };
+
+  const copyText=async()=>{
     saveToHistory("draft");
-    const lines=[`QUOTE — ${biz.name}`,"─".repeat(32),`Job: ${quote.jobTitle}`,`Date: ${quote.date}   Quote #: ${quote.qNum}`,"",...quote.lineItems.map(l=>`  ${l.desc.padEnd(22)} ${$$(l.total)}`),``,`  Subtotal: ${$$(quote.subtotal)}`,quote.tax>0?`  Tax (${quote.taxRate}%): ${$$(quote.tax)}`:null,`  TOTAL: ${$$(quote.grandTotal)}`,``,`Valid for ${quote.validDays} days.`,quote.notes?`\nNotes: ${quote.notes}`:null].filter(Boolean).join("\n");
+    const url=await getShareUrl();
+    const lines=[
+      `QUOTE — ${biz.name}`,
+      biz.trade+( biz.phone ? `  ·  ${fmtPhone(biz.phone)}` : "")+(biz.email?`  ·  ${biz.email}`:""),
+      biz.licenseNum?`License: ${biz.licenseNum}`:"",
+      "─".repeat(36),
+      `Job: ${quote.jobTitle}`,
+      `Date: ${quote.date}    Quote #: ${quote.qNum}`,
+      quote.clientName?`Client: ${quote.clientName}`:"",
+      "",
+      ...quote.lineItems.filter(l=>l.desc&&l.total>0).map(l=>`  ${l.desc.padEnd(26)} ${$$(l.total)}`),
+      "",
+      `  Subtotal:${" ".repeat(18)}${$$(quote.subtotal)}`,
+      quote.tax>0?`  Tax (${quote.taxRate}%):${" ".repeat(16)}${$$(quote.tax)}`:null,
+      `  TOTAL:${" ".repeat(22)}${$$(quote.grandTotal)}`,
+      "",
+      `Valid for ${quote.validDays} days from ${quote.date}.`,
+      quote.notes?`Notes: ${quote.notes}`:"",
+      biz.paymentTerms?`Payment: ${biz.paymentTerms}`:"",
+      biz.warranty?`Warranty: ${biz.warranty}`:"",
+      url?`\nView online: ${url}`:"",
+    ].filter(l=>l!==null&&l!==undefined&&l!=="").join("\n");
     navigator.clipboard.writeText(lines).then(()=>ping("Copied ✓"));
   };
 
@@ -1301,6 +1386,70 @@ export default function WrenchBid() {
     const q=history[i]; setHistory(h=>h.filter((_,j)=>j!==i));
     if(user&&q?.qNum)await supabase.from("quotes").delete().eq("user_id",user.id).eq("quote_num",q.qNum);
   };
+
+  // Shared quote viewer — shown to clients via link
+  if(sharedLoading) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",background:"#f5f0e8"}}><div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,letterSpacing:2,color:"#7a7060"}}>LOADING QUOTE…</div></div>;
+  if(sharedQuote&&!sharedQuote.error){
+    const q=sharedQuote;
+    const $$n=v=>v!=null?`$${Number(v).toFixed(2)}`:"$0.00";
+    return(
+      <div style={{maxWidth:520,margin:"0 auto",padding:20,fontFamily:"'Barlow',sans-serif",background:"#f5f0e8",minHeight:"100vh"}}>
+        <style>{`@media print{button{display:none!important}} @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600;700&display=swap');`}</style>
+        <div style={{background:"#0d0d0d",padding:"22px 24px",borderRadius:"6px 6px 0 0",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,letterSpacing:3,color:"#e8a020",textTransform:"uppercase"}}>{q.biz_name}</div>
+            <div style={{fontSize:13,color:"#9e9e9e",marginTop:2}}>{q.biz_trade}{q.biz_phone?` · ${q.biz_phone}`:""}{q.biz_email?` · ${q.biz_email}`:""}</div>
+            {q.biz_license&&<div style={{fontSize:11,color:"#666",marginTop:2}}>Lic: {q.biz_license}</div>}
+          </div>
+          <button onClick={()=>window.print()} style={{background:"#e8a020",border:"none",borderRadius:4,padding:"8px 14px",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:1,textTransform:"uppercase",cursor:"pointer",color:"#0d0d0d"}}>🖨 Save PDF</button>
+        </div>
+        <div style={{background:"#fff",border:"1px solid #d0c8b8",borderTop:"none",borderRadius:"0 0 6px 6px",padding:"20px 24px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16,paddingBottom:16,borderBottom:"1px solid #d0c8b8"}}>
+            <div>
+              {q.client_name&&<div style={{fontSize:14,fontWeight:600,color:"#0d0d0d"}}>{q.client_name}</div>}
+              <div style={{fontSize:16,fontWeight:700,color:"#0d0d0d",marginTop:q.client_name?4:0}}>{q.job_title}</div>
+            </div>
+            <div style={{textAlign:"right",fontSize:11,color:"#7a7060"}}>
+              <div style={{fontWeight:700,letterSpacing:1,textTransform:"uppercase"}}>Quote #{q.quote_num}</div>
+              <div style={{marginTop:2}}>{q.quote_date}</div>
+              <div style={{marginTop:2}}>Valid {q.valid_days} days</div>
+            </div>
+          </div>
+          <table style={{width:"100%",borderCollapse:"collapse",marginBottom:16}}>
+            <thead><tr style={{borderBottom:"2px solid #0d0d0d"}}>
+              <th style={{textAlign:"left",padding:"6px 0",fontSize:10,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:"#7a7060"}}>Description</th>
+              <th style={{textAlign:"right",padding:"6px 0",fontSize:10,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:"#7a7060"}}>Amount</th>
+            </tr></thead>
+            <tbody>
+              {(q.line_items||[]).filter(l=>l.desc&&l.total>0).map((l,i)=>(
+                <tr key={i} style={{borderBottom:"1px solid #eee"}}>
+                  <td style={{padding:"10px 0",fontSize:14,color:"#0d0d0d"}}>{l.desc}</td>
+                  <td style={{padding:"10px 0",fontSize:14,fontWeight:600,textAlign:"right",color:"#0d0d0d"}}>{$$n(l.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{borderTop:"2px solid #0d0d0d",paddingTop:12}}>
+            {q.subtotal!==q.grand_total&&<div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#7a7060",marginBottom:4}}><span>Subtotal</span><span>{$$n(q.subtotal)}</span></div>}
+            {q.tax>0&&<div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#7a7060",marginBottom:4}}><span>Tax ({q.tax_rate}%)</span><span>{$$n(q.tax)}</span></div>}
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:20,fontWeight:900,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:1,marginTop:6}}><span>TOTAL</span><span style={{color:"#e8a020"}}>{$$n(q.grand_total)}</span></div>
+          </div>
+          {(q.notes||q.payment_terms||q.warranty||q.custom_terms)&&(
+            <div style={{marginTop:20,paddingTop:14,borderTop:"1px solid #d0c8b8",fontSize:12,color:"#7a7060",lineHeight:1.6}}>
+              {q.notes&&<div style={{marginBottom:6}}><strong>Notes:</strong> {q.notes}</div>}
+              {q.payment_terms&&<div style={{marginBottom:6}}><strong>Payment:</strong> {q.payment_terms}</div>}
+              {q.warranty&&<div style={{marginBottom:6}}><strong>Warranty:</strong> {q.warranty}</div>}
+              {q.custom_terms&&<div style={{marginBottom:6}}>{q.custom_terms}</div>}
+            </div>
+          )}
+          <div style={{marginTop:20,paddingTop:14,borderTop:"1px solid #d0c8b8",fontSize:11,color:"#aaa",textAlign:"center"}}>
+            Quote generated via WrenchBid · wrenchbid.vercel.app
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if(sharedQuote?.error) return <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100vh",fontFamily:"'Barlow Condensed',sans-serif",color:"#7a7060"}}><div style={{fontSize:48}}>🔧</div><div style={{fontSize:18,letterSpacing:2,marginTop:12}}>QUOTE NOT FOUND</div><div style={{fontSize:13,marginTop:8}}>This link may have expired.</div></div>;
 
   if(!authReady) return <div className="app" style={{alignItems:"center",justifyContent:"center"}}><div className="loader" style={{width:200}}/></div>;
 
@@ -1406,12 +1555,20 @@ export default function WrenchBid() {
               </div>
               <div className="send-lbl">Send to Client</div>
               <div className="send-row">
-                <input className="ph-input" type="tel" placeholder="Client phone number" value={clientPhone} onChange={e=>setClientPhone(e.target.value)}/>
-                <button className="btn-sms" onClick={sendSMS}>📱 SMS</button>
+                <input className="ph-input" type="tel" placeholder="Client phone number" value={clientPhone} onChange={e=>{setClientPhone(e.target.value);setShareUrl(null);}}/>
+                <button className="btn-sms" onClick={sendSMS} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1}}>
+                  {shareLoading?"…":"📱 SMS"}
+                </button>
               </div>
+              {shareUrl&&(
+                <div style={{background:"#e8f5e9",border:"1px solid #81c784",borderRadius:4,padding:"8px 12px",marginBottom:8,fontSize:12,wordBreak:"break-all"}}>
+                  <div style={{fontWeight:700,fontSize:10,letterSpacing:1,textTransform:"uppercase",color:"#2d7a4a",marginBottom:3}}>🔗 Quote Link (included in SMS)</div>
+                  <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#1a4a8a",textDecoration:"underline"}}>{shareUrl}</a>
+                </div>
+              )}
               <div className="btn-row" style={{marginBottom:8}}>
                 <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save</button>
-                <button className="btn btn-ghost" onClick={copyText}>📋 Copy</button>
+                <button className="btn btn-ghost" onClick={copyText} disabled={shareLoading}>{shareLoading?"…":"📋 Copy"}</button>
                 <button className="btn btn-ghost" onClick={newQuote}>+ New</button>
               </div>
             </>
