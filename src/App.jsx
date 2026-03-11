@@ -18,7 +18,7 @@ if (!document.getElementById("wb-font")) {
 /* ─── Styles ──────────────────────────────────────────────────────────────── */
 const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body,#root{width:100%;min-height:100vh;}
+html,body,#root{width:100%;min-height:100vh;min-height:-webkit-fill-available;}
 :root{
   --ink:#0d0d0d;--paper:#f5f0e8;--amber:#e8a020;--amber-deep:#b07010;
   --amber-light:#fef3d0;--steel:#2a2a2a;--steel2:#3d3d3d;--rule:#d0c8b8;
@@ -27,7 +27,7 @@ html,body,#root{width:100%;min-height:100vh;}
   --shadow:0 4px 24px rgba(0,0,0,0.12);
 }
 body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;line-height:1.4}
-.app{width:100%;max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--paper);position:relative}
+.app{width:100%;max-width:460px;margin:0 auto;min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;background:var(--paper);position:relative}
 .hdr{background:var(--ink);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .logo{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:3px;color:var(--amber);text-transform:uppercase}
 .logo em{color:var(--white);font-style:normal}
@@ -35,7 +35,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .tabs{display:flex;width:100%;border-bottom:3px solid var(--ink);background:var(--white)}
 .tab{flex:1;padding:10px 4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .15s}
 .tab.on{color:var(--ink);border-bottom-color:var(--amber)}
-.page{flex:1;padding:20px;overflow-y:auto}
+.page{flex:1;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .card{background:var(--white);border:1.5px solid var(--rule);border-radius:4px;margin-bottom:16px;overflow:hidden}
 .card-hd{background:var(--ink);padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber)}
 .card-bd{padding:16px}
@@ -85,7 +85,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .editable-meta{font-size:14px;font-weight:600}
 .send-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .send-row{display:flex;gap:8px;margin-bottom:10px}
-.ph-input{flex:1;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;padding:12px 14px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none}
+.ph-input{flex:1;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;padding:12px 14px;font-size:16px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none}
 .ph-input:focus{border-color:var(--amber)}
 .btn-sms{background:var(--amber);color:var(--ink);border:none;border-radius:3px;padding:0 18px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:background .15s}
 .btn-sms:hover{background:var(--amber-deep);color:var(--white)}
@@ -103,7 +103,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .chip.saved{background:var(--blue-light);color:var(--blue)}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;padding:11px 14px;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;font-size:16px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amber)}
 .field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 .field textarea{resize:vertical;min-height:72px;line-height:1.5}
@@ -137,7 +137,7 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .auth-tab.on{color:var(--ink);border-bottom-color:var(--amber)}
 .auth-field{margin-bottom:14px}
 .auth-field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.auth-field input{width:100%;padding:12px 14px;background:var(--paper);border:1.5px solid var(--rule);border-radius:3px;font-size:15px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
+.auth-field input{width:100%;padding:12px 14px;background:var(--paper);border:1.5px solid var(--rule);border-radius:3px;font-size:16px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
 .auth-field input:focus{border-color:var(--amber)}
 .auth-err{background:#fff0f0;border-left:3px solid var(--red);padding:10px 12px;font-size:13px;color:var(--red);border-radius:0 3px 3px 0;margin-bottom:14px;line-height:1.4}
 .auth-foot{text-align:center;margin-top:14px;font-size:12px;color:var(--muted)}
@@ -1228,7 +1228,7 @@ export default function WrenchBid() {
       const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model=nova-2&language="+(biz.language||"en-US")+"&interim_results=true&endpointing=100&no_delay=true&numerals=true",["token",token]);
       ws.onopen=()=>{
         if(!active){ ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
-        const mt=["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"].find(t=>MediaRecorder.isTypeSupported(t))||"";
+        const mt=["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg","audio/mp4"].find(t=>{ try{return MediaRecorder.isTypeSupported(t);}catch{return false;} })||"";
         const mr=new MediaRecorder(stream,mt?{mimeType:mt}:{});
         mr.ondataavailable=(e)=>{ if(active&&ws.readyState===WebSocket.OPEN&&e.data.size>0)ws.send(e.data); };
         mr.start(100);
