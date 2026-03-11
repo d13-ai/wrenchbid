@@ -1524,8 +1524,7 @@ export default function WrenchBid() {
           <button onClick={()=>window.location.reload()} style={{background:"#e8a020",color:"#0d0d0d",border:"none",borderRadius:3,padding:"5px 14px",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:1,textTransform:"uppercase",cursor:"pointer"}}>Update Now</button>
         </div>
       )}
-      {!user&&(
-        {!onboardDone&&!user&&(
+      {!onboardDone&&!user&&(
           <div className="ob-wrap">
             {/* Slides */}
             <div className="ob-slides" style={{transform:`translateX(-${onboardStep*100}%)`}}>
@@ -1599,6 +1598,7 @@ export default function WrenchBid() {
           </div>
         )}
 
+        {!user&&(
         <div className="auth-overlay">
           <div className="auth-box">
             <div className="auth-hd">
@@ -1624,6 +1624,7 @@ export default function WrenchBid() {
             </div>
           </div>
         </div>
+        )}
       )}
 
       <header className="hdr">
