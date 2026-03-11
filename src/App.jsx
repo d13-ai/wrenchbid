@@ -1189,6 +1189,26 @@ export default function WrenchBid() {
   useEffect(()=>{ try{localStorage.setItem("wb_history",JSON.stringify(history));}catch{} },[history]);
   useEffect(()=>{ try{localStorage.setItem("wb_biz",JSON.stringify(biz));}catch{} },[biz]);
 
+  // Auto-update check: compare current JS bundle hash with what's deployed
+  const [updateAvailable,setUpdateAvailable]=useState(false);
+  useEffect(()=>{
+    const currentScript=[...document.querySelectorAll('script[src]')].find(s=>s.src.includes('/assets/'))?.src||"";
+    const check=async()=>{
+      try{
+        const res=await fetch("/?_cb="+Date.now(),{cache:"no-store"});
+        const html=await res.text();
+        const match=html.match(/\/assets\/index-([^"]+)\.js/);
+        if(match&&currentScript&&!currentScript.includes(match[1])){
+          setUpdateAvailable(true);
+        }
+      }catch{}
+    };
+    // Check after 30s (let app settle), then every 5 minutes
+    const t1=setTimeout(check,30000);
+    const t2=setInterval(check,5*60*1000);
+    return()=>{clearTimeout(t1);clearInterval(t2);};
+  },[]);
+
   useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>{
       setUser(session?.user??null); setAuthReady(true);
@@ -1455,6 +1475,12 @@ export default function WrenchBid() {
 
   return (
     <div className="app">
+      {updateAvailable&&(
+        <div style={{background:"#1a4a8a",color:"#fff",padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:13,fontWeight:600,gap:10,zIndex:300}}>
+          <span>🆕 New version available</span>
+          <button onClick={()=>window.location.reload()} style={{background:"#e8a020",color:"#0d0d0d",border:"none",borderRadius:3,padding:"5px 14px",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:1,textTransform:"uppercase",cursor:"pointer"}}>Update Now</button>
+        </div>
+      )}
       {!user&&(
         <div className="auth-overlay">
           <div className="auth-box">
