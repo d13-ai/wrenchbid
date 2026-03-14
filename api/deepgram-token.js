@@ -1,29 +1,26 @@
-// In-memory rate limiter — resets on each Vercel cold start
-// Max 10 requests per IP per minute
+import { createClient } from "@supabase/supabase-js";
+
 const rateLimit = new Map();
 
-function isRateLimited(ip) {
+function isRateLimited(ip, max = 10, windowMs = 60 * 1000) {
   const now = Date.now();
-  const windowMs = 60 * 1000; // 1 minute
-  const max = 10;
-
   if (!rateLimit.has(ip)) {
     rateLimit.set(ip, { count: 1, start: now });
     return false;
   }
-
   const entry = rateLimit.get(ip);
-
   if (now - entry.start > windowMs) {
     rateLimit.set(ip, { count: 1, start: now });
     return false;
   }
-
   entry.count++;
-  if (entry.count > max) return true;
-
-  return false;
+  return entry.count > max;
 }
+
+const supabase = createClient(
+  "https://rnlrugxpnfanufevypge.supabase.co",
+  process.env.SUPABASE_ANON_KEY || "sb_publishable_N3Csawv8SnR4gO9YV7ZQkQ_s1fPC8yI"
+);
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -35,8 +32,19 @@ export default async function handler(req, res) {
     || req.socket?.remoteAddress
     || "unknown";
 
-  if (isRateLimited(ip)) {
+  if (isRateLimited(ip, 10)) {
     return res.status(429).json({ error: "Too many requests. Please wait a moment." });
+  }
+
+  // Auth check
+  const authHeader = req.headers["authorization"];
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const token = authHeader.slice(7);
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+  if (authError || !user) {
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   const key = process.env.DEEPGRAM_API_KEY;
@@ -57,8 +65,8 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    const token = data.token || data.key || key;
-    res.status(200).json({ token });
+    const token2 = data.token || data.key || key;
+    res.status(200).json({ token: token2 });
   } catch (e) {
     res.status(200).json({ token: key });
   }
