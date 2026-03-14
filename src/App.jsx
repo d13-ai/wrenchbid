@@ -1598,7 +1598,7 @@ export default function WrenchBid() {
           </div>
         )}
 
-        {!user&&(
+      {!user&&(
         <div className="auth-overlay">
           <div className="auth-box">
             <div className="auth-hd">
@@ -1624,7 +1624,6 @@ export default function WrenchBid() {
             </div>
           </div>
         </div>
-        )}
       )}
 
       <header className="hdr">
