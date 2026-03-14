@@ -3,39 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-
-    <!-- Primary Meta -->
     <title>WrenchBid — Voice-to-Quote for Tradespeople</title>
     <meta name="description" content="Speak the job out loud. WrenchBid builds a professional quote instantly — for HVAC, plumbing, electrical, and more." />
     <meta name="theme-color" content="#e8a020" />
-
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
-
-    <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
-
-    <!-- Apple / iOS PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="WrenchBid" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
-
-    <!-- Android / Chrome -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="WrenchBid" />
-
-    <!-- Splash screen background color while app loads -->
-    <style>
-      html { background: #0d0d0d; }
-    </style>
+    <style>html { background: #0d0d0d; }</style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .catch(function(err) { console.log('SW failed:', err); });
+        });
+      }
+    </script>
   </body>
 </html>
