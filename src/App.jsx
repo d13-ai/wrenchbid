@@ -1304,7 +1304,7 @@ export default function WrenchBid() {
   const handleSignIn=async()=>{ setAuthError(""); setAuthLoading(true); const{error}=await supabase.auth.signInWithPassword({email:authEmail,password:authPassword}); setAuthLoading(false); if(error)setAuthError(error.message); else ping("Welcome back ✓"); };
   const handleSignOut=async()=>{ await supabase.auth.signOut(); ping("Signed out"); };
   const shareApp=()=>{
-    const url="https://wrenchbid.app";
+    const url="https://wrenchbid.vercel.app";
     const text="Check out WrenchBid — speak a job out loud and it builds a professional quote instantly. Free for tradespeople.";
     if(navigator.share){ navigator.share({title:"WrenchBid",text,url}).catch(()=>{}); }
     else{ navigator.clipboard.writeText(url).then(()=>ping("Link copied ✓")); }
@@ -1886,8 +1886,9 @@ export default function WrenchBid() {
 
       {toast&&<div className="toast">{toast}</div>}
       <footer className="app-footer">
-        <button onClick={shareApp} style={{background:"var(--amber)",border:"none",borderRadius:3,padding:"8px 18px",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:1,textTransform:"uppercase",cursor:"pointer",color:"var(--ink)",marginBottom:12,width:"100%"}}>
-          📣 Share WrenchBid with a Tradesperson
+        <button onClick={shareApp} style={{background:"var(--amber)",border:"none",borderRadius:4,padding:"10px 18px",cursor:"pointer",color:"var(--ink)",marginBottom:12,width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:10,transition:"background .15s"}} onMouseOver={e=>e.currentTarget.style.background="var(--amber-deep)"} onMouseOut={e=>e.currentTarget.style.background="var(--amber)"}>
+          <img src="/logo.png" alt="WrenchBid" style={{width:28,height:28,objectFit:"contain"}}/>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,letterSpacing:1,textTransform:"uppercase"}}>Share WrenchBid</span>
         </button>
         © 2026 WrenchBid &nbsp;·&nbsp;
         <a href="https://wrenchbid.vercel.app/terms" target="_blank" rel="noopener noreferrer">Terms</a>
