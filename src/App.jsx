@@ -1256,7 +1256,7 @@ export default function WrenchBid() {
     const currentScript=[...document.querySelectorAll('script[src]')].find(s=>s.src.includes('/assets/'))?.src||"";
     const check=async()=>{
       try{
-        const res=await fetch("/?_cb="+Date.now(),{cache:"no-store"});
+        const res=await fetch("/?_cb="+Date.now(),{cache:"no-store",headers:{"Service-Worker":"bypass","Cache-Control":"no-cache"}});
         const html=await res.text();
         const match=html.match(/\/assets\/index-([^"]+)\.js/);
         if(match&&currentScript&&!currentScript.includes(match[1])){
