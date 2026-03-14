@@ -1205,6 +1205,8 @@ export default function WrenchBid() {
   const [clientPhone,setClientPhone]=useState("");
   const [shareUrl,setShareUrl]=useState(null);
   const [shareLoading,setShareLoading]=useState(false);
+  const [installPrompt,setInstallPrompt]=useState(null);
+  const [showInstallBanner,setShowInstallBanner]=useState(false);
   const [sharedQuote,setSharedQuote]=useState(null);
   const [sharedLoading,setSharedLoading]=useState(()=>!!new URLSearchParams(window.location.search).get("quote"));
   const [history,setHistory]=useState(()=>{ try{return JSON.parse(localStorage.getItem("wb_history"))||[];}catch{return[];} });
@@ -1231,6 +1233,15 @@ export default function WrenchBid() {
     },38);
     return()=>clearInterval(interval);
   },[onboardStep,onboardDone]);
+
+  // Catch Android install prompt
+  useEffect(()=>{
+    const handler=(e)=>{ e.preventDefault(); setInstallPrompt(e); setShowInstallBanner(true); };
+    window.addEventListener("beforeinstallprompt", handler);
+    // If already installed, hide banner
+    window.addEventListener("appinstalled", ()=>setShowInstallBanner(false));
+    return()=>window.removeEventListener("beforeinstallprompt", handler);
+  },[]);
 
   // Auto-update check: compare current JS bundle hash with what's deployed
   const [updateAvailable,setUpdateAvailable]=useState(false);
@@ -1522,6 +1533,15 @@ export default function WrenchBid() {
         <div style={{background:"#1a4a8a",color:"#fff",padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:13,fontWeight:600,gap:10,zIndex:300}}>
           <span>🆕 New version available</span>
           <button onClick={()=>window.location.reload()} style={{background:"#e8a020",color:"#0d0d0d",border:"none",borderRadius:3,padding:"5px 14px",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:1,textTransform:"uppercase",cursor:"pointer"}}>Update Now</button>
+        </div>
+      )}
+      {showInstallBanner&&(
+        <div style={{background:"#1a3a1a",color:"#fff",padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:13,fontWeight:600,gap:10,zIndex:300}}>
+          <span>📲 Add WrenchBid to your home screen</span>
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={async()=>{ if(installPrompt){await installPrompt.prompt(); const r=await installPrompt.userChoice; if(r.outcome==="accepted") setShowInstallBanner(false);} }} style={{background:"#e8a020",color:"#0d0d0d",border:"none",borderRadius:3,padding:"5px 14px",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:1,textTransform:"uppercase",cursor:"pointer"}}>Install</button>
+            <button onClick={()=>setShowInstallBanner(false)} style={{background:"none",border:"1px solid #555",color:"#aaa",borderRadius:3,padding:"5px 10px",fontSize:12,cursor:"pointer"}}>✕</button>
+          </div>
         </div>
       )}
       {!onboardDone&&!user&&(
