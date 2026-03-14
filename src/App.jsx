@@ -1207,6 +1207,13 @@ export default function WrenchBid() {
   const [shareLoading,setShareLoading]=useState(false);
   const [installPrompt,setInstallPrompt]=useState(null);
   const [showInstallBanner,setShowInstallBanner]=useState(false);
+  const [showIosBanner,setShowIosBanner]=useState(()=>{
+    const isIos=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;
+    const dismissed=localStorage.getItem("wb_ios_install_dismissed");
+    return isIos && isSafari && !isStandalone && !dismissed;
+  });
   const [sharedQuote,setSharedQuote]=useState(null);
   const [sharedLoading,setSharedLoading]=useState(()=>!!new URLSearchParams(window.location.search).get("quote"));
   const [history,setHistory]=useState(()=>{ try{return JSON.parse(localStorage.getItem("wb_history"))||[];}catch{return[];} });
@@ -1542,6 +1549,15 @@ export default function WrenchBid() {
             <button onClick={async()=>{ if(installPrompt){await installPrompt.prompt(); const r=await installPrompt.userChoice; if(r.outcome==="accepted") setShowInstallBanner(false);} }} style={{background:"#e8a020",color:"#0d0d0d",border:"none",borderRadius:3,padding:"5px 14px",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:1,textTransform:"uppercase",cursor:"pointer"}}>Install</button>
             <button onClick={()=>setShowInstallBanner(false)} style={{background:"none",border:"1px solid #555",color:"#aaa",borderRadius:3,padding:"5px 10px",fontSize:12,cursor:"pointer"}}>✕</button>
           </div>
+        </div>
+      )}
+      {showIosBanner&&(
+        <div style={{background:"#1a1a2e",color:"#fff",padding:"12px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10,zIndex:300}}>
+          <div style={{fontSize:13,lineHeight:1.5}}>
+            <div style={{fontWeight:700,marginBottom:3}}>📲 Install WrenchBid on your iPhone</div>
+            <div style={{color:"#aaa",fontSize:12}}>Tap <strong style={{color:"#fff"}}>Share</strong> <span style={{fontSize:14}}>⎋</span> then <strong style={{color:"#fff"}}>"Add to Home Screen"</strong></div>
+          </div>
+          <button onClick={()=>{localStorage.setItem("wb_ios_install_dismissed","1");setShowIosBanner(false);}} style={{background:"none",border:"1px solid #555",color:"#aaa",borderRadius:3,padding:"5px 10px",fontSize:12,cursor:"pointer",flexShrink:0}}>✕</button>
         </div>
       )}
       {!onboardDone&&!user&&(
