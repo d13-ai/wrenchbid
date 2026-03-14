@@ -1303,6 +1303,13 @@ export default function WrenchBid() {
   const handleSignUp=async()=>{ setAuthError(""); setAuthLoading(true); const{error}=await supabase.auth.signUp({email:authEmail,password:authPassword}); setAuthLoading(false); if(error)setAuthError(error.message); else ping("Welcome to WrenchBid! ✓"); };
   const handleSignIn=async()=>{ setAuthError(""); setAuthLoading(true); const{error}=await supabase.auth.signInWithPassword({email:authEmail,password:authPassword}); setAuthLoading(false); if(error)setAuthError(error.message); else ping("Welcome back ✓"); };
   const handleSignOut=async()=>{ await supabase.auth.signOut(); ping("Signed out"); };
+  const handleGoogleSignIn=async()=>{
+    const{error}=await supabase.auth.signInWithOAuth({
+      provider:"google",
+      options:{redirectTo:window.location.origin}
+    });
+    if(error) ping("Google sign-in failed");
+  };
   const ping=(msg)=>{ clearTimeout(toastTimer.current); setToast(msg); toastTimer.current=setTimeout(()=>setToast(null),2800); };
 
   const startRec=async()=>{
@@ -1656,6 +1663,15 @@ export default function WrenchBid() {
               <div className="auth-field"><label>Email</label><input type="email" value={authEmail} onChange={e=>setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email"/></div>
               <div className="auth-field"><label>Password</label><input type="password" value={authPassword} onChange={e=>setAuthPassword(e.target.value)} placeholder={authMode==="signup"?"Min 6 characters":"Your password"} autoComplete={authMode==="signup"?"new-password":"current-password"} onKeyDown={e=>e.key==="Enter"&&(authMode==="signup"?handleSignUp():handleSignIn())}/></div>
               <button className="btn btn-cta btn-full" onClick={authMode==="signup"?handleSignUp:handleSignIn} disabled={authLoading||!authEmail||!authPassword}>{authLoading?"Please wait...":authMode==="signup"?"Create Account":"Sign In"}</button>
+              <div style={{display:"flex",alignItems:"center",gap:10,margin:"14px 0"}}>
+                <div style={{flex:1,height:1,background:"var(--rule)"}}/>
+                <span style={{fontSize:11,color:"var(--muted)",fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>or</span>
+                <div style={{flex:1,height:1,background:"var(--rule)"}}/>
+              </div>
+              <button onClick={handleGoogleSignIn} style={{width:"100%",padding:"11px 16px",background:"var(--white)",border:"1.5px solid var(--rule)",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",gap:10,cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",transition:"border-color .15s"}} onMouseOver={e=>e.currentTarget.style.borderColor="var(--amber)"} onMouseOut={e=>e.currentTarget.style.borderColor="var(--rule)"}>
+                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+                Continue with Google
+              </button>
               <div className="auth-foot">{authMode==="signin"?"New to WrenchBid? ":"Already have an account? "}<button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={()=>{setAuthMode(authMode==="signin"?"signup":"signin");setAuthError("");}}>{authMode==="signin"?"Create a free account":"Sign in"}</button></div>
             </div>
           </div>
