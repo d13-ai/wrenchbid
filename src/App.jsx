@@ -1218,13 +1218,14 @@ async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate, acc
 Job description: "${transcript}"
 
 Rules:
+- The job description may be in any language — always output JSON with English field values regardless of input language
 - Extract client name if mentioned, otherwise null
 - Separate labor and materials into distinct line items
-- If rate is stated (e.g. "$90/hr", "flat rate $500"), use it exactly
+- If rate is stated (e.g. "$90/hr", "flat rate $500", "tarifa plana $500"), use it exactly
 - If rate is NOT stated, use realistic current market rates for a ${trade} in the US
 - If hours are not stated but a flat rate is given, set qty=1 unit="flat"
 - Round all amounts to 2 decimals
-- jobTitle should be a short professional description (e.g. "AC Tune-Up", "Kitchen Faucet Replacement")
+- jobTitle should be a short professional description in English (e.g. "AC Tune-Up", "Kitchen Faucet Replacement")
 - notes should capture anything relevant not in line items (warranty, scope, conditions) or null
 - validDays is how long the quote is valid — default 30
 
@@ -1412,7 +1413,10 @@ export default function WrenchBid() {
       const{token}=await tokenRes.json();
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
       const activeLang = LANGUAGES.find(l=>l.code===(biz.language||"en")) || LANGUAGES[0];
-      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model="+activeLang.model+"&language="+activeLang.code+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total",["token",token]);
+      const keyterms = activeLang.code === "es"
+        ? "keyterm=factura&keyterm=mano+de+obra&keyterm=materiales&keyterm=partes&keyterm=horas&keyterm=precio+fijo&keyterm=dep%C3%B3sito&keyterm=por+hora&keyterm=subtotal&keyterm=total"
+        : "keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total";
+      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model="+activeLang.model+"&language="+activeLang.code+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&"+keyterms,["token",token]);
       ws.onopen=()=>{
         if(!active){ ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
         const mt=["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg","audio/mp4"].find(t=>{ try{return MediaRecorder.isTypeSupported(t);}catch{return false;} })||"";
