@@ -1684,7 +1684,7 @@ export default function WrenchBid() {
       "",
       `💰 Total: ${$$(quote.grandTotal)}`,
       "",
-      url?`View & save as PDF:\n${url}`:"",
+      url?`─────────────────────────\n📄 VIEW YOUR QUOTE ONLINE\nClick the link below to view your full quote and save it as a PDF:\n${url}\n─────────────────────────`:"",
       "",
       quote.paymentTerms?`Payment Terms: ${quote.paymentTerms}`:"",
       quote.warranty?`Warranty: ${quote.warranty}`:"",
