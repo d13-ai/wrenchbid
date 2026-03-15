@@ -120,10 +120,23 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .h-job{font-size:13px;color:var(--muted);margin-bottom:8px}
 .h-foot{display:flex;justify-content:space-between;align-items:center}
 .h-date{font-size:11px;color:var(--muted)}
-.chip{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:2px}
+.chip{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:2px;cursor:pointer;transition:opacity .15s}
+.chip:hover{opacity:.75}
 .chip.sent{background:var(--green-light);color:var(--green)}
 .chip.draft{background:var(--amber-light);color:var(--amber-deep)}
 .chip.saved{background:var(--blue-light);color:var(--blue)}
+.chip.accepted{background:#d4f0e0;color:#1a6b3a}
+.chip.declined{background:#fde8e8;color:#8b1a1a}
+.h-qnum{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+.h-summary{background:var(--ink);border-radius:4px;padding:14px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.h-summary-stat{text-align:center}
+.h-summary-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--amber)}
+.h-summary-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-top:2px}
+.h-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.h-search{flex:1;min-width:140px;padding:8px 12px;border:1.5px solid var(--rule);border-radius:3px;font-size:14px;font-family:'Barlow',sans-serif;background:var(--white);color:var(--ink);outline:none}
+.h-search:focus{border-color:var(--amber)}
+.h-sort{padding:8px 10px;border:1.5px solid var(--rule);border-radius:3px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;background:var(--white);color:var(--ink);cursor:pointer;outline:none}
+.h-sort:focus{border-color:var(--amber)}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
 .field input,.field select,.field textarea{width:100%;padding:11px 14px;background:var(--white);border:1.5px solid var(--rule);border-radius:3px;font-size:16px;font-family:'Barlow',sans-serif;color:var(--ink);outline:none;transition:border-color .15s}
@@ -1260,6 +1273,8 @@ Return ONLY valid JSON, no explanation:
 /* ─── App ─────────────────────────────────────────────────────────────────── */
 export default function WrenchBid() {
   const [tab,setTab]=useState("new");
+  const [histSearch,setHistSearch]=useState("");
+  const [histSort,setHistSort]=useState("date");
   const [biz,setBiz]=useState(()=>{
     try{ const s=JSON.parse(localStorage.getItem("wb_biz")); return s||{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
     catch{ return{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
@@ -2050,20 +2065,69 @@ export default function WrenchBid() {
           {history.length===0
             ?<div className="empty"><div className="empty-icon">📋</div><p>No quotes yet.<br/><strong>Tap "Quote"</strong> to get started.</p></div>
             :<>
-               <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}>
-                 <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 14px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>Clear All</button>
-               </div>
-               {history.map((q,i)=>(
-                 <div className="h-item" key={i} style={{position:"relative"}}>
-                   <div onClick={()=>{setQuote({paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||"",...q});setStep("preview");setTab("new");}}>
-                     <div className="h-top"><div className="h-client">{q.clientName||"No client name"}</div><div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div></div>
-                     <div className="h-job">{q.jobTitle}</div>
-                     <div className="h-foot"><div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div><div className={`chip ${q.status}`}>{q.status}</div></div>
-                   </div>
-                   <button onClick={e=>{e.stopPropagation();deleteQuote(i);}} style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",padding:"4px 6px"}}>✕</button>
-                 </div>
-               ))}
-             </>
+              {/* Summary bar */}
+              <div className="h-summary">
+                {[
+                  {val:history.length, lbl:"Total"},
+                  {val:history.filter(q=>q.status==="sent").length, lbl:"Sent"},
+                  {val:history.filter(q=>q.status==="accepted").length, lbl:"Accepted"},
+                  {val:"$"+history.filter(q=>q.status==="accepted").reduce((s,q)=>s+(q.grandTotal||0),0).toFixed(0), lbl:"Won"},
+                ].map((s,i)=>(
+                  <div className="h-summary-stat" key={i}>
+                    <div className="h-summary-val">{s.val}</div>
+                    <div className="h-summary-lbl">{s.lbl}</div>
+                  </div>
+                ))}
+              </div>
+              {/* Search + Sort + Clear */}
+              <div className="h-controls">
+                <input className="h-search" placeholder="🔍 Search client or job…" value={histSearch} onChange={e=>setHistSearch(e.target.value)}/>
+                <select className="h-sort" value={histSort} onChange={e=>setHistSort(e.target.value)}>
+                  <option value="date">Newest</option>
+                  <option value="amount">Amount ↓</option>
+                  <option value="status">Status</option>
+                  <option value="client">Client A–Z</option>
+                </select>
+                <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 12px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>Clear All</button>
+              </div>
+              {/* Cards */}
+              {[...history]
+                .filter(q=>{
+                  if(!histSearch.trim()) return true;
+                  const s=histSearch.toLowerCase();
+                  return (q.clientName||"").toLowerCase().includes(s)||(q.jobTitle||"").toLowerCase().includes(s)||(q.qNum||"").toLowerCase().includes(s);
+                })
+                .sort((a,b)=>{
+                  if(histSort==="amount") return (b.grandTotal||0)-(a.grandTotal||0);
+                  if(histSort==="status") return (a.status||"").localeCompare(b.status||"");
+                  if(histSort==="client") return (a.clientName||"").localeCompare(b.clientName||"");
+                  return new Date(b.savedAt||0)-new Date(a.savedAt||0);
+                })
+                .map((q,i)=>{
+                  const realIdx=history.indexOf(q);
+                  const statuses=["saved","draft","sent","accepted","declined"];
+                  const nextStatus=()=>{
+                    const cur=statuses.indexOf(q.status||"saved");
+                    const next=statuses[(cur+1)%statuses.length];
+                    setHistory(h=>{const n=[...h];n[realIdx]={...n[realIdx],status:next};return n;});
+                  };
+                  return(
+                  <div className="h-item" key={realIdx} style={{position:"relative"}}>
+                    <div onClick={()=>{setQuote({paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||"",...q});setStep("preview");setTab("new");}}>
+                      <div className="h-qnum">{q.qNum||""}</div>
+                      <div className="h-top"><div className="h-client">{q.clientName||"No client name"}</div><div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div></div>
+                      <div className="h-job">{q.jobTitle}</div>
+                      <div className="h-foot">
+                        <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
+                        <span className={`chip ${q.status||"saved"}`} onClick={e=>{e.stopPropagation();nextStatus();}} title="Tap to change status">{q.status||"saved"}</span>
+                      </div>
+                    </div>
+                    <button onClick={e=>{e.stopPropagation();deleteQuote(realIdx);}} style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",padding:"4px 6px"}}>✕</button>
+                  </div>
+                  );
+                })
+              }
+            </>
           }
         </div>
       )}
