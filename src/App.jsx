@@ -2105,12 +2105,6 @@ export default function WrenchBid() {
                 })
                 .map((q,i)=>{
                   const realIdx=history.indexOf(q);
-                  const statuses=["saved","draft","sent","accepted","declined"];
-                  const nextStatus=()=>{
-                    const cur=statuses.indexOf(q.status||"saved");
-                    const next=statuses[(cur+1)%statuses.length];
-                    setHistory(h=>{const n=[...h];n[realIdx]={...n[realIdx],status:next};return n;});
-                  };
                   return(
                   <div className="h-item" key={realIdx} style={{position:"relative"}}>
                     <div onClick={()=>{setQuote({paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||"",...q});setStep("preview");setTab("new");}}>
@@ -2119,7 +2113,19 @@ export default function WrenchBid() {
                       <div className="h-job">{q.jobTitle}</div>
                       <div className="h-foot">
                         <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
-                        <span className={`chip ${q.status||"saved"}`} onClick={e=>{e.stopPropagation();nextStatus();}} title="Tap to change status">{q.status||"saved"}</span>
+                        <select
+                          value={q.status||"saved"}
+                          onClick={e=>e.stopPropagation()}
+                          onChange={e=>{e.stopPropagation();const next=e.target.value;setHistory(h=>{const n=[...h];n[realIdx]={...n[realIdx],status:next};return n;});}}
+                          className={`chip ${q.status||"saved"}`}
+                          style={{border:"none",cursor:"pointer",appearance:"none",WebkitAppearance:"none",fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,letterSpacing:"1.5px",textTransform:"uppercase",fontSize:10,padding:"2px 8px",borderRadius:2}}
+                        >
+                          <option value="saved">Saved</option>
+                          <option value="draft">Draft</option>
+                          <option value="sent">Sent</option>
+                          <option value="accepted">Accepted</option>
+                          <option value="declined">Declined</option>
+                        </select>
                       </div>
                     </div>
                     <button onClick={e=>{e.stopPropagation();deleteQuote(realIdx);}} style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",padding:"4px 6px"}}>✕</button>
