@@ -1505,6 +1505,65 @@ export default function WrenchBid() {
     }
   };
 
+  const handlePrint=()=>{
+    const $$n=v=>v!=null?`$${Number(v).toFixed(2)}`:"$0.00";
+    const li=(quote.lineItems||[]).filter(l=>l.desc&&l.total>0).map(l=>`
+      <tr style="border-bottom:1px solid #eee">
+        <td style="padding:10px 0;font-size:14px;color:#0d0d0d">
+          ${l.desc}
+          ${l.qty&&l.rate&&l.unit!=="flat"?`<div style="font-size:11px;color:#7a7060;margin-top:2px">${l.qty} ${l.unit} × $${Number(l.rate).toFixed(2)}</div>`:""}
+        </td>
+        <td style="padding:10px 0;font-size:14px;font-weight:600;text-align:right;color:#0d0d0d">${$$n(l.total)}</td>
+      </tr>`).join("");
+    const terms=[(quote.notes?`<div style="margin-bottom:6px"><strong>Notes:</strong> ${quote.notes}</div>`:""),
+      (quote.paymentTerms?`<div style="margin-bottom:6px"><strong>Payment:</strong> ${quote.paymentTerms}</div>`:""),
+      (quote.warranty?`<div style="margin-bottom:6px"><strong>Warranty:</strong> ${quote.warranty}</div>`:""),
+      (quote.customTerms?`<div style="margin-bottom:6px">${quote.customTerms}</div>`:""),
+      (biz.licenseNum?`<div style="margin-bottom:6px"><strong>License #:</strong> ${biz.licenseNum}</div>`:"")].filter(Boolean).join("");
+    const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Quote ${quote.qNum} — ${biz.name}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Barlow',sans-serif;background:#f5f0e8;padding:20px}@media print{body{padding:0;background:white}}</style>
+    </head><body>
+    <div style="max-width:600px;margin:0 auto">
+      <div style="background:#0d0d0d;padding:22px 24px;border-radius:6px 6px 0 0">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;letter-spacing:3px;color:#e8a020;text-transform:uppercase">${biz.name}</div>
+        <div style="font-size:13px;color:#9e9e9e;margin-top:4px">${biz.trade||""}${biz.phone?` · ${biz.phone}`:""}${biz.email?` · ${biz.email}`:""}</div>
+      </div>
+      <div style="background:#e8a020;height:4px"></div>
+      <div style="background:#fff;border:1px solid #d0c8b8;border-top:none;border-radius:0 0 6px 6px;padding:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #d0c8b8">
+          <div>
+            ${quote.clientName?`<div style="font-size:12px;color:#7a7060;font-weight:600;text-transform:uppercase;letter-spacing:1px">To</div><div style="font-size:15px;font-weight:700;color:#0d0d0d;margin-top:2px">${quote.clientName}</div>`:""}
+            <div style="font-size:18px;font-weight:700;color:#0d0d0d;margin-top:${quote.clientName?8:0}px">${quote.jobTitle||""}</div>
+          </div>
+          <div style="text-align:right;font-size:11px;color:#7a7060">
+            <div style="font-weight:700;letter-spacing:1px;text-transform:uppercase">Quote #${quote.qNum}</div>
+            <div style="margin-top:3px">${quote.date}</div>
+            <div style="margin-top:3px">Valid ${quote.validDays} days</div>
+          </div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+          <thead><tr style="border-bottom:2px solid #0d0d0d">
+            <th style="text-align:left;padding:6px 0;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7a7060">Description</th>
+            <th style="text-align:right;padding:6px 0;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7a7060">Amount</th>
+          </tr></thead>
+          <tbody>${li}</tbody>
+        </table>
+        <div style="border-top:2px solid #0d0d0d;padding-top:12px">
+          ${quote.tax>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#7a7060;margin-bottom:4px"><span>Subtotal</span><span>${$$n(quote.subtotal)}</span></div><div style="display:flex;justify-content:space-between;font-size:13px;color:#7a7060;margin-bottom:4px"><span>Tax (${quote.taxRate}%)</span><span>${$$n(quote.tax)}</span></div>`:""}
+          <div style="display:flex;justify-content:space-between;font-size:22px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-top:6px"><span>TOTAL</span><span style="color:#e8a020">${$$n(quote.grandTotal)}</span></div>
+        </div>
+        ${terms?`<div style="margin-top:20px;padding-top:14px;border-top:1px solid #d0c8b8;font-size:12px;color:#7a7060;line-height:1.6">${terms}</div>`:""}
+        <div style="margin-top:20px;padding-top:14px;border-top:1px solid #d0c8b8;font-size:11px;color:#aaa;text-align:center">Quote generated via WrenchBid · wrenchbid.app</div>
+      </div>
+    </div>
+    <script>window.onload=()=>{window.print();}</script>
+    </body></html>`;
+    const w=window.open("","_blank");
+    w.document.write(html);
+    w.document.close();
+  };
+
   const sendSMS=async()=>{
     const digits=clientPhone.replace(/\D/g,"");
     if(digits.length<10){ping("Enter a valid phone number first");return;}
@@ -1901,7 +1960,7 @@ export default function WrenchBid() {
               )}
               <div className="btn-row" style={{marginBottom:8}}>
                 <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save</button>
-                <button className="btn btn-ghost" onClick={()=>window.print()}>📄 PDF</button>
+                <button className="btn btn-ghost" onClick={handlePrint}>📄 PDF</button>
                 <button className="btn btn-ghost" onClick={copyText} disabled={shareLoading}>{shareLoading?"…":"📋 Copy"}</button>
                 <button className="btn btn-ghost" onClick={newQuote}>+ New</button>
               </div>
