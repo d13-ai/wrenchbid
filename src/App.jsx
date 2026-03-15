@@ -1906,7 +1906,7 @@ export default function WrenchBid() {
                </div>
                {history.map((q,i)=>(
                  <div className="h-item" key={i} style={{position:"relative"}}>
-                   <div onClick={()=>{setQuote(q);setStep("preview");setTab("new");}}>
+                   <div onClick={()=>{setQuote({paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||"",...q});setStep("preview");setTab("new");}}>
                      <div className="h-top"><div className="h-client">{q.clientName||"No client name"}</div><div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div></div>
                      <div className="h-job">{q.jobTitle}</div>
                      <div className="h-foot"><div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div><div className={`chip ${q.status}`}>{q.status}</div></div>
