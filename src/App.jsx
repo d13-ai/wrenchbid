@@ -1508,63 +1508,122 @@ export default function WrenchBid() {
   const handlePrint=()=>{
     const $$n=v=>v!=null?`$${Number(v).toFixed(2)}`:"$0.00";
     const li=(quote.lineItems||[]).filter(l=>l.desc&&l.total>0).map(l=>`
-      <tr style="border-bottom:1px solid #eee">
-        <td style="padding:10px 0;font-size:14px;color:#0d0d0d">
-          ${l.desc}
-          ${l.qty&&l.rate&&l.unit!=="flat"?`<div style="font-size:11px;color:#7a7060;margin-top:2px">${l.qty} ${l.unit} × $${Number(l.rate).toFixed(2)}</div>`:""}
+      <tr>
+        <td class="td-desc">
+          <div class="li-name">${l.desc}</div>
+          ${l.qty&&l.rate&&l.unit!=="flat"?`<div class="li-detail">${l.qty} ${l.unit} &times; $${Number(l.rate).toFixed(2)}</div>`:""}
         </td>
-        <td style="padding:10px 0;font-size:14px;font-weight:600;text-align:right;color:#0d0d0d">${$$n(l.total)}</td>
+        <td class="td-amt">${$$n(l.total)}</td>
       </tr>`).join("");
-    const terms=[(quote.notes?`<div style="margin-bottom:6px"><strong>Notes:</strong> ${quote.notes}</div>`:""),
-      (quote.paymentTerms?`<div style="margin-bottom:6px"><strong>Payment:</strong> ${quote.paymentTerms}</div>`:""),
-      (quote.warranty?`<div style="margin-bottom:6px"><strong>Warranty:</strong> ${quote.warranty}</div>`:""),
-      (quote.customTerms?`<div style="margin-bottom:6px">${quote.customTerms}</div>`:""),
-      (biz.licenseNum?`<div style="margin-bottom:6px"><strong>License #:</strong> ${biz.licenseNum}</div>`:"")].filter(Boolean).join("");
-    const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Quote ${quote.qNum} — ${biz.name}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Barlow',sans-serif;background:#f5f0e8;padding:20px}@media print{body{padding:0;background:white}}</style>
-    </head><body>
-    <div style="max-width:600px;margin:0 auto">
-      <div style="background:#0d0d0d;padding:22px 24px;border-radius:6px 6px 0 0">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;letter-spacing:3px;color:#e8a020;text-transform:uppercase">${biz.name}</div>
-        <div style="font-size:13px;color:#9e9e9e;margin-top:4px">${biz.trade||""}${biz.phone?` · ${biz.phone}`:""}${biz.email?` · ${biz.email}`:""}</div>
+    const terms=[
+      quote.notes?`<div class="term-row"><span class="term-lbl">Notes</span><span>${quote.notes}</span></div>`:"",
+      quote.paymentTerms?`<div class="term-row"><span class="term-lbl">Payment Terms</span><span>${quote.paymentTerms}</span></div>`:"",
+      quote.warranty?`<div class="term-row"><span class="term-lbl">Warranty</span><span>${quote.warranty}</span></div>`:"",
+      quote.customTerms?`<div class="term-row"><span class="term-lbl">Terms &amp; Conditions</span><span>${quote.customTerms}</span></div>`:"",
+      biz.licenseNum?`<div class="term-row"><span class="term-lbl">License #</span><span>${biz.licenseNum}</span></div>`:""
+    ].filter(Boolean).join("");
+    const html=`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Quote ${quote.qNum} — ${biz.name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;background:#e8e0d0;font-family:'Barlow',sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{max-width:680px;margin:32px auto;background:white;border-radius:6px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.12)}
+  .hdr{background:#0d0d0d;padding:28px 32px;display:flex;justify-content:space-between;align-items:flex-start;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .biz-name{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;letter-spacing:3px;color:#e8a020;text-transform:uppercase;line-height:1}
+  .biz-sub{font-size:13px;color:#888;margin-top:6px;line-height:1.5}
+  .hdr-right{text-align:right}
+  .quote-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:4px}
+  .quote-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:#e8a020;letter-spacing:2px}
+  .stripe{height:5px;background:#e8a020;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .body{padding:32px}
+  .meta{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;margin-bottom:24px;border-bottom:1px solid #e0d8cc}
+  .meta-left{}
+  .to-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0a890;margin-bottom:4px}
+  .client-name{font-size:17px;font-weight:700;color:#0d0d0d;margin-bottom:4px}
+  .job-title{font-size:22px;font-weight:900;font-family:'Barlow Condensed',sans-serif;color:#0d0d0d;letter-spacing:1px;text-transform:uppercase}
+  .meta-right{text-align:right;font-size:12px;color:#7a7060;line-height:1.8}
+  .meta-right strong{color:#0d0d0d;font-weight:700}
+  table{width:100%;border-collapse:collapse;margin-bottom:0}
+  .thead-row th{padding:8px 0;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0a890;border-bottom:2px solid #0d0d0d}
+  .thead-row th:last-child{text-align:right}
+  .td-desc{padding:14px 0;font-size:14px;color:#0d0d0d;border-bottom:1px solid #f0e8de;width:75%}
+  .td-amt{padding:14px 0;font-size:15px;font-weight:700;text-align:right;color:#0d0d0d;border-bottom:1px solid #f0e8de;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
+  .li-name{font-weight:600}
+  .li-detail{font-size:11px;color:#b0a890;margin-top:3px}
+  .totals{background:#0d0d0d;margin:0 -32px -32px;padding:20px 32px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .subtotal-row{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:5px}
+  .total-row{display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:6px;border-top:1px solid #333}
+  .total-label{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase}
+  .total-amt{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:#e8a020;letter-spacing:1px}
+  .terms{margin-top:28px;padding-top:20px;border-top:1px solid #e0d8cc}
+  .term-row{display:flex;gap:16px;margin-bottom:12px;font-size:12px;line-height:1.6}
+  .term-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e8a020;min-width:110px;padding-top:1px}
+  .term-val{color:#5a5040;flex:1}
+  .footer{margin-top:28px;padding-top:16px;border-top:1px solid #e0d8cc;font-size:10px;color:#c0b8a8;text-align:center;letter-spacing:1px;text-transform:uppercase}
+  @media print{
+    html,body{background:white!important}
+    .page{margin:0;border-radius:0;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div>
+      <div class="biz-name">${biz.name}</div>
+      <div class="biz-sub">${biz.trade||""}${biz.phone?` &nbsp;·&nbsp; ${biz.phone}`:""}${biz.email?` &nbsp;·&nbsp; ${biz.email}`:""}</div>
+    </div>
+    <div class="hdr-right">
+      <div class="quote-label">Quote</div>
+      <div class="quote-num">#${quote.qNum}</div>
+    </div>
+  </div>
+  <div class="stripe"></div>
+  <div class="body">
+    <div class="meta">
+      <div class="meta-left">
+        ${quote.clientName?`<div class="to-label">Prepared for</div><div class="client-name">${quote.clientName}</div>`:""}
+        <div class="job-title">${quote.jobTitle||""}</div>
       </div>
-      <div style="background:#e8a020;height:4px"></div>
-      <div style="background:#fff;border:1px solid #d0c8b8;border-top:none;border-radius:0 0 6px 6px;padding:24px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #d0c8b8">
-          <div>
-            ${quote.clientName?`<div style="font-size:12px;color:#7a7060;font-weight:600;text-transform:uppercase;letter-spacing:1px">To</div><div style="font-size:15px;font-weight:700;color:#0d0d0d;margin-top:2px">${quote.clientName}</div>`:""}
-            <div style="font-size:18px;font-weight:700;color:#0d0d0d;margin-top:${quote.clientName?8:0}px">${quote.jobTitle||""}</div>
-          </div>
-          <div style="text-align:right;font-size:11px;color:#7a7060">
-            <div style="font-weight:700;letter-spacing:1px;text-transform:uppercase">Quote #${quote.qNum}</div>
-            <div style="margin-top:3px">${quote.date}</div>
-            <div style="margin-top:3px">Valid ${quote.validDays} days</div>
-          </div>
-        </div>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
-          <thead><tr style="border-bottom:2px solid #0d0d0d">
-            <th style="text-align:left;padding:6px 0;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7a7060">Description</th>
-            <th style="text-align:right;padding:6px 0;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7a7060">Amount</th>
-          </tr></thead>
-          <tbody>${li}</tbody>
-        </table>
-        <div style="border-top:2px solid #0d0d0d;padding-top:12px">
-          ${quote.tax>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#7a7060;margin-bottom:4px"><span>Subtotal</span><span>${$$n(quote.subtotal)}</span></div><div style="display:flex;justify-content:space-between;font-size:13px;color:#7a7060;margin-bottom:4px"><span>Tax (${quote.taxRate}%)</span><span>${$$n(quote.tax)}</span></div>`:""}
-          <div style="display:flex;justify-content:space-between;font-size:22px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-top:6px"><span>TOTAL</span><span style="color:#e8a020">${$$n(quote.grandTotal)}</span></div>
-        </div>
-        ${terms?`<div style="margin-top:20px;padding-top:14px;border-top:1px solid #d0c8b8;font-size:12px;color:#7a7060;line-height:1.6">${terms}</div>`:""}
-        <div style="margin-top:20px;padding-top:14px;border-top:1px solid #d0c8b8;font-size:11px;color:#aaa;text-align:center">Quote generated via WrenchBid · wrenchbid.app</div>
+      <div class="meta-right">
+        <div><strong>Date</strong> &nbsp; ${quote.date}</div>
+        <div><strong>Valid</strong> &nbsp; ${quote.validDays} days</div>
+        ${biz.licenseNum?`<div><strong>Lic #</strong> &nbsp; ${biz.licenseNum}</div>`:""}
       </div>
     </div>
-    <script>window.onload=()=>{window.print();}</script>
-    </body></html>`;
+    <table>
+      <thead><tr class="thead-row">
+        <th style="text-align:left">Description</th>
+        <th>Amount</th>
+      </tr></thead>
+      <tbody>${li}</tbody>
+    </table>
+    <div class="totals">
+      ${quote.tax>0?`
+      <div class="subtotal-row"><span>Subtotal</span><span>${$$n(quote.subtotal)}</span></div>
+      <div class="subtotal-row"><span>Tax (${quote.taxRate}%)</span><span>${$$n(quote.tax)}</span></div>`:""}
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-amt">${$$n(quote.grandTotal)}</span>
+      </div>
+    </div>
+    ${terms?`<div class="terms">${terms}</div>`:""}
+    <div class="footer">Quote generated via WrenchBid &nbsp;·&nbsp; wrenchbid.app</div>
+  </div>
+</div>
+<script>window.onload=()=>{ setTimeout(()=>window.print(),400); }</script>
+</body>
+</html>`;
     const w=window.open("","_blank");
-    w.document.write(html);
-    w.document.close();
+    if(w){ w.document.write(html); w.document.close(); }
+    else ping("Allow popups to generate PDF");
   };
 
-  const sendSMS=async()=>{
+    const sendSMS=async()=>{
     const digits=clientPhone.replace(/\D/g,"");
     if(digits.length<10){ping("Enter a valid phone number first");return;}
     saveToHistory("sent");
