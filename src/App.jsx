@@ -2118,13 +2118,13 @@ export default function WrenchBid() {
                           onClick={e=>e.stopPropagation()}
                           onChange={e=>{e.stopPropagation();const next=e.target.value;setHistory(h=>{const n=[...h];n[realIdx]={...n[realIdx],status:next};return n;});}}
                           className={`chip ${q.status||"saved"}`}
-                          style={{border:"none",cursor:"pointer",appearance:"none",WebkitAppearance:"none",fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,letterSpacing:"1.5px",textTransform:"uppercase",fontSize:10,padding:"2px 8px",borderRadius:2}}
+                          style={{border:"1.5px solid currentColor",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",fontSize:10,padding:"2px 6px 2px 8px",borderRadius:2,outline:"none"}}
                         >
                           <option value="saved">Saved</option>
                           <option value="draft">Draft</option>
                           <option value="sent">Sent</option>
-                          <option value="accepted">Accepted</option>
-                          <option value="declined">Declined</option>
+                          <option value="accepted">Accepted ✓</option>
+                          <option value="declined">Declined ✗</option>
                         </select>
                       </div>
                     </div>
