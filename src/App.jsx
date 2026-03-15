@@ -1775,7 +1775,12 @@ export default function WrenchBid() {
             <>
               <div className="tip"><strong>How it works:</strong> Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid builds the quote automatically.</div>
               <div className="mic-wrap">
-                <div className="mic-hint">{step==="recording"?"🔴 Recording — tap to stop":"Tap to start speaking"}</div>
+                <div className="mic-hint">
+                  {step==="recording"
+                    ? "🔴 Recording — tap to stop"
+                    : (() => { const l=LANGUAGES.find(x=>x.code===(biz.language||"en"))||LANGUAGES[0]; return l.code==="en" ? "Tap to start speaking" : `${l.flag} Recording in ${l.label} — tap to speak`; })()
+                  }
+                </div>
                 <button className={`mic-btn ${step==="recording"?"live":""}`} onClick={toggleMic}>
                   <div className="mic-icon">{step==="recording"?"⏹":"🎙"}</div>
                   <div>{step==="recording"?"STOP":"SPEAK"}</div>
@@ -1783,7 +1788,7 @@ export default function WrenchBid() {
                 <div className="lang-bar">
                   {LANGUAGES.map(l=>(
                     <button key={l.code} className={`lang-pill ${(biz.language||"en")===l.code?"on":""}`}
-                      onClick={()=>setBiz(b=>({...b,language:l.code}))}>
+                      onClick={()=>{ setBiz(b=>({...b,language:l.code})); if(l.code!=="en") ping(`${l.flag} Switched to ${l.label}`); }}>
                       {l.flag} {l.label}
                     </button>
                   ))}
@@ -1913,7 +1918,7 @@ export default function WrenchBid() {
               <div className="field"><label>Email</label><input type="email" value={biz.email} onChange={e=>setBiz(b=>({...b,email:e.target.value}))} placeholder="you@yourbusiness.com"/></div>
               <div className="field"><label>License # <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>(optional)</span></label><input value={biz.licenseNum} onChange={e=>setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345"/></div>
               <div className="field">
-                <label>Voice Language</label>
+                <label>Voice Language <span style={{fontWeight:400,fontSize:11,textTransform:"none",letterSpacing:0}}>(same as pill on Quote screen)</span></label>
                 <select value={biz.language||"en"} onChange={e=>setBiz(b=>({...b,language:e.target.value}))}>
                   <option value="en">🇺🇸 English</option>
                   <option value="es">🇲🇽 Spanish / Español</option>
