@@ -1293,6 +1293,7 @@ export default function WrenchBid() {
   const [transcript,setTranscript]=useState("");
   const [quote,setQuote]=useState(null);
   const [clientPhone,setClientPhone]=useState("");
+  const [clientEmail,setClientEmail]=useState("");
   const [shareUrl,setShareUrl]=useState(null);
   const [shareLoading,setShareLoading]=useState(false);
   const [installPrompt,setInstallPrompt]=useState(null);
@@ -1662,6 +1663,39 @@ export default function WrenchBid() {
     ping("SMS ready ✓");
   };
 
+  const sendEmail=async()=>{
+    if(!clientEmail.trim()||!clientEmail.includes("@")){ping("Enter a valid email address");return;}
+    saveToHistory("sent");
+    setShareLoading(true);
+    const url=await getShareUrl();
+    setShareLoading(false);
+    const lineList=(quote.lineItems||[]).filter(l=>l.desc&&l.total>0).map(l=>`  • ${l.desc}: ${$$(l.total)}`).join("\n");
+    const subject=`Quote from ${biz.name} — ${quote.jobTitle}`;
+    const body=[
+      `Hi${quote.clientName?" "+quote.clientName:""},`,
+      "",
+      `Please find your quote from ${biz.name} below.`,
+      "",
+      `📋 ${quote.jobTitle}`,
+      `📅 Date: ${quote.date}   |   Quote #: ${quote.qNum}   |   Valid: ${quote.validDays} days`,
+      "",
+      "LINE ITEMS",
+      lineList,
+      "",
+      `💰 Total: ${$$(quote.grandTotal)}`,
+      "",
+      url?`View & save as PDF:\n${url}`:"",
+      "",
+      quote.paymentTerms?`Payment Terms: ${quote.paymentTerms}`:"",
+      quote.warranty?`Warranty: ${quote.warranty}`:"",
+      "",
+      biz.phone?`📞 ${fmtPhone(biz.phone)}`:"",
+      biz.email?`✉️ ${biz.email}`:"",
+    ].filter(l=>l!==null&&l!==undefined&&l!=="").join("\n").replace(/\n{3,}/g,"\n\n");
+    window.open(`mailto:${clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    ping("Email ready ✓");
+  };
+
   const copyText=async()=>{
     saveToHistory("draft");
     const url=await getShareUrl();
@@ -1694,7 +1728,7 @@ export default function WrenchBid() {
     if(user&&entry) await supabase.from("quotes").insert({user_id:user.id,quote_num:entry.qNum,client_name:entry.clientName,job_title:entry.jobTitle,grand_total:entry.grandTotal,status:"saved",quote_data:entry});
   };
 
-  const newQuote=()=>{ setQuote(null); finalRef.current=""; interimRef.current=""; displayRef.current=""; setTranscript(""); setStep("idle"); setClientPhone(""); setTab("new"); };
+  const newQuote=()=>{ setQuote(null); finalRef.current=""; interimRef.current=""; displayRef.current=""; setTranscript(""); setStep("idle"); setClientPhone(""); setClientEmail(""); setTab("new"); };
 
   const clearHistory=async()=>{
     if(window.confirm("Delete all saved quotes?")){ setHistory([]); ping("History cleared"); if(user)await supabase.from("quotes").delete().eq("user_id",user.id); }
@@ -2041,6 +2075,12 @@ export default function WrenchBid() {
                 <input className="ph-input" type="tel" placeholder="Client phone number" value={clientPhone} onChange={e=>{setClientPhone(e.target.value);setShareUrl(null);}}/>
                 <button className="btn-sms" onClick={sendSMS} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1}}>
                   {shareLoading?"…":"📱 SMS"}
+                </button>
+              </div>
+              <div className="send-row" style={{marginTop:8}}>
+                <input className="ph-input" type="email" placeholder="Client email address" value={clientEmail} onChange={e=>setClientEmail(e.target.value)}/>
+                <button className="btn-sms" onClick={sendEmail} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1,background:"var(--steel)",color:"var(--white)"}}>
+                  {shareLoading?"…":"✉️ Email"}
                 </button>
               </div>
               {shareUrl&&(
