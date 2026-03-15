@@ -1835,15 +1835,19 @@ export default function WrenchBid() {
                           <input className="editable editable-name" value={li.desc} onChange={e=>upd("desc",e.target.value)}/>
                           <div className="li-sub">
                             <input className="li-qty" type="number" min="0" step="0.5" value={li.qty} onChange={e=>upd("qty",parseFloat(e.target.value)||0)}/>
-                            <span className="li-unit">{li.unit}</span>
+                            <select className="li-unit-sel" value={li.unit} onChange={e=>upd("unit",e.target.value)} style={{fontSize:11,color:"var(--muted)",border:"1px solid var(--rule)",borderRadius:2,background:"var(--paper)",padding:"2px 2px",fontFamily:"'Barlow',sans-serif",cursor:"pointer"}}><option value="hrs">hrs</option><option value="flat">flat</option><option value="ea">ea</option><option value="sqft">sqft</option><option value="lbs">lbs</option><option value="day">day</option></select>
                             <span style={{color:"var(--muted)",fontSize:11}}>×</span>
                             <input className="li-rate" type="number" min="0" step="0.01" value={li.rate} onChange={e=>upd("rate",parseFloat(e.target.value)||0)}/>
                           </div>
                         </div>
-                        <input className="editable editable-amt" value={li.total} type="number" onChange={e=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],total:parseFloat(e.target.value)||0};const sub=items.reduce((s,l)=>s+l.total,0);const tax=sub>0?parseFloat((sub*(q.taxRate/100)).toFixed(2)):0;return{...q,lineItems:items,subtotal:parseFloat(sub.toFixed(2)),tax,grandTotal:parseFloat((sub+tax).toFixed(2))}})}/>
+                        <div style={{display:"flex",alignItems:"center",gap:6}}>
+                          <input className="editable editable-amt" value={li.total} type="number" onChange={e=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],total:parseFloat(e.target.value)||0};const sub=items.reduce((s,l)=>s+l.total,0);const tax=sub>0?parseFloat((sub*(q.taxRate/100)).toFixed(2)):0;return{...q,lineItems:items,subtotal:parseFloat(sub.toFixed(2)),tax,grandTotal:parseFloat((sub+tax).toFixed(2))}})}/>
+                          <button onClick={()=>setQuote(q=>{const items=q.lineItems.filter((_,j)=>j!==i);const sub=items.reduce((s,l)=>s+l.total,0);const tax=sub>0?parseFloat((sub*(q.taxRate/100)).toFixed(2)):0;return{...q,lineItems:items,subtotal:parseFloat(sub.toFixed(2)),tax,grandTotal:parseFloat((sub+tax).toFixed(2))}})} style={{background:"none",border:"none",color:"var(--muted)",fontSize:16,cursor:"pointer",padding:"2px 4px",lineHeight:1,flexShrink:0}} title="Remove line">✕</button>
+                        </div>
                       </div>
                       );
                     })}
+                    <button onClick={()=>setQuote(q=>{const items=[...q.lineItems,{desc:"",qty:1,unit:"hrs",rate:0,total:0}];return{...q,lineItems:items};})} style={{width:"100%",padding:"8px",marginTop:8,background:"none",border:"1.5px dashed var(--rule)",borderRadius:3,color:"var(--muted)",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:1,textTransform:"uppercase",cursor:"pointer",transition:"all .15s"}} onMouseOver={e=>{e.currentTarget.style.borderColor="var(--amber)";e.currentTarget.style.color="var(--ink)"}} onMouseOut={e=>{e.currentTarget.style.borderColor="var(--rule)";e.currentTarget.style.color="var(--muted)"}}>+ Add Line</button>
                   </div>
                   <div className="qdoc-notes"><strong>Notes</strong><input className="editable" style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}} value={quote.notes||""} onChange={e=>setQuote(q=>({...q,notes:e.target.value}))} placeholder="Payment terms, warranty, etc."/></div>
                   {(biz.paymentTerms||biz.warranty||biz.customTerms||biz.licenseNum)&&(
