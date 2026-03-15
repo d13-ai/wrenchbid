@@ -1170,8 +1170,16 @@ function RebateWizard({ state, trade }) {
 async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate, accessToken="") {
   const taxNote = taxEnabled && parseFloat(taxRate) > 0
     ? `Apply ${taxRate}% sales tax.` : `No sales tax. taxRate=0, tax=0.`;
+  // If token looks stale, try refreshing via supabase directly
+  let token = accessToken;
+  if(!token){
+    try{
+      const { data: { session } } = await supabase.auth.getSession();
+      token = session?.access_token || "";
+    }catch{}
+  }
   const res = await fetch("/api/quote", {
-    method:"POST", headers:{"content-type":"application/json","authorization":"Bearer "+accessToken},
+    method:"POST", headers:{"content-type":"application/json","authorization":"Bearer "+token},
     body: JSON.stringify({
       model:"claude-sonnet-4-20250514", max_tokens:900,
       messages:[{role:"user",content:`You are a quoting assistant for "${bizName}", a ${trade}. If not English, translate first.\n\nJob: "${transcript}"\n\nReturn ONLY valid JSON:\n{"clientName":null,"jobTitle":"string","lineItems":[{"desc":"string","qty":1,"unit":"hrs","rate":0,"total":0}],"subtotal":0,"taxRate":0,"tax":0,"grandTotal":0,"notes":null,"validDays":30}\n\n${taxNote}\nUse realistic ${trade} rates if not stated. Round to 2 decimals.`}]
@@ -1323,28 +1331,8 @@ export default function WrenchBid() {
   const ping=(msg)=>{ clearTimeout(toastTimer.current); setToast(msg); toastTimer.current=setTimeout(()=>setToast(null),2800); };
 
   const startRec=async()=>{
-    const isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
-
-    // Desktop: Web Speech API (manages its own mic permission)
-    if(!isMobile&&'webkitSpeechRecognition' in window){
-      const rec=new window.webkitSpeechRecognition();
-      rec.continuous=true; rec.interimResults=true; rec.lang=biz.language||"en-US";
-      rec.onresult=(e)=>{ let f=finalRef.current,i=""; for(let j=e.resultIndex;j<e.results.length;j++){ if(e.results[j].isFinal)f+=e.results[j][0].transcript+" "; else i+=e.results[j][0].transcript; } finalRef.current=f; displayRef.current=f+i; setTranscript(f+i); };
-      rec.onerror=(e)=>{
-        if(e.error==="not-allowed"||e.error==="permission-denied")
-          ping("Mic blocked — click the 🔒 in your address bar to allow");
-        else if(e.error==="no-speech")
-          ping("No speech detected — try again");
-        else if(e.error!=="aborted")
-          ping("Voice error: "+e.error);
-      };
-      rec.onend=()=>{ if(recognitionRef.current?.rec===rec)setStep(s=>s==="recording"?"idle":s); };
-      rec.start(); recognitionRef.current={rec,type:"webspeech"}; setStep("recording"); return;
-    }
-
-    // Mobile: Deepgram via getUserMedia
-    // IMPORTANT: getUserMedia MUST be the first await — iOS Safari loses the
-    // user gesture context if any other await precedes it, causing not-allowed.
+    // Use Deepgram on all platforms for consistency
+    // getUserMedia MUST be first await for iOS Safari gesture context
     let active=true;
     let stream;
     try{
@@ -1360,8 +1348,18 @@ export default function WrenchBid() {
     }
 
     try{
-      const tokenRes=await fetch("/api/deepgram-token",{headers:{"authorization":"Bearer "+accessTokenRef.current}});
-      if(!tokenRes.ok){ ping("Voice setup failed"); stream.getTracks().forEach(t=>t.stop()); return; }
+      // Always get fresh session — auto-refreshes if expired
+      const { data: { session } } = await supabase.auth.getSession();
+      const authToken = session?.access_token || "";
+      if(!authToken){ ping("Please sign in to use voice"); stream.getTracks().forEach(t=>t.stop()); return; }
+
+      const tokenRes=await fetch("/api/deepgram-token",{headers:{"authorization":"Bearer "+authToken}});
+      if(!tokenRes.ok){
+        await tokenRes.json().catch(()=>({}));
+        if(tokenRes.status===401) ping("Sign out and sign back in, then try again");
+        else ping("Voice setup failed ("+tokenRes.status+")");
+        stream.getTracks().forEach(t=>t.stop()); return;
+      }
       const{token}=await tokenRes.json();
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
       const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model=nova-2&language="+(biz.language||"en-US")+"&interim_results=true&endpointing=100&no_delay=true&numerals=true",["token",token]);
@@ -1388,11 +1386,8 @@ export default function WrenchBid() {
   const stopRec=()=>{
     const ref=recognitionRef.current; if(!ref)return;
     recognitionRef.current=null;
-    if(ref.type==="webspeech"){ ref.rec.stop(); }
-    else{
-      ref.deactivate(); ref.mediaRecorder?.stop(); ref.stream?.getTracks().forEach(t=>t.stop()); ref.ws?.close();
-      if(interimRef.current){ finalRef.current+=interimRef.current+" "; interimRef.current=""; displayRef.current=finalRef.current; setTranscript(finalRef.current); }
-    }
+    ref.deactivate?.(); ref.mediaRecorder?.stop(); ref.stream?.getTracks().forEach(t=>t.stop()); ref.ws?.close();
+    if(interimRef.current){ finalRef.current+=interimRef.current+" "; interimRef.current=""; displayRef.current=finalRef.current; setTranscript(finalRef.current); }
     setStep("idle");
   };
 
