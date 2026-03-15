@@ -272,7 +272,7 @@ if (!document.getElementById("wb-css")) {
 /* ─── Constants ───────────────────────────────────────────────────────────── */
 const $$ = (n) => `$${Number(n || 0).toFixed(2)}`;
 const todayStr = () => new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-const qNum = () => "WB-" + String(Date.now()).slice(-4);
+const qNum = (history=[]) => { const n = history.length + 1; return "WB-" + String(n).padStart(4,"0"); };
 const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","Other"];
 const LANGUAGES = [
   {code:"en",    flag:"🇺🇸", label:"EN",  model:"nova-3"},
@@ -1454,7 +1454,7 @@ export default function WrenchBid() {
   const generate=async()=>{
     if(!transcript.trim()){ping("Speak a job description first");return;}
     setStep("processing");
-    try{ const data=await aiParseQuote(transcript,biz.name,biz.trade,biz.taxEnabled,biz.taxRate,accessTokenRef.current); setQuote({...data,qNum:qNum(),date:todayStr(),paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||""}); setStep("preview"); }
+    try{ const data=await aiParseQuote(transcript,biz.name,biz.trade,biz.taxEnabled,biz.taxRate,accessTokenRef.current); setQuote({...data,qNum:qNum(history),date:todayStr(),paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||""}); setStep("preview"); }
     catch{ setStep("idle"); ping("Parse error — try again"); }
   };
 
@@ -1816,7 +1816,7 @@ export default function WrenchBid() {
                 <div className="qdoc-body">
                   <div className="qdoc-meta-row">
                     <div className="qdoc-meta-cell">To<span><input className="editable editable-meta" value={quote.clientName||""} onChange={e=>setQuote(q=>({...q,clientName:e.target.value}))} placeholder="Client name"/></span></div>
-                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>Quote #<span>{quote.qNum}</span></div>
+                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>Quote #<span><input className="editable editable-meta" value={quote.qNum||""} onChange={e=>setQuote(q=>({...q,qNum:e.target.value}))} style={{textAlign:"right",width:80}}/></span></div>
                   </div>
                   <div className="qdoc-meta-row" style={{marginBottom:16}}>
                     <div className="qdoc-meta-cell">Date<span>{quote.date}</span></div>
