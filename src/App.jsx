@@ -88,9 +88,13 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .qdoc-job{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--rule);letter-spacing:.5px}
 .sec-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber-deep);margin-bottom:8px}
 .li-table{width:100%;margin-bottom:16px}
-.li-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--rule)}
+.li-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--rule)}
 .li-row:last-child{border-bottom:none}
-.li-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.li-sub{font-size:11px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:4px}
+.li-qty{width:40px;font-size:12px;font-weight:600;text-align:center;padding:2px 4px;background:var(--paper);border:1px solid var(--rule);border-radius:2px;font-family:'Barlow',sans-serif;color:var(--ink);}
+.li-unit{font-size:11px;color:var(--muted);min-width:24px;}
+.li-rate{width:60px;font-size:12px;font-weight:600;text-align:right;padding:2px 4px;background:var(--paper);border:1px solid var(--rule);border-radius:2px;font-family:'Barlow',sans-serif;color:var(--ink);}
+.li-qty:focus,.li-rate:focus{border-color:var(--amber);background:var(--amber-light);outline:none;}
 .totals{background:var(--ink);margin:0 -22px -20px;padding:16px 22px}
 .total-row{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:5px}
 .total-final{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--amber);border-top:1px solid #333;padding-top:10px;margin-top:8px;display:flex;justify-content:space-between;letter-spacing:1px}
@@ -1822,15 +1826,24 @@ export default function WrenchBid() {
                   <div className="qdoc-job"><input className="editable editable-title" value={quote.jobTitle||""} onChange={e=>setQuote(q=>({...q,jobTitle:e.target.value}))} placeholder="Job title"/></div>
                   <div className="sec-label">Line Items</div>
                   <div className="li-table">
-                    {quote.lineItems.map((li,i)=>(
+                    {quote.lineItems.map((li,i)=>{
+                      const recalc=(items)=>{const sub=items.reduce((s,l)=>s+l.total,0);const tax=sub>0?parseFloat((sub*(quote.taxRate/100)).toFixed(2)):0;return{subtotal:parseFloat(sub.toFixed(2)),tax,grandTotal:parseFloat((sub+tax).toFixed(2))};};
+                      const upd=(field,val)=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],[field]:val};if(field==="qty"||field==="rate")items[i].total=parseFloat(((items[i].qty||0)*(items[i].rate||0)).toFixed(2));return{...q,lineItems:items,...recalc(items)};});
+                      return(
                       <div className="li-row" key={i}>
                         <div style={{flex:1,marginRight:8}}>
-                          <input className="editable editable-name" value={li.desc} onChange={e=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],desc:e.target.value};return{...q,lineItems:items};})}/>
-                          {li.qty!==1&&<div className="li-sub">{li.qty} {li.unit} × {$$(li.rate)}</div>}
+                          <input className="editable editable-name" value={li.desc} onChange={e=>upd("desc",e.target.value)}/>
+                          <div className="li-sub">
+                            <input className="li-qty" type="number" min="0" step="0.5" value={li.qty} onChange={e=>upd("qty",parseFloat(e.target.value)||0)}/>
+                            <span className="li-unit">{li.unit}</span>
+                            <span style={{color:"var(--muted)",fontSize:11}}>×</span>
+                            <input className="li-rate" type="number" min="0" step="0.01" value={li.rate} onChange={e=>upd("rate",parseFloat(e.target.value)||0)}/>
+                          </div>
                         </div>
-                        <input className="editable editable-amt" value={li.total} type="number" onChange={e=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],total:parseFloat(e.target.value)||0};const sub=items.reduce((s,l)=>s+l.total,0);const tax=sub>150?parseFloat((sub*(q.taxRate/100)).toFixed(2)):0;return{...q,lineItems:items,subtotal:parseFloat(sub.toFixed(2)),tax,grandTotal:parseFloat((sub+tax).toFixed(2))}})}/>
+                        <input className="editable editable-amt" value={li.total} type="number" onChange={e=>setQuote(q=>{const items=[...q.lineItems];items[i]={...items[i],total:parseFloat(e.target.value)||0};const sub=items.reduce((s,l)=>s+l.total,0);const tax=sub>0?parseFloat((sub*(q.taxRate/100)).toFixed(2)):0;return{...q,lineItems:items,subtotal:parseFloat(sub.toFixed(2)),tax,grandTotal:parseFloat((sub+tax).toFixed(2))}})}/>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                   <div className="qdoc-notes"><strong>Notes</strong><input className="editable" style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}} value={quote.notes||""} onChange={e=>setQuote(q=>({...q,notes:e.target.value}))} placeholder="Payment terms, warranty, etc."/></div>
                   {(biz.paymentTerms||biz.warranty||biz.customTerms||biz.licenseNum)&&(
