@@ -1454,7 +1454,7 @@ export default function WrenchBid() {
   const generate=async()=>{
     if(!transcript.trim()){ping("Speak a job description first");return;}
     setStep("processing");
-    try{ const data=await aiParseQuote(transcript,biz.name,biz.trade,biz.taxEnabled,biz.taxRate,accessTokenRef.current); setQuote({...data,qNum:qNum(),date:todayStr()}); setStep("preview"); }
+    try{ const data=await aiParseQuote(transcript,biz.name,biz.trade,biz.taxEnabled,biz.taxRate,accessTokenRef.current); setQuote({...data,qNum:qNum(),date:todayStr(),paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||""}); setStep("preview"); }
     catch{ setStep("idle"); ping("Parse error — try again"); }
   };
 
@@ -1850,14 +1850,21 @@ export default function WrenchBid() {
                     <button onClick={()=>setQuote(q=>{const items=[...q.lineItems,{desc:"",qty:1,unit:"hrs",rate:0,total:0}];return{...q,lineItems:items};})} style={{width:"100%",padding:"8px",marginTop:8,background:"none",border:"1.5px dashed var(--rule)",borderRadius:3,color:"var(--muted)",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:1,textTransform:"uppercase",cursor:"pointer",transition:"all .15s"}} onMouseOver={e=>{e.currentTarget.style.borderColor="var(--amber)";e.currentTarget.style.color="var(--ink)"}} onMouseOut={e=>{e.currentTarget.style.borderColor="var(--rule)";e.currentTarget.style.color="var(--muted)"}}>+ Add Line</button>
                   </div>
                   <div className="qdoc-notes"><strong>Notes</strong><input className="editable" style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}} value={quote.notes||""} onChange={e=>setQuote(q=>({...q,notes:e.target.value}))} placeholder="Payment terms, warranty, etc."/></div>
-                  {(biz.paymentTerms||biz.warranty||biz.customTerms||biz.licenseNum)&&(
-                    <div className="qdoc-terms">
-                      {biz.paymentTerms&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">Payment Terms</div><div className="qdoc-terms-text">{biz.paymentTerms}</div></div>}
-                      {biz.warranty&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">Warranty</div><div className="qdoc-terms-text">{biz.warranty}</div></div>}
-                      {biz.customTerms&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">Terms & Conditions</div><div className="qdoc-terms-text">{biz.customTerms}</div></div>}
+                  <div className="qdoc-terms">
+                      <div className="qdoc-terms-row">
+                        <div className="qdoc-terms-label">Payment Terms</div>
+                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.paymentTerms||""} onChange={e=>setQuote(q=>({...q,paymentTerms:e.target.value}))} placeholder="e.g. 50% deposit required. Balance due on completion."/>
+                      </div>
+                      <div className="qdoc-terms-row">
+                        <div className="qdoc-terms-label">Warranty</div>
+                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.warranty||""} onChange={e=>setQuote(q=>({...q,warranty:e.target.value}))} placeholder="e.g. All labor warrantied for 1 year."/>
+                      </div>
+                      <div className="qdoc-terms-row">
+                        <div className="qdoc-terms-label">Terms & Conditions</div>
+                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.customTerms||""} onChange={e=>setQuote(q=>({...q,customTerms:e.target.value}))} placeholder="e.g. Client responsible for permits."/>
+                      </div>
                       {biz.licenseNum&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">License #</div><div className="qdoc-terms-text">{biz.licenseNum}</div></div>}
                     </div>
-                  )}
                   <div className="disclaimer"><strong>Estimate only.</strong> Review all pricing before sending to clients.</div>
                   <div className="totals">
                     <div className="total-row"><span>Subtotal</span><span>{$$(quote.subtotal)}</span></div>
