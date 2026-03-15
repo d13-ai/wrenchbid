@@ -1167,11 +1167,11 @@ function RebateWizard({ state, trade }) {
 }
 
 /* ─── AI Quote Parser ─────────────────────────────────────────────────────── */
-async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate) {
+async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate, accessToken="") {
   const taxNote = taxEnabled && parseFloat(taxRate) > 0
     ? `Apply ${taxRate}% sales tax.` : `No sales tax. taxRate=0, tax=0.`;
   const res = await fetch("/api/quote", {
-    method:"POST", headers:{"content-type":"application/json"},
+    method:"POST", headers:{"content-type":"application/json","authorization":"Bearer "+accessToken},
     body: JSON.stringify({
       model:"claude-sonnet-4-20250514", max_tokens:900,
       messages:[{role:"user",content:`You are a quoting assistant for "${bizName}", a ${trade}. If not English, translate first.\n\nJob: "${transcript}"\n\nReturn ONLY valid JSON:\n{"clientName":null,"jobTitle":"string","lineItems":[{"desc":"string","qty":1,"unit":"hrs","rate":0,"total":0}],"subtotal":0,"taxRate":0,"tax":0,"grandTotal":0,"notes":null,"validDays":30}\n\n${taxNote}\nUse realistic ${trade} rates if not stated. Round to 2 decimals.`}]
@@ -1223,6 +1223,7 @@ export default function WrenchBid() {
   const finalRef=useRef("");
   const interimRef=useRef("");
   const displayRef=useRef("");
+  const accessTokenRef=useRef("");
 
   useEffect(()=>{ try{localStorage.setItem("wb_history",JSON.stringify(history));}catch{} },[history]);
   useEffect(()=>{ try{localStorage.setItem("wb_biz",JSON.stringify(biz));}catch{} },[biz]);
@@ -1273,10 +1274,12 @@ export default function WrenchBid() {
   useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>{
       setUser(session?.user??null); setAuthReady(true);
+      accessTokenRef.current=session?.access_token||"";
       if(session?.user){ loadCloudQuotes(session.user.id); loadCloudBiz(session.user); }
     });
     const{data:{subscription}}=supabase.auth.onAuthStateChange((_e,session)=>{
       setUser(session?.user??null);
+      accessTokenRef.current=session?.access_token||"";
       if(session?.user){ loadCloudQuotes(session.user.id); loadCloudBiz(session.user); }
     });
     return()=>subscription.unsubscribe();
@@ -1357,7 +1360,7 @@ export default function WrenchBid() {
     }
 
     try{
-      const tokenRes=await fetch("/api/deepgram-token");
+      const tokenRes=await fetch("/api/deepgram-token",{headers:{"authorization":"Bearer "+accessTokenRef.current}});
       if(!tokenRes.ok){ ping("Voice setup failed"); stream.getTracks().forEach(t=>t.stop()); return; }
       const{token}=await tokenRes.json();
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
@@ -1398,7 +1401,7 @@ export default function WrenchBid() {
   const generate=async()=>{
     if(!transcript.trim()){ping("Speak a job description first");return;}
     setStep("processing");
-    try{ const data=await aiParseQuote(transcript,biz.name,biz.trade,biz.taxEnabled,biz.taxRate); setQuote({...data,qNum:qNum(),date:todayStr()}); setStep("preview"); }
+    try{ const data=await aiParseQuote(transcript,biz.name,biz.trade,biz.taxEnabled,biz.taxRate,accessTokenRef.current); setQuote({...data,qNum:qNum(),date:todayStr()}); setStep("preview"); }
     catch{ setStep("idle"); ping("Parse error — try again"); }
   };
 
