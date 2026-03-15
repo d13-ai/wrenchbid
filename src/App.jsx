@@ -271,16 +271,16 @@ const todayStr = () => new Date().toLocaleDateString("en-US", { month: "short", 
 const qNum = () => "WB-" + String(Date.now()).slice(-4);
 const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","Other"];
 const LANGUAGES = [
-  {code:"en-US",  flag:"🇺🇸", label:"EN"},
-  {code:"es-419", flag:"🇲🇽", label:"ES"},
-  {code:"zh-CN",  flag:"🇨🇳", label:"中文"},
-  {code:"ar",     flag:"🇸🇦", label:"AR"},
-  {code:"vi-VN",  flag:"🇻🇳", label:"VI"},
-  {code:"ko-KR",  flag:"🇰🇷", label:"KO"},
-  {code:"tl",     flag:"🇵🇭", label:"TL"},
-  {code:"fr-FR",  flag:"🇫🇷", label:"FR"},
-  {code:"pl-PL",  flag:"🇵🇱", label:"PL"},
-  {code:"ru-RU",  flag:"🇷🇺", label:"RU"},
+  {code:"en",    flag:"🇺🇸", label:"EN"},
+  {code:"es",    flag:"🇲🇽", label:"ES"},
+  {code:"zh-CN", flag:"🇨🇳", label:"中文"},
+  {code:"ar",    flag:"🇸🇦", label:"AR"},
+  {code:"vi",    flag:"🇻🇳", label:"VI"},
+  {code:"ko",    flag:"🇰🇷", label:"KO"},
+  {code:"tl",    flag:"🇵🇭", label:"TL"},
+  {code:"fr",    flag:"🇫🇷", label:"FR"},
+  {code:"pl",    flag:"🇵🇱", label:"PL"},
+  {code:"ru",    flag:"🇷🇺", label:"RU"},
 ];
 const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 
@@ -1243,8 +1243,8 @@ Return ONLY valid JSON, no explanation:
 export default function WrenchBid() {
   const [tab,setTab]=useState("new");
   const [biz,setBiz]=useState(()=>{
-    try{ const s=JSON.parse(localStorage.getItem("wb_biz")); return s||{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en-US",state:""}; }
-    catch{ return{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en-US",state:""}; }
+    try{ const s=JSON.parse(localStorage.getItem("wb_biz")); return s||{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
+    catch{ return{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
   });
   const [user,setUser]=useState(null);
   const [authReady,setAuthReady]=useState(false);
@@ -1411,7 +1411,7 @@ export default function WrenchBid() {
       }
       const{token}=await tokenRes.json();
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
-      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model=nova-3&language="+(biz.language||"en-US")+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total",["token",token]);
+      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model=nova-3&language="+(biz.language||"en")+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total",["token",token]);
       ws.onopen=()=>{
         if(!active){ ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
         const mt=["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg","audio/mp4"].find(t=>{ try{return MediaRecorder.isTypeSupported(t);}catch{return false;} })||"";
@@ -1777,7 +1777,7 @@ export default function WrenchBid() {
                 </button>
                 <div className="lang-bar">
                   {LANGUAGES.map(l=>(
-                    <button key={l.code} className={`lang-pill ${(biz.language||"en-US")===l.code?"on":""}`}
+                    <button key={l.code} className={`lang-pill ${(biz.language||"en")===l.code?"on":""}`}
                       onClick={()=>setBiz(b=>({...b,language:l.code}))}>
                       {l.flag} {l.label}
                     </button>
@@ -1909,17 +1909,17 @@ export default function WrenchBid() {
               <div className="field"><label>License # <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>(optional)</span></label><input value={biz.licenseNum} onChange={e=>setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345"/></div>
               <div className="field">
                 <label>Voice Language</label>
-                <select value={biz.language||"en-US"} onChange={e=>setBiz(b=>({...b,language:e.target.value}))}>
-                  <option value="en-US">🇺🇸 English</option>
-                  <option value="es-419">🇲🇽 Spanish / Español</option>
+                <select value={biz.language||"en"} onChange={e=>setBiz(b=>({...b,language:e.target.value}))}>
+                  <option value="en">🇺🇸 English</option>
+                  <option value="es">🇲🇽 Spanish / Español</option>
                   <option value="zh-CN">🇨🇳 Chinese / 中文</option>
                   <option value="ar">🇸🇦 Arabic / العربية</option>
-                  <option value="vi-VN">🇻🇳 Vietnamese / Tiếng Việt</option>
-                  <option value="ko-KR">🇰🇷 Korean / 한국어</option>
+                  <option value="vi">🇻🇳 Vietnamese / Tiếng Việt</option>
+                  <option value="ko">🇰🇷 Korean / 한국어</option>
                   <option value="tl">🇵🇭 Tagalog / Filipino</option>
-                  <option value="fr-FR">🇫🇷 French / Français</option>
-                  <option value="pl-PL">🇵🇱 Polish / Polski</option>
-                  <option value="ru-RU">🇷🇺 Russian / Русский</option>
+                  <option value="fr">🇫🇷 French / Français</option>
+                  <option value="pl">🇵🇱 Polish / Polski</option>
+                  <option value="ru">🇷🇺 Russian / Русский</option>
                 </select>
                 <div className="field-hint">Speak in your language — quotes are always built in English.</div>
               </div>
