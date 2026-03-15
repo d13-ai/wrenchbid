@@ -60,6 +60,10 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .mic-btn:hover{background:var(--amber-light);transform:scale(1.04)}
 .mic-btn.live{border-color:var(--red);color:var(--red);background:#fff5f5;animation:sonar 1.1s ease-out infinite}
 .mic-icon{font-size:34px;line-height:1}
+.lang-bar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;padding:0 4px}
+.lang-pill{padding:4px 10px;border-radius:20px;border:1.5px solid var(--rule);background:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;color:var(--muted)}
+.lang-pill:hover{border-color:var(--amber);color:var(--ink)}
+.lang-pill.on{border-color:var(--amber);background:var(--amber);color:var(--ink)}
 @keyframes sonar{0%{box-shadow:0 0 0 0 rgba(176,48,48,.5)}70%{box-shadow:0 0 0 22px rgba(176,48,48,0)}100%{box-shadow:0 0 0 0 rgba(176,48,48,0)}}
 .tx-box{background:var(--ink);border-radius:4px;padding:14px 16px;min-height:70px;font-size:14px;line-height:1.6;color:var(--paper);margin-bottom:14px;border:1.5px solid var(--steel)}
 .btn{padding:12px 18px;border-radius:3px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s}
@@ -266,6 +270,18 @@ const $$ = (n) => `$${Number(n || 0).toFixed(2)}`;
 const todayStr = () => new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 const qNum = () => "WB-" + String(Date.now()).slice(-4);
 const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","Other"];
+const LANGUAGES = [
+  {code:"en-US",  flag:"🇺🇸", label:"EN"},
+  {code:"es-419", flag:"🇲🇽", label:"ES"},
+  {code:"zh-CN",  flag:"🇨🇳", label:"中文"},
+  {code:"ar",     flag:"🇸🇦", label:"AR"},
+  {code:"vi-VN",  flag:"🇻🇳", label:"VI"},
+  {code:"ko-KR",  flag:"🇰🇷", label:"KO"},
+  {code:"tl",     flag:"🇵🇭", label:"TL"},
+  {code:"fr-FR",  flag:"🇫🇷", label:"FR"},
+  {code:"pl-PL",  flag:"🇵🇱", label:"PL"},
+  {code:"ru-RU",  flag:"🇷🇺", label:"RU"},
+];
 const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1759,6 +1775,14 @@ export default function WrenchBid() {
                   <div className="mic-icon">{step==="recording"?"⏹":"🎙"}</div>
                   <div>{step==="recording"?"STOP":"SPEAK"}</div>
                 </button>
+                <div className="lang-bar">
+                  {LANGUAGES.map(l=>(
+                    <button key={l.code} className={`lang-pill ${(biz.language||"en-US")===l.code?"on":""}`}
+                      onClick={()=>setBiz(b=>({...b,language:l.code}))}>
+                      {l.flag} {l.label}
+                    </button>
+                  ))}
+                </div>
               </div>
               <textarea className="tx-box" value={transcript} onChange={e=>{finalRef.current=e.target.value;interimRef.current="";displayRef.current=e.target.value;setTranscript(e.target.value);}} placeholder="Your words appear here as you speak... or type directly" rows={4} style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}/>
               {step==="processing"&&<div className="loader"/>}
@@ -1887,13 +1911,15 @@ export default function WrenchBid() {
                 <label>Voice Language</label>
                 <select value={biz.language||"en-US"} onChange={e=>setBiz(b=>({...b,language:e.target.value}))}>
                   <option value="en-US">🇺🇸 English</option>
-                  <option value="es-US">🇲🇽 Spanish / Español</option>
-                  <option value="pt-BR">🇧🇷 Portuguese / Português</option>
-                  <option value="fr-FR">🇫🇷 French / Français</option>
+                  <option value="es-419">🇲🇽 Spanish / Español</option>
                   <option value="zh-CN">🇨🇳 Chinese / 中文</option>
+                  <option value="ar">🇸🇦 Arabic / العربية</option>
                   <option value="vi-VN">🇻🇳 Vietnamese / Tiếng Việt</option>
                   <option value="ko-KR">🇰🇷 Korean / 한국어</option>
-                  <option value="ar-SA">🇸🇦 Arabic / العربية</option>
+                  <option value="tl">🇵🇭 Tagalog / Filipino</option>
+                  <option value="fr-FR">🇫🇷 French / Français</option>
+                  <option value="pl-PL">🇵🇱 Polish / Polski</option>
+                  <option value="ru-RU">🇷🇺 Russian / Русский</option>
                 </select>
                 <div className="field-hint">Speak in your language — quotes are always built in English.</div>
               </div>
