@@ -299,7 +299,7 @@ if (!document.getElementById("wb-css")) {
 const $$ = (n) => `$${Number(n || 0).toFixed(2)}`;
 const todayStr = () => new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 const qNum = (history=[]) => { const n = history.length + 1; return "WB-" + String(n).padStart(4,"0"); };
-const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","Other"];
+const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","General Contractor","Concrete","Masonry","Drywall","Insulation","Solar Installer","Pool Service","Pest Control","Locksmith","Drone Operator","Photographer","Videographer","Graphic Designer","Web Designer","Copywriter","Social Media Manager","DJ","Face Painter","Caterer","Event Planner","Personal Trainer","Tutor","Inspector","Consultant","Other"];
 const LANGUAGES = [
   {code:"en",    flag:"🇺🇸", label:"EN",  model:"nova-3"},
   {code:"es",    flag:"🇲🇽", label:"ES",  model:"nova-3"},
@@ -2188,7 +2188,7 @@ export default function WrenchBid() {
             <div className="card-hd">Your Business Profile</div>
             <div className="card-bd">
               <div className="field"><label>Business Name</label><input value={biz.name} onChange={e=>setBiz(b=>({...b,name:e.target.value}))} placeholder="Mike's Plumbing LLC"/></div>
-              <div className="field"><label>Your Trade</label><select value={biz.trade} onChange={e=>setBiz(b=>({...b,trade:e.target.value}))}>{TRADES.map(t=><option key={t}>{t}</option>)}</select></div>
+              <div className="field"><label>Your Profession</label><select value={biz.trade} onChange={e=>setBiz(b=>({...b,trade:e.target.value}))}>{TRADES.map(t=><option key={t}>{t}</option>)}</select></div>
               <div className="field">
                 <label>State</label>
                 <select value={biz.state||""} onChange={e=>setBiz(b=>({...b,state:e.target.value}))}>
