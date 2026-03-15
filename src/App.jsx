@@ -28,6 +28,21 @@ html,body,#root{width:100%;min-height:100vh;min-height:-webkit-fill-available;}
 }
 body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;line-height:1.4}
 .app{width:100%;max-width:460px;margin:0 auto;min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;background:var(--paper);position:relative}
+@media(min-width:768px){
+  .app{max-width:720px;}
+  .page{padding:28px 32px;}
+  .mic-btn{width:130px;height:130px;}
+  .mic-icon{font-size:42px;}
+  .tx-box{font-size:16px;min-height:90px;}
+  .btn{font-size:17px;padding:14px 22px;}
+  .card-hd{font-size:14px;padding:12px 20px;}
+  .card-bd{padding:20px;}
+  .hdr{height:64px;padding:0 28px;}
+  .logo{font-size:30px;}
+  .tab{font-size:15px;padding:14px 12px;}
+  .li-table td{font-size:15px;}
+  .field input,.field select,.field textarea{font-size:17px;}
+}
 .hdr{background:var(--ink);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .logo{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:3px;color:var(--amber);text-transform:uppercase}
 .logo em{color:var(--white);font-style:normal}
