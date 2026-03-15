@@ -261,6 +261,19 @@ body{background:var(--paper);color:var(--ink);font-family:'Barlow',sans-serif;li
 .rw-no-state .icon{font-size:48px;margin-bottom:14px}
 .rw-updated{font-size:10px;color:var(--muted);text-align:right;margin-bottom:14px;font-style:italic}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--rule)}
+@media print{
+  body{background:white!important}
+  .hdr,.tabs,.tip,.mic-wrap,.tx-box,.btn-row,.send-lbl,.phone-row,.btn-sms,.btn-row,.send-section,.app-footer,.toast,.update-banner,.install-banner,.lang-bar,.disclaimer{display:none!important}
+  .page{padding:0!important}
+  .app{max-width:100%!important;box-shadow:none!important}
+  .qdoc{border:none!important;box-shadow:none!important}
+  .totals{background:#0d0d0d!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .qdoc-stripe{background:#e8a020!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  textarea.editable{border:none!important;resize:none!important;background:transparent!important}
+  input.editable{border:none!important;background:transparent!important}
+  .li-qty,.li-rate{border:none!important;background:transparent!important}
+  select{border:none!important;background:transparent!important;appearance:none}
+}
 `;
 
 if (!document.getElementById("wb-css")) {
@@ -1888,6 +1901,7 @@ export default function WrenchBid() {
               )}
               <div className="btn-row" style={{marginBottom:8}}>
                 <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save</button>
+                <button className="btn btn-ghost" onClick={()=>window.print()}>📄 PDF</button>
                 <button className="btn btn-ghost" onClick={copyText} disabled={shareLoading}>{shareLoading?"…":"📋 Copy"}</button>
                 <button className="btn btn-ghost" onClick={newQuote}>+ New</button>
               </div>
