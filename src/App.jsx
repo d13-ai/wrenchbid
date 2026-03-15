@@ -1197,7 +1197,25 @@ async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate, acc
     method:"POST", headers:{"content-type":"application/json","authorization":"Bearer "+token},
     body: JSON.stringify({
       model:"claude-sonnet-4-20250514", max_tokens:900,
-      messages:[{role:"user",content:`You are a quoting assistant for "${bizName}", a ${trade}. If not English, translate first.\n\nJob: "${transcript}"\n\nReturn ONLY valid JSON:\n{"clientName":null,"jobTitle":"string","lineItems":[{"desc":"string","qty":1,"unit":"hrs","rate":0,"total":0}],"subtotal":0,"taxRate":0,"tax":0,"grandTotal":0,"notes":null,"validDays":30}\n\n${taxNote}\nUse realistic ${trade} rates if not stated. Round to 2 decimals.`}]
+      messages:[{role:"user",content:`You are a quoting assistant for "${bizName}", a ${trade}. Your job is to convert a spoken job description into a structured quote.
+
+Job description: "${transcript}"
+
+Rules:
+- Extract client name if mentioned, otherwise null
+- Separate labor and materials into distinct line items
+- If rate is stated (e.g. "$90/hr", "flat rate $500"), use it exactly
+- If rate is NOT stated, use realistic current market rates for a ${trade} in the US
+- If hours are not stated but a flat rate is given, set qty=1 unit="flat"
+- Round all amounts to 2 decimals
+- jobTitle should be a short professional description (e.g. "AC Tune-Up", "Kitchen Faucet Replacement")
+- notes should capture anything relevant not in line items (warranty, scope, conditions) or null
+- validDays is how long the quote is valid — default 30
+
+${taxNote}
+
+Return ONLY valid JSON, no explanation:
+{"clientName":null,"jobTitle":"string","lineItems":[{"desc":"string","qty":1,"unit":"hrs","rate":0,"total":0}],"subtotal":0,"taxRate":0,"tax":0,"grandTotal":0,"notes":null,"validDays":30}`}]
     })
   });
   const d = await res.json();
@@ -1377,7 +1395,7 @@ export default function WrenchBid() {
       }
       const{token}=await tokenRes.json();
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
-      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model=nova-2&language="+(biz.language||"en-US")+"&interim_results=true&endpointing=100&no_delay=true&numerals=true",["token",token]);
+      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model=nova-3&language="+(biz.language||"en-US")+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total",["token",token]);
       ws.onopen=()=>{
         if(!active){ ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
         const mt=["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg","audio/mp4"].find(t=>{ try{return MediaRecorder.isTypeSupported(t);}catch{return false;} })||"";
