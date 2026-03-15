@@ -1321,17 +1321,43 @@ export default function WrenchBid() {
 
   const startRec=async()=>{
     const isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    // Desktop: Web Speech API (manages its own mic permission)
     if(!isMobile&&'webkitSpeechRecognition' in window){
       const rec=new window.webkitSpeechRecognition();
       rec.continuous=true; rec.interimResults=true; rec.lang=biz.language||"en-US";
       rec.onresult=(e)=>{ let f=finalRef.current,i=""; for(let j=e.resultIndex;j<e.results.length;j++){ if(e.results[j].isFinal)f+=e.results[j][0].transcript+" "; else i+=e.results[j][0].transcript; } finalRef.current=f; displayRef.current=f+i; setTranscript(f+i); };
-      rec.onerror=(e)=>{ if(e.error!=="aborted")ping("Voice error: "+e.error); };
+      rec.onerror=(e)=>{
+        if(e.error==="not-allowed"||e.error==="permission-denied")
+          ping("Mic blocked — click the 🔒 in your address bar to allow");
+        else if(e.error==="no-speech")
+          ping("No speech detected — try again");
+        else if(e.error!=="aborted")
+          ping("Voice error: "+e.error);
+      };
       rec.onend=()=>{ if(recognitionRef.current?.rec===rec)setStep(s=>s==="recording"?"idle":s); };
       rec.start(); recognitionRef.current={rec,type:"webspeech"}; setStep("recording"); return;
     }
+
+    // Mobile: Deepgram via getUserMedia
+    // IMPORTANT: getUserMedia MUST be the first await — iOS Safari loses the
+    // user gesture context if any other await precedes it, causing not-allowed.
     let active=true;
+    let stream;
     try{
-      const[tokenRes,stream]=await Promise.all([fetch("/api/deepgram-token"),navigator.mediaDevices.getUserMedia({audio:true})]);
+      stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    }catch(permErr){
+      if(permErr.name==="NotAllowedError"||permErr.name==="PermissionDeniedError"||permErr.name==="SecurityError")
+        ping("Mic blocked — check browser settings to allow microphone");
+      else if(permErr.name==="NotFoundError")
+        ping("No microphone found on this device");
+      else
+        ping("Microphone unavailable — "+permErr.name);
+      return;
+    }
+
+    try{
+      const tokenRes=await fetch("/api/deepgram-token");
       if(!tokenRes.ok){ ping("Voice setup failed"); stream.getTracks().forEach(t=>t.stop()); return; }
       const{token}=await tokenRes.json();
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
@@ -1353,7 +1379,7 @@ export default function WrenchBid() {
       };
       ws.onerror=()=>{ if(active)ping("Voice connection error"); };
       ws.onclose=()=>{ if(active)setStep(s=>s==="recording"?"idle":s); };
-    }catch{ ping("Could not start recording"); setStep("idle"); }
+    }catch(e){ stream?.getTracks().forEach(t=>t.stop()); ping("Could not start recording"); setStep("idle"); }
   };
 
   const stopRec=()=>{
@@ -1368,11 +1394,6 @@ export default function WrenchBid() {
   };
 
   const toggleMic=()=>step==="recording"?stopRec():startRec();
-
-  useEffect(()=>{
-    if(!/Android|iPhone|iPad/i.test(navigator.userAgent)&&'webkitSpeechRecognition' in window)
-      navigator.mediaDevices.getUserMedia({audio:true}).then(s=>s.getTracks().forEach(t=>t.stop())).catch(()=>{});
-  },[]);
 
   const generate=async()=>{
     if(!transcript.trim()){ping("Speak a job description first");return;}
