@@ -1252,7 +1252,7 @@ Rules:
 - Extract client name if mentioned, otherwise null
 - Separate labor and materials into distinct line items
 - If rate is stated (e.g. "$90/hr", "flat rate $500", "tarifa plana $500"), use it exactly
-- If rate is NOT stated, use realistic current market rates for a ${trade} in the US
+- If rate is NOT stated, leave rate as 0 — you'll fill in your own prices before sending.
 - If hours are not stated but a flat rate is given, set qty=1 unit="flat"
 - Round all amounts to 2 decimals
 - jobTitle should be a short professional description in English (e.g. "AC Tune-Up", "Kitchen Faucet Replacement")
