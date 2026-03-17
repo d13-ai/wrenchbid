@@ -1857,7 +1857,7 @@ export default function WrenchBid() {
               <div className="ob-slide">
                 <div className="ob-icon">🎙</div>
                 <div className="ob-title">Quote any job<br/>in 60 seconds</div>
-                <div className="ob-sub">Just speak the job out loud. WrenchBid builds a professional quote instantly — no typing, no templates.</div>
+                <div className="ob-sub">Speak the job out loud — your rates, your prices, your terms. WrenchBid formats it into a professional quote. You set all the prices.</div>
                 <div className="ob-demo">
                   <div className="ob-demo-label"><span style={{width:8,height:8,borderRadius:"50%",background:"#b03030",display:"inline-block"}}/>Recording…</div>
                   <div className="ob-demo-text">{onboardTyped}{onboardTyped.length<74&&<span className="ob-cursor"/>}</div>
@@ -1867,8 +1867,8 @@ export default function WrenchBid() {
               {/* Slide 2 — Show the output */}
               <div className="ob-slide">
                 <div className="ob-icon">⚡</div>
-                <div className="ob-title">Speaks trades.<br/>Builds quotes.</div>
-                <div className="ob-sub">Say it like you'd say it to a homeowner. WrenchBid understands hours, rates, materials, and client names.</div>
+                <div className="ob-title">You set the price.<br/>We do the paperwork.</div>
+                <div className="ob-sub">Say your rate, your hours, your materials cost. WrenchBid formats your numbers into a professional quote — you control every dollar.</div>
                 <div className="ob-quote-preview">
                   <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,letterSpacing:2,color:"var(--amber)",marginBottom:10,textTransform:"uppercase"}}>Quote Preview</div>
                   {[["Water Heater Replacement",""],["Labor — 3 hrs @ $105/hr","$315.00"],["Parts & Materials","$380.00"],["TOTAL","$695.00"]].map(([d,a],i)=>(
@@ -1974,7 +1974,7 @@ export default function WrenchBid() {
         <div className="page">
           {step!=="preview"&&(
             <>
-              <div className="tip"><strong>How it works:</strong> Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid builds the quote automatically.</div>
+              <div className="tip"><strong>How it works:</strong> Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid formats it into a quote. You set all the prices.</div>
               <div className="mic-wrap">
                 <div className="mic-hint">
                   {step==="recording"
@@ -2062,7 +2062,7 @@ export default function WrenchBid() {
                       </div>
                       {biz.licenseNum&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">License #</div><div className="qdoc-terms-text">{biz.licenseNum}</div></div>}
                     </div>
-                  <div className="disclaimer"><strong>Estimate only.</strong> Review all pricing before sending to clients.</div>
+                  <div className="disclaimer"><strong>Review before sending.</strong> WrenchBid formats what you described — it does not set prices. You are responsible for all pricing.</div>
                   <div className="totals">
                     <div className="total-row"><span>Subtotal</span><span>{$$(quote.subtotal)}</span></div>
                     {quote.tax>0&&<div className="total-row"><span>Tax ({quote.taxRate}%)</span><span>{$$(quote.tax)}</span></div>}
