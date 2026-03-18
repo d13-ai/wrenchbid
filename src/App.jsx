@@ -1399,7 +1399,7 @@ export default function WrenchBid() {
   const handleSignOut=async()=>{ await supabase.auth.signOut(); ping("Signed out"); };
   const shareApp=()=>{
     const url="https://wrenchbid.vercel.app";
-    const text="Check out WrenchBid — speak a job out loud and it builds a professional quote instantly. Free for tradespeople.";
+    const text="Check out WrenchBid — say the job, say your price, send the quote. Free for tradespeople.";
     if(navigator.share){ navigator.share({title:"WrenchBid",text,url}).catch(()=>{}); }
     else{ navigator.clipboard.writeText(url).then(()=>ping("Link copied ✓")); }
   };
