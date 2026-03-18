@@ -299,7 +299,7 @@ if (!document.getElementById("wb-css")) {
 const $$ = (n) => `$${Number(n || 0).toFixed(2)}`;
 const todayStr = () => new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 const qNum = (history=[]) => { const n = history.length + 1; return "WB-" + String(n).padStart(4,"0"); };
-const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","General Contractor","Concrete","Masonry","Drywall","Insulation","Solar Installer","Pool Service","Pest Control","Locksmith","Drone Operator","Photographer","Videographer","Graphic Designer","Web Designer","Copywriter","Social Media Manager","DJ","Face Painter","Caterer","Event Planner","Personal Trainer","Tutor","Inspector","Consultant","Other"];
+const TRADES = ["Plumber","Electrician","HVAC Technician","Painter","Landscaper","Roofer","Carpenter","Handyman","Welder","Flooring Pro","Pressure Washer","General Contractor","Concrete","Masonry","Drywall","Insulation","Solar Installer","Pool Service","Pest Control","Locksmith","Drone Operator","Photographer","Videographer","Graphic Designer","Web Designer","Copywriter","Social Media Manager","DJ","Face Painter","Caterer","Event Planner","Personal Trainer","Tutor","Inspector","Consultant","Irrigation Specialist","Other"];
 const LANGUAGES = [
   {code:"en",    flag:"🇺🇸", label:"EN",  model:"nova-3"},
   {code:"es",    flag:"🇲🇽", label:"ES",  model:"nova-3"},
