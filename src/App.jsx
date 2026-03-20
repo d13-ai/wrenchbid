@@ -1430,7 +1430,28 @@ export default function WrenchBid() {
   };
   const ping=(msg)=>{ clearTimeout(toastTimer.current); setToast(msg); toastTimer.current=setTimeout(()=>setToast(null),2800); };
 
+  const TRIAL_EXAMPLES={
+    en:"Replace water heater for John Smith, 3 hours at $105 an hour, parts cost $380",
+    es:"Reparar calentador de agua para Juan García, 3 horas a $105 la hora, materiales $380",
+    zh:"为张先生更换热水器，3小时每小时105美元，零件费用380美元",
+    ar:"إصلاح سخان المياه للسيد أحمد، 3 ساعات بسعر 105 دولار للساعة، تكلفة القطع 380 دولار",
+    vi:"Thay bình nóng lạnh cho anh Nguyễn, 3 giờ với giá $105/giờ, phụ tùng $380",
+    ko:"김씨 온수기 교체, 시간당 $105로 3시간, 부품비 $380",
+    tl:"Palitan ang water heater ni Juan, 3 oras sa $105 bawat oras, gastos sa parts $380",
+    fr:"Remplacement du chauffe-eau pour M. Dupont, 3 heures à 105$/h, pièces 380$",
+    pl:"Wymiana podgrzewacza wody dla pana Kowalskiego, 3 godziny po $105/godz., części $380",
+    ru:"Замена водонагревателя для Иванова, 3 часа по $105/час, запчасти $380"
+  };
+
   const startRec=async()=>{
+    // Trial mode: fill in an example quote instead of recording
+    if(!user&&trialMode){
+      const lang=biz.language||"en";
+      const example=TRIAL_EXAMPLES[lang]||TRIAL_EXAMPLES.en;
+      finalRef.current=example;interimRef.current="";displayRef.current=example;setTranscript(example);
+      ping(lang==="es"?"✨ Ejemplo listo — toca Build Quote para ver la magia!":"✨ Example filled — hit Build Quote to see the magic!");
+      return;
+    }
     // Use Deepgram on all platforms for consistency
     // getUserMedia MUST be first await for iOS Safari gesture context
     let active=true;
@@ -1451,7 +1472,7 @@ export default function WrenchBid() {
       // Always get fresh session — auto-refreshes if expired
       const { data: { session } } = await supabase.auth.getSession();
       const authToken = session?.access_token || "";
-      if(!authToken){ stream.getTracks().forEach(t=>t.stop()); if(trialMode){ping("🔒 Sign up to unlock voice — type below to try it now");}else{ping("Please sign in to use voice");} return; }
+      if(!authToken){ stream.getTracks().forEach(t=>t.stop()); ping("Please sign in to use voice"); return; }
 
       const tokenRes=await fetch("/api/deepgram-token",{headers:{"authorization":"Bearer "+authToken}});
       if(!tokenRes.ok){
@@ -1884,6 +1905,11 @@ export default function WrenchBid() {
                   <div className="ob-demo-label"><span style={{width:8,height:8,borderRadius:"50%",background:"#b03030",display:"inline-block"}}/>Recording…</div>
                   <div className="ob-demo-text">{onboardTyped}{onboardTyped.length<74&&<span className="ob-cursor"/>}</div>
                 </div>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginTop:16,flexWrap:"wrap"}}>
+                  <span style={{fontSize:13,fontWeight:700,color:"var(--amber)"}}>🇺🇸 English</span>
+                  <span style={{fontSize:13,fontWeight:700,color:"var(--amber)"}}>🇲🇽 Español</span>
+                  <span style={{fontSize:11,color:"#666"}}>+ 8 more languages</span>
+                </div>
               </div>
 
               {/* Slide 2 — Show the output */}
@@ -2005,7 +2031,9 @@ export default function WrenchBid() {
                 <div className="mic-hint">
                   {step==="recording"
                     ? "🔴 Recording — tap to stop"
-                    : (() => { const l=LANGUAGES.find(x=>x.code===(biz.language||"en"))||LANGUAGES[0]; return l.code==="en" ? "Tap to start speaking" : `${l.flag} Recording in ${l.label} — tap to speak`; })()
+                    : (!user&&trialMode)
+                      ? "Tap to load an example quote"
+                      : (() => { const l=LANGUAGES.find(x=>x.code===(biz.language||"en"))||LANGUAGES[0]; return l.code==="en" ? "Tap to start speaking" : `${l.flag} Recording in ${l.label} — tap to speak`; })()
                   }
                 </div>
                 <button className={`mic-btn ${step==="recording"?"live":""}`} onClick={toggleMic}>
