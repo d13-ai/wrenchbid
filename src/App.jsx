@@ -1451,7 +1451,7 @@ export default function WrenchBid() {
       // Always get fresh session — auto-refreshes if expired
       const { data: { session } } = await supabase.auth.getSession();
       const authToken = session?.access_token || "";
-      if(!authToken){ stream.getTracks().forEach(t=>t.stop()); if(trialMode){setAuthPrompt("Create a free account to use voice recording — or type your quote below");setShowAuthWall(true);setAuthMode("signup");}else{ping("Please sign in to use voice");} return; }
+      if(!authToken){ stream.getTracks().forEach(t=>t.stop()); if(trialMode){ping("🔒 Sign up to unlock voice — type below to try it now");}else{ping("Please sign in to use voice");} return; }
 
       const tokenRes=await fetch("/api/deepgram-token",{headers:{"authorization":"Bearer "+authToken}});
       if(!tokenRes.ok){
@@ -2000,8 +2000,8 @@ export default function WrenchBid() {
         <div className="page">
           {step!=="preview"&&(
             <>
-              <div className="tip"><strong>How it works:</strong> {!user&&trialMode?"Type your quote below — client name, job details, hours & rate, materials cost. WrenchBid formats it into a professional quote. You set all the prices.":"Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid formats it into a quote. You set all the prices."}</div>
-              {(!trialMode||user)&&<div className="mic-wrap">
+              <div className="tip"><strong>How it works:</strong> Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid formats it into a quote. You set all the prices.</div>
+              <div className="mic-wrap">
                 <div className="mic-hint">
                   {step==="recording"
                     ? "🔴 Recording — tap to stop"
@@ -2034,8 +2034,8 @@ export default function WrenchBid() {
                     </button>
                   )}
                 </div>
-              </div>}
-              <textarea className="tx-box" value={transcript} onChange={e=>{finalRef.current=e.target.value;interimRef.current="";displayRef.current=e.target.value;setTranscript(e.target.value);}} placeholder={!user&&trialMode?"Type your quote here, e.g.: Replace water heater for John Smith, 3 hours at $105/hr, parts cost $380":"Your words appear here as you speak... or type directly"} rows={4} style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}/>
+              </div>
+              <textarea className="tx-box" value={transcript} onChange={e=>{finalRef.current=e.target.value;interimRef.current="";displayRef.current=e.target.value;setTranscript(e.target.value);}} placeholder="Your words appear here as you speak... or type directly" rows={4} style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}/>
               {step==="processing"&&<div className="loader"/>}
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={()=>{finalRef.current="";interimRef.current="";displayRef.current="";setTranscript("");}}>Clear</button>
