@@ -1249,6 +1249,13 @@ async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate, acc
       model:"claude-sonnet-4-20250514", max_tokens:900,
       messages:[{role:"user",content:`You are a quoting assistant for "${bizName}", a ${trade}. Your job is to convert a spoken job description into a structured quote.
 
+IMPORTANT: This text comes from speech-to-text and may contain errors from mumbling, background noise, or accent.
+- Fix obvious misheard words using trade context (e.g. "water eater" → "water heater", "copper piping" not "copper pipping", "breaker panel" not "baker panel")
+- Names may be garbled — use your best guess (e.g. "John's myth" → "John Smith", "Jen some" → "Jensen")
+- Ignore filler words, false starts, and repeated phrases — extract the CORE job details
+- If the same job is described multiple times (user was testing), use the clearest version
+- Numbers/prices may have speech errors — "$1.05 an hour" likely means "$105/hr" in a contractor context
+
 Job description: "${transcript}"
 
 Rules:
@@ -1256,7 +1263,7 @@ Rules:
 - Extract client name if mentioned, otherwise null
 - Separate labor and materials into distinct line items
 - If rate is stated (e.g. "$90/hr", "flat rate $500", "tarifa plana $500"), use it exactly
-- If rate is NOT stated, leave rate as 0 — you'll fill in your own prices before sending.
+- If rate is NOT stated, leave rate as 0 — you'll fill in your own prices before sending
 - If hours are not stated but a flat rate is given, set qty=1 unit="flat"
 - Round all amounts to 2 decimals
 - jobTitle should be a short professional description in English (e.g. "AC Tune-Up", "Kitchen Faucet Replacement")
@@ -1511,9 +1518,22 @@ export default function WrenchBid() {
       const{token}=await tokenRes.json();
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
       const activeLang = LANGUAGES.find(l=>l.code===(biz.language||"en")) || LANGUAGES[0];
-      const keyterms = activeLang.code === "es"
-        ? "keyterm=factura&keyterm=mano+de+obra&keyterm=materiales&keyterm=partes&keyterm=horas&keyterm=precio+fijo&keyterm=dep%C3%B3sito&keyterm=por+hora&keyterm=subtotal&keyterm=total&keyterm=d%C3%B3lares&keyterm=costo"
-        : "keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total&keyterm=dollars&keyterm=dollar&keyterm=per+hour&keyterm=an+hour&keyterm=cost";
+      // Trade-specific vocabulary helps Deepgram recognize mumbled words
+      const tradeTerms = {
+        "Plumber":["water heater","faucet","toilet","sewer","drain","pipe","copper","PVC","shutoff valve","garbage disposal","supply line","P-trap","wax ring","flange","soldering"],
+        "Electrician":["breaker","panel","outlet","switch","wire","conduit","junction box","circuit","GFCI","amperage","voltage","receptacle","romex","transformer"],
+        "HVAC Technician":["furnace","compressor","condenser","evaporator","refrigerant","thermostat","ductwork","blower motor","capacitor","freon","heat pump","air handler","coil"],
+        "Painter":["primer","latex","satin","semi-gloss","trim","baseboard","ceiling","roller","caulking","prep work","masking","coat","exterior","interior"],
+        "Roofer":["shingle","flashing","underlayment","ridge cap","soffit","fascia","gutter","downspout","tar paper","ice dam","dormer","valley","eave"],
+        "Carpenter":["framing","drywall","baseboard","crown molding","plywood","stud","joist","subfloor","trim","shim","header","casing"],
+        "Landscaper":["sod","mulch","gravel","irrigation","sprinkler","retaining wall","grading","topsoil","drainage","edging","paver"],
+        "General Contractor":["demolition","framing","permit","inspection","subcontractor","change order","punch list","rough-in","finish work"],
+      };
+      const baseEN = ["invoice","labor","materials","parts","hours","flat rate","deposit","per hour","an hour","subtotal","total","dollars","dollar","cost","estimate","quote","client","customer","warranty","square foot","linear foot","each","unit"];
+      const baseES = ["factura","mano de obra","materiales","partes","horas","precio fijo","depósito","por hora","subtotal","total","dólares","costo","presupuesto","cliente","garantía"];
+      const tradeSpecific = tradeTerms[biz.trade] || [];
+      const allTerms = activeLang.code === "es" ? baseES : [...baseEN, ...tradeSpecific];
+      const keyterms = allTerms.map(t => "keyterm=" + encodeURIComponent(t)).join("&");
       const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model="+activeLang.model+"&language="+activeLang.code+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&diarize=false&"+keyterms,["token",token]);
       ws.onopen=()=>{
         if(!active){ ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
