@@ -1485,9 +1485,9 @@ export default function WrenchBid() {
       if(!token){ ping("Voice token missing"); stream.getTracks().forEach(t=>t.stop()); return; }
       const activeLang = LANGUAGES.find(l=>l.code===(biz.language||"en")) || LANGUAGES[0];
       const keyterms = activeLang.code === "es"
-        ? "keyterm=factura&keyterm=mano+de+obra&keyterm=materiales&keyterm=partes&keyterm=horas&keyterm=precio+fijo&keyterm=dep%C3%B3sito&keyterm=por+hora&keyterm=subtotal&keyterm=total"
-        : "keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total";
-      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model="+activeLang.model+"&language="+activeLang.code+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&"+keyterms,["token",token]);
+        ? "keyterm=factura&keyterm=mano+de+obra&keyterm=materiales&keyterm=partes&keyterm=horas&keyterm=precio+fijo&keyterm=dep%C3%B3sito&keyterm=por+hora&keyterm=subtotal&keyterm=total&keyterm=d%C3%B3lares&keyterm=costo"
+        : "keyterm=invoice&keyterm=labor&keyterm=materials&keyterm=parts&keyterm=hours&keyterm=flat+rate&keyterm=deposit&keyterm=per+hour&keyterm=subtotal&keyterm=total&keyterm=dollars&keyterm=dollar&keyterm=per+hour&keyterm=an+hour&keyterm=cost";
+      const ws=new WebSocket("wss://api.deepgram.com/v1/listen?model="+activeLang.model+"&language="+activeLang.code+"&interim_results=true&endpointing=300&no_delay=true&numerals=true&smart_format=true&punctuate=true&filler_words=false&diarize=false&"+keyterms,["token",token]);
       ws.onopen=()=>{
         if(!active){ ws.close(); stream.getTracks().forEach(t=>t.stop()); return; }
         const mt=["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg","audio/mp4"].find(t=>{ try{return MediaRecorder.isTypeSupported(t);}catch{return false;} })||"";
@@ -1508,11 +1508,27 @@ export default function WrenchBid() {
     }catch(e){ stream?.getTracks().forEach(t=>t.stop()); ping("Could not start recording"); setStep("idle"); }
   };
 
+  // Fix common Deepgram number/currency misinterpretations
+  const fixTranscript=(text)=>{
+    let t=text;
+    // "01:05 an hour" → "$105 an hour", "03:80" → "$380", etc.
+    t=t.replace(/\b0?(\d{1,2}):(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
+    // Standalone time-like numbers that are likely prices: "01:05" → "$105"
+    t=t.replace(/\b0(\d):(\d{2})\b/g,(_,a,b)=>"$"+parseInt(a+b,10));
+    // "3 80" after "cost" or "parts" → "$380"
+    t=t.replace(/(cost|parts|materials|price|total|rate|flat rate|charge)\s*,?\s*(\d{1,2})\s+(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
+    // "3, 80" → "$380" in similar contexts
+    t=t.replace(/(cost|parts|materials|price|total|rate|charge)\s*,?\s*(\d{1,2}),\s*(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
+    return t;
+  };
+
   const stopRec=()=>{
     const ref=recognitionRef.current; if(!ref)return;
     recognitionRef.current=null;
     ref.deactivate?.(); ref.mediaRecorder?.stop(); ref.stream?.getTracks().forEach(t=>t.stop()); ref.ws?.close();
-    if(interimRef.current){ finalRef.current+=interimRef.current+" "; interimRef.current=""; displayRef.current=finalRef.current; setTranscript(finalRef.current); }
+    if(interimRef.current){ finalRef.current+=interimRef.current+" "; interimRef.current=""; }
+    finalRef.current=fixTranscript(finalRef.current);
+    displayRef.current=finalRef.current; setTranscript(finalRef.current);
     setStep("idle");
   };
 
