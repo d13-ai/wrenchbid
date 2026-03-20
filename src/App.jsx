@@ -1343,19 +1343,40 @@ export default function WrenchBid() {
   useEffect(()=>{ try{localStorage.setItem("wb_history",JSON.stringify(history));}catch{} },[history]);
   useEffect(()=>{ try{localStorage.setItem("wb_biz",JSON.stringify(biz));}catch{} },[biz]);
 
-  // Typewriter animation for onboarding screen 1
-  const DEMO_TEXT = "Replace water heater for John Smith, 3 hours at $105 an hour, parts $380";
+  // Typewriter animation for onboarding screen 1 — cycles EN then ES
+  const DEMO_TEXTS = [
+    {lang:"🇺🇸",text:"Replace water heater for John Smith, 3 hours at $105 an hour, parts $380"},
+    {lang:"🇲🇽",text:"Reparar calentador de agua para Juan, 3 horas a $105 la hora, partes $380"}
+  ];
+  const [demoIdx,setDemoIdx]=useState(0);
+  const [demoPhase,setDemoPhase]=useState("typing"); // typing | pause | clearing
   useEffect(()=>{
     if(onboardDone||onboardStep!==0) return;
-    setOnboardTyped("");
-    let i=0;
-    const interval=setInterval(()=>{
-      i++;
-      setOnboardTyped(DEMO_TEXT.slice(0,i));
-      if(i>=DEMO_TEXT.length) clearInterval(interval);
-    },38);
-    return()=>clearInterval(interval);
-  },[onboardStep,onboardDone]);
+    const demo=DEMO_TEXTS[demoIdx];
+    if(demoPhase==="typing"){
+      setOnboardTyped("");
+      let i=0;
+      const interval=setInterval(()=>{
+        i++;
+        setOnboardTyped(demo.text.slice(0,i));
+        if(i>=demo.text.length){ clearInterval(interval); setDemoPhase("pause"); }
+      },38);
+      return()=>clearInterval(interval);
+    }
+    if(demoPhase==="pause"){
+      const t=setTimeout(()=>setDemoPhase("clearing"),2200);
+      return()=>clearTimeout(t);
+    }
+    if(demoPhase==="clearing"){
+      let len=DEMO_TEXTS[demoIdx].text.length;
+      const interval=setInterval(()=>{
+        len-=3;
+        if(len<=0){ clearInterval(interval); setOnboardTyped(""); setDemoIdx(d=>(d+1)%DEMO_TEXTS.length); setDemoPhase("typing"); }
+        else setOnboardTyped(DEMO_TEXTS[demoIdx].text.slice(0,len));
+      },12);
+      return()=>clearInterval(interval);
+    }
+  },[onboardStep,onboardDone,demoIdx,demoPhase]);
 
   // Catch Android install prompt
   useEffect(()=>{
@@ -1951,14 +1972,15 @@ export default function WrenchBid() {
                 <div className="ob-title">Quote any job<br/>in 60 seconds</div>
                 <div className="ob-sub">Speak the job out loud — client name, what you're doing, hours, rate, materials. WrenchBid turns it into a professional quote instantly.</div>
                 <div className="ob-demo">
-                  <div className="ob-demo-label"><span style={{width:8,height:8,borderRadius:"50%",background:"#b03030",display:"inline-block"}}/>Recording…</div>
-                  <div className="ob-demo-text">{onboardTyped}{onboardTyped.length<74&&<span className="ob-cursor"/>}</div>
+                  <div className="ob-demo-label"><span style={{width:8,height:8,borderRadius:"50%",background:"#b03030",display:"inline-block"}}/>{DEMO_TEXTS[demoIdx].lang} Recording…</div>
+                  <div className="ob-demo-text">{onboardTyped}{demoPhase==="typing"&&<span className="ob-cursor"/>}</div>
                 </div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginTop:16,flexWrap:"wrap"}}>
                   <span style={{fontSize:13,fontWeight:700,color:"var(--amber)"}}>🇺🇸 English</span>
                   <span style={{fontSize:13,fontWeight:700,color:"var(--amber)"}}>🇲🇽 Español</span>
-                  <span style={{fontSize:11,color:"#666"}}>+ 8 more languages</span>
+                  <span style={{fontSize:11,color:"#666"}}>+ 8 more</span>
                 </div>
+                <div style={{fontSize:12,color:"#888",marginTop:8}}>Speak in any language — your quote is always formatted in English</div>
               </div>
 
               {/* Slide 2 — Show the output */}
