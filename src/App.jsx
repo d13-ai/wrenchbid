@@ -1283,7 +1283,7 @@ export default function WrenchBid() {
   const [user,setUser]=useState(null);
   const [authReady,setAuthReady]=useState(false);
   const [authMode,setAuthMode]=useState("signin");
-  const [onboardDone,setOnboardDone]=useState(()=>!!localStorage.getItem("wb_onboarded"));
+  const [onboardDone,setOnboardDone]=useState(false);
   const [onboardStep,setOnboardStep]=useState(0);
   const [onboardTyped,setOnboardTyped]=useState("");
   const [authEmail,setAuthEmail]=useState("");
@@ -1917,12 +1917,12 @@ export default function WrenchBid() {
               {onboardStep<2?(
                 <>
                   <button className="ob-btn-main" onClick={()=>setOnboardStep(s=>s+1)}>Next →</button>
-                  <button className="ob-btn-skip" onClick={()=>{localStorage.setItem("wb_onboarded","1");setOnboardDone(true);setAuthMode("signup");}}>Skip intro</button>
+                  <button className="ob-btn-skip" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>Skip intro</button>
                 </>
               ):(
                 <>
-                  <button className="ob-btn-main" onClick={()=>{localStorage.setItem("wb_onboarded","1");setOnboardDone(true);setAuthMode("signup");}}>Get Started Free →</button>
-                  <button className="ob-btn-next" onClick={()=>{localStorage.setItem("wb_onboarded","1");setOnboardDone(true);setAuthMode("signin");}}>Already have an account? Sign in</button>
+                  <button className="ob-btn-main" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>Get Started Free →</button>
+                  <button className="ob-btn-next" onClick={()=>{setOnboardDone(true);setAuthMode("signin");}}>Already have an account? Sign in</button>
                 </>
               )}
             </div>
