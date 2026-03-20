@@ -1443,6 +1443,24 @@ export default function WrenchBid() {
     ru:"Замена водонагревателя для Иванова, 3 часа по $105/час, запчасти $380"
   };
 
+  // Fix common Deepgram number/currency misinterpretations — must be defined before startRec
+  const fixTranscript=(text)=>{
+    let t=text;
+    // "01:05 an hour" → "$105 an hour", "03:80" → "$380", etc.
+    t=t.replace(/\b0?(\d{1,2}):(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
+    // Standalone time-like numbers that are likely prices: "01:05" → "$105"
+    t=t.replace(/\b0(\d):(\d{2})\b/g,(_,a,b)=>"$"+parseInt(a+b,10));
+    // "3 80" after "cost" or "parts" → "$380"
+    t=t.replace(/(cost|parts|materials|price|total|rate|flat rate|charge)\s*,?\s*(\d{1,2})\s+(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
+    // "3, 80" → "$380" in similar contexts
+    t=t.replace(/(cost|parts|materials|price|total|rate|charge)\s*,?\s*(\d{1,2}),\s*(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
+    // Standalone split numbers: "1 05" near hour/rate context → "$105"
+    t=t.replace(/\b(\d{1})\s+(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora|a hour)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
+    // "$3 80" or "$ 3 80" → "$380"
+    t=t.replace(/\$\s*(\d{1,2})\s+(\d{2})\b/g,(_,a,b)=>"$"+parseInt(a+b,10));
+    return t;
+  };
+
   const startRec=async()=>{
     // Trial mode: fill in an example quote instead of recording
     if(!user&&trialMode){
@@ -1501,25 +1519,11 @@ export default function WrenchBid() {
         if(!active) return;
         try{ const msg=JSON.parse(e.data); if(msg.type!=="Results")return; const text=msg.channel?.alternatives?.[0]?.transcript; if(!text)return;
           if(msg.is_final){ finalRef.current+=text+" "; interimRef.current=""; } else interimRef.current=text;
-          displayRef.current=finalRef.current+interimRef.current; setTranscript(displayRef.current); }catch{}
+          displayRef.current=fixTranscript(finalRef.current+interimRef.current); setTranscript(displayRef.current); }catch{}
       };
       ws.onerror=()=>{ if(active)ping("Voice connection error"); };
       ws.onclose=()=>{ if(active)setStep(s=>s==="recording"?"idle":s); };
     }catch(e){ stream?.getTracks().forEach(t=>t.stop()); ping("Could not start recording"); setStep("idle"); }
-  };
-
-  // Fix common Deepgram number/currency misinterpretations
-  const fixTranscript=(text)=>{
-    let t=text;
-    // "01:05 an hour" → "$105 an hour", "03:80" → "$380", etc.
-    t=t.replace(/\b0?(\d{1,2}):(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
-    // Standalone time-like numbers that are likely prices: "01:05" → "$105"
-    t=t.replace(/\b0(\d):(\d{2})\b/g,(_,a,b)=>"$"+parseInt(a+b,10));
-    // "3 80" after "cost" or "parts" → "$380"
-    t=t.replace(/(cost|parts|materials|price|total|rate|flat rate|charge)\s*,?\s*(\d{1,2})\s+(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
-    // "3, 80" → "$380" in similar contexts
-    t=t.replace(/(cost|parts|materials|price|total|rate|charge)\s*,?\s*(\d{1,2}),\s*(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
-    return t;
   };
 
   const stopRec=()=>{
