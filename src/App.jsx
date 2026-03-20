@@ -384,8 +384,14 @@ const UI = {
     obLangCalloutES: "Habla en cualquier idioma — tu cotización siempre sale en inglés",
     obTitle2: "You set the price.", obTitle2b: "We do the paperwork.",
     obSub2: "Say your rate, hours, and materials cost. WrenchBid formats everything into a clean, itemized quote — you control every dollar.",
+    obPreviewLabel: "Quote Preview",
+    obPreviewRows: [["Water Heater Replacement",""],["Labor — 3 hrs @ $105/hr","$315.00"],["Parts & Materials","$380.00"],["TOTAL","$695.00"]],
+    obPhrase1: '"Roof repair for the Johnsons, 5 hours at $90, shingles cost me $210"',
+    obPhrase2: '"Electrical panel upgrade, flat rate $1,800, client is Mike Torres"',
     obTitle3: "Send via SMS, email,", obTitle3b: "or save as PDF",
     obSub3: "Text or email the quote to your client in one tap. They get a link to view the full quote and save it as a PDF.",
+    obClientReceives: "✓ What your client receives",
+    obClientMsg: "Hi John! Here's your quote from",
     obFree: "Free to use. No credit card required.",
     obNext: "Next →", obSkip: "Skip intro",
     obTryFree: "Try it free — no signup →", obCreateAcct: "Create account", obSignIn: "Already have an account? Sign in",
@@ -458,8 +464,14 @@ const UI = {
     obLangCalloutES: "Habla en cualquier idioma — tu cotización siempre sale en inglés",
     obTitle2: "Tú pones el precio.", obTitle2b: "Nosotros hacemos el papeleo.",
     obSub2: "Di tu tarifa, horas y costo de materiales. WrenchBid formatea todo en una cotización profesional — tú controlas cada dólar.",
+    obPreviewLabel: "Vista previa",
+    obPreviewRows: [["Reemplazo de calentador de agua",""],["Mano de obra — 3 hrs @ $105/hr","$315.00"],["Partes y materiales","$380.00"],["TOTAL","$695.00"]],
+    obPhrase1: '"Reparar techo para los Johnson, 5 horas a $90, tejas me costaron $210"',
+    obPhrase2: '"Actualización de panel eléctrico, tarifa fija $1,800, cliente Mike Torres"',
     obTitle3: "Envía por SMS, email,", obTitle3b: "o guarda como PDF",
     obSub3: "Envía la cotización a tu cliente por texto o email con un toque. Reciben un enlace para ver y guardar como PDF.",
+    obClientReceives: "✓ Lo que recibe tu cliente",
+    obClientMsg: "¡Hola Juan! Aquí está tu cotización de",
     obFree: "Gratis. Sin tarjeta de crédito.",
     obNext: "Siguiente →", obSkip: "Saltar intro",
     obTryFree: "Pruébalo gratis — sin registro →", obCreateAcct: "Crear cuenta", obSignIn: "¿Ya tienes cuenta? Inicia sesión",
@@ -1454,7 +1466,13 @@ export default function WrenchBid() {
   const [histSearch,setHistSearch]=useState("");
   const [histSort,setHistSort]=useState("date");
   const [biz,setBiz]=useState(()=>{
-    try{ const s=JSON.parse(localStorage.getItem("wb_biz")); return s||{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
+    try{
+      const s=JSON.parse(localStorage.getItem("wb_biz"));
+      if(s) return s;
+      // Detect browser language for first-time users
+      const browserLang = (navigator.language||"").slice(0,2)==="es" ? "es" : "en";
+      return{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:browserLang,state:""};
+    }
     catch{ return{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
   });
   const L = getUI(biz.language||"en"); // UI translations — quote output stays English regardless
@@ -2152,14 +2170,14 @@ export default function WrenchBid() {
                 <div className="ob-title">{L.obTitle2}<br/>{L.obTitle2b}</div>
                 <div className="ob-sub">{L.obSub2}</div>
                 <div className="ob-quote-preview">
-                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,letterSpacing:2,color:"var(--amber)",marginBottom:10,textTransform:"uppercase"}}>Quote Preview</div>
-                  {[["Water Heater Replacement",""],["Labor — 3 hrs @ $105/hr","$315.00"],["Parts & Materials","$380.00"],["TOTAL","$695.00"]].map(([d,a],i)=>(
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,letterSpacing:2,color:"var(--amber)",marginBottom:10,textTransform:"uppercase"}}>{L.obPreviewLabel}</div>
+                  {L.obPreviewRows.map(([d,a],i)=>(
                     <div key={i} className="ob-qrow"><span>{d}</span>{a&&<span>{a}</span>}</div>
                   ))}
                 </div>
                 <div className="ob-phrases">
-                  <div className="ob-phrase">"Roof repair for the Johnsons, 5 hours at $90, shingles cost me $210"</div>
-                  <div className="ob-phrase">"Electrical panel upgrade, flat rate $1,800, client is Mike Torres"</div>
+                  <div className="ob-phrase">{L.obPhrase1}</div>
+                  <div className="ob-phrase">{L.obPhrase2}</div>
                 </div>
               </div>
 
@@ -2169,9 +2187,9 @@ export default function WrenchBid() {
                 <div className="ob-title">{L.obTitle3}<br/>{L.obTitle3b}</div>
                 <div className="ob-sub">{L.obSub3}</div>
                 <div className="ob-demo" style={{marginTop:20}}>
-                  <div className="ob-demo-label" style={{color:"#4caf50"}}>✓ What your client receives</div>
+                  <div className="ob-demo-label" style={{color:"#4caf50"}}>{L.obClientReceives}</div>
                   <div style={{fontSize:13,color:"#e8e0d0",lineHeight:1.7}}>
-                    Hi John! Here's your quote from <strong style={{color:"var(--amber)"}}>Smith Plumbing</strong>.<br/>
+                    {L.obClientMsg} <strong style={{color:"var(--amber)"}}>Smith Plumbing</strong>.<br/>
                     📋 Water Heater Replacement<br/>
                     💰 Total: <strong style={{color:"var(--amber)"}}>$695.00</strong><br/>
                     📅 Valid: 30 days<br/>
