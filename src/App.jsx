@@ -1229,19 +1229,22 @@ function RebateWizard({ state, trade }) {
 }
 
 /* ─── AI Quote Parser ─────────────────────────────────────────────────────── */
-async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate, accessToken="") {
+async function aiParseQuote(transcript, bizName, trade, taxEnabled, taxRate, accessToken="", isTrial=false) {
   const taxNote = taxEnabled && parseFloat(taxRate) > 0
     ? `Apply ${taxRate}% sales tax.` : `No sales tax. taxRate=0, tax=0.`;
   // If token looks stale, try refreshing via supabase directly
   let token = accessToken;
-  if(!token){
+  if(!token && !isTrial){
     try{
       const { data: { session } } = await supabase.auth.getSession();
       token = session?.access_token || "";
     }catch{}
   }
+  const headers = {"content-type":"application/json"};
+  if(token) headers["authorization"] = "Bearer "+token;
+  if(isTrial) headers["x-trial"] = "1";
   const res = await fetch("/api/quote", {
-    method:"POST", headers:{"content-type":"application/json","authorization":"Bearer "+token},
+    method:"POST", headers,
     body: JSON.stringify({
       model:"claude-sonnet-4-20250514", max_tokens:900,
       messages:[{role:"user",content:`You are a quoting assistant for "${bizName}", a ${trade}. Your job is to convert a spoken job description into a structured quote.
@@ -1266,6 +1269,11 @@ Return ONLY valid JSON, no explanation:
 {"clientName":null,"jobTitle":"string","lineItems":[{"desc":"string","qty":1,"unit":"hrs","rate":0,"total":0}],"subtotal":0,"taxRate":0,"tax":0,"grandTotal":0,"notes":null,"validDays":30}`}]
     })
   });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    if(err.error==="trial_limit") throw new Error("trial_limit");
+    throw new Error(err.error||"API error");
+  }
   const d = await res.json();
   const t = d.content[0].text.trim();
   return JSON.parse(t.slice(t.indexOf("{"), t.lastIndexOf("}")+1));
@@ -1443,7 +1451,7 @@ export default function WrenchBid() {
       // Always get fresh session — auto-refreshes if expired
       const { data: { session } } = await supabase.auth.getSession();
       const authToken = session?.access_token || "";
-      if(!authToken){ ping("Please sign in to use voice"); stream.getTracks().forEach(t=>t.stop()); return; }
+      if(!authToken){ stream.getTracks().forEach(t=>t.stop()); if(trialMode){setAuthPrompt("Create a free account to use voice recording — or type your quote below");setShowAuthWall(true);setAuthMode("signup");}else{ping("Please sign in to use voice");} return; }
 
       const tokenRes=await fetch("/api/deepgram-token",{headers:{"authorization":"Bearer "+authToken}});
       if(!tokenRes.ok){
@@ -1492,8 +1500,8 @@ export default function WrenchBid() {
   const generate=async()=>{
     if(!transcript.trim()){ping("Speak a job description first");return;}
     setStep("processing");
-    try{ const data=await aiParseQuote(transcript,biz.name,biz.trade,biz.taxEnabled,biz.taxRate,accessTokenRef.current); setQuote({...data,qNum:qNum(history),date:todayStr(),paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||""}); setStep("preview"); }
-    catch{ setStep("idle"); ping("Parse error — try again"); }
+    try{ const data=await aiParseQuote(transcript,biz.name||"My Business",biz.trade||"General Contractor",biz.taxEnabled,biz.taxRate,accessTokenRef.current,!user&&trialMode); setQuote({...data,qNum:qNum(history),date:todayStr(),paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||""}); setStep("preview"); }
+    catch(e){ setStep("idle"); if(e.message==="trial_limit"){setAuthPrompt("You've used your free trial quotes — create an account to keep going!");setShowAuthWall(true);setAuthMode("signup");}else{ping("Parse error — try again");} }
   };
 
   const saveToHistory=(status)=>{ if(!quote)return; const entry={...quote,_id:quote._id||Math.random().toString(36).slice(2)+Date.now().toString(36),status,transcript,bizName:biz.name,savedAt:new Date().toISOString()}; setHistory(h=>[entry,...h]); return entry; };
@@ -2031,7 +2039,7 @@ export default function WrenchBid() {
               {step==="processing"&&<div className="loader"/>}
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={()=>{finalRef.current="";interimRef.current="";displayRef.current="";setTranscript("");}}>Clear</button>
-                <button className="btn btn-cta" onClick={()=>{if(!user){setAuthPrompt("Create a free account to build your quote");setShowAuthWall(true);setAuthMode("signup");return;}generate();}} disabled={!transcript.trim()||step==="processing"||step==="recording"}>{step==="processing"?"Building...":"⚡ Build Quote"}</button>
+                <button className="btn btn-cta" onClick={generate} disabled={!transcript.trim()||step==="processing"||step==="recording"}>{step==="processing"?"Building...":"⚡ Build Quote"}</button>
               </div>
               <div className="div"/>
               <div className="tip"><strong>Example phrases:</strong><br/>"Replace water heater for John Smith, 3 hours at $105/hr, parts cost $380"<br/><br/>"Paint exterior of house, flat rate $1400, client Maria Rodriguez"</div>
@@ -2102,31 +2110,44 @@ export default function WrenchBid() {
                   </div>
                 </div>
               </div>
-              <div className="send-lbl">Send to Client</div>
-              <div className="send-row">
-                <input className="ph-input" type="tel" placeholder="Client phone number" value={clientPhone} onChange={e=>{setClientPhone(e.target.value);setShareUrl(null);}}/>
-                <button className="btn-sms" onClick={sendSMS} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1}}>
-                  {shareLoading?"…":"📱 SMS"}
-                </button>
-              </div>
-              <div className="send-row" style={{marginTop:8}}>
-                <input className="ph-input" type="email" placeholder="Client email address" value={clientEmail} onChange={e=>setClientEmail(e.target.value)}/>
-                <button className="btn-sms" onClick={sendEmail} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1,background:"var(--steel)",color:"var(--white)"}}>
-                  {shareLoading?"…":"✉️ Email"}
-                </button>
-              </div>
-              {shareUrl&&(
-                <div style={{background:"#e8f5e9",border:"1px solid #81c784",borderRadius:4,padding:"8px 12px",marginBottom:8,fontSize:12,wordBreak:"break-all"}}>
-                  <div style={{fontWeight:700,fontSize:10,letterSpacing:1,textTransform:"uppercase",color:"#2d7a4a",marginBottom:3}}>🔗 Quote Link (included in SMS)</div>
-                  <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#1a4a8a",textDecoration:"underline"}}>{shareUrl}</a>
+              {!user&&trialMode?(
+                <div style={{textAlign:"center",padding:"16px 12px",background:"rgba(218,165,32,0.08)",border:"1.5px solid rgba(218,165,32,0.3)",borderRadius:6,marginBottom:8}}>
+                  <div style={{fontSize:15,fontWeight:700,color:"var(--amber)",marginBottom:6}}>Like what you see?</div>
+                  <div style={{fontSize:13,color:"var(--muted)",marginBottom:12,lineHeight:1.5}}>Create a free account to save this quote, send it to your client via SMS or email, and download as PDF.</div>
+                  <button className="btn btn-cta btn-full" onClick={()=>{setAuthPrompt("Sign up to save and send this quote");setShowAuthWall(true);setAuthMode("signup");}}>Create Free Account →</button>
+                  <div style={{marginTop:10}}>
+                    <button className="btn btn-ghost" onClick={newQuote} style={{fontSize:12}}>+ Try another quote</button>
+                  </div>
                 </div>
+              ):(
+                <>
+                  <div className="send-lbl">Send to Client</div>
+                  <div className="send-row">
+                    <input className="ph-input" type="tel" placeholder="Client phone number" value={clientPhone} onChange={e=>{setClientPhone(e.target.value);setShareUrl(null);}}/>
+                    <button className="btn-sms" onClick={sendSMS} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1}}>
+                      {shareLoading?"…":"📱 SMS"}
+                    </button>
+                  </div>
+                  <div className="send-row" style={{marginTop:8}}>
+                    <input className="ph-input" type="email" placeholder="Client email address" value={clientEmail} onChange={e=>setClientEmail(e.target.value)}/>
+                    <button className="btn-sms" onClick={sendEmail} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1,background:"var(--steel)",color:"var(--white)"}}>
+                      {shareLoading?"…":"✉️ Email"}
+                    </button>
+                  </div>
+                  {shareUrl&&(
+                    <div style={{background:"#e8f5e9",border:"1px solid #81c784",borderRadius:4,padding:"8px 12px",marginBottom:8,fontSize:12,wordBreak:"break-all"}}>
+                      <div style={{fontWeight:700,fontSize:10,letterSpacing:1,textTransform:"uppercase",color:"#2d7a4a",marginBottom:3}}>🔗 Quote Link (included in SMS)</div>
+                      <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#1a4a8a",textDecoration:"underline"}}>{shareUrl}</a>
+                    </div>
+                  )}
+                  <div className="btn-row" style={{marginBottom:8}}>
+                    <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save</button>
+                    <button className="btn btn-ghost" onClick={handlePrint}>📄 PDF</button>
+                    <button className="btn btn-ghost" onClick={copyText} disabled={shareLoading}>{shareLoading?"…":"📋 Copy"}</button>
+                    <button className="btn btn-ghost" onClick={newQuote}>+ New</button>
+                  </div>
+                </>
               )}
-              <div className="btn-row" style={{marginBottom:8}}>
-                <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save</button>
-                <button className="btn btn-ghost" onClick={handlePrint}>📄 PDF</button>
-                <button className="btn btn-ghost" onClick={copyText} disabled={shareLoading}>{shareLoading?"…":"📋 Copy"}</button>
-                <button className="btn btn-ghost" onClick={newQuote}>+ New</button>
-              </div>
             </>
           )}
         </div>

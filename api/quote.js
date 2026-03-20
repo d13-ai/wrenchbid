@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 
 // In-memory rate limiter
 const rateLimit = new Map();
+// Separate limiter for unauthenticated trial quotes (2 per IP per day)
+const trialLimit = new Map();
 
 function isRateLimited(ip, max = 20, windowMs = 60 * 1000) {
   const now = Date.now();
@@ -12,6 +14,21 @@ function isRateLimited(ip, max = 20, windowMs = 60 * 1000) {
   const entry = rateLimit.get(ip);
   if (now - entry.start > windowMs) {
     rateLimit.set(ip, { count: 1, start: now });
+    return false;
+  }
+  entry.count++;
+  return entry.count > max;
+}
+
+function isTrialLimited(ip, max = 2, windowMs = 24 * 60 * 60 * 1000) {
+  const now = Date.now();
+  if (!trialLimit.has(ip)) {
+    trialLimit.set(ip, { count: 1, start: now });
+    return false;
+  }
+  const entry = trialLimit.get(ip);
+  if (now - entry.start > windowMs) {
+    trialLimit.set(ip, { count: 1, start: now });
     return false;
   }
   entry.count++;
@@ -40,14 +57,23 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: "Too many requests. Please wait a moment." });
   }
 
-  // Auth check — require valid Supabase session token
+  // Auth check — allow trial quotes (limited) or require valid Supabase session
   const authHeader = req.headers["authorization"];
-  if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Unauthorized" });
+  const isTrial = req.headers["x-trial"] === "1";
+  let authenticated = false;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (!authError && user) authenticated = true;
   }
-  const token = authHeader.slice(7);
-  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-  if (authError || !user) {
+
+  if (!authenticated && isTrial) {
+    // Allow limited trial quotes — 2 per IP per day
+    if (isTrialLimited(ip, 2)) {
+      return res.status(429).json({ error: "trial_limit", message: "You've used your free trial quotes. Create a free account to keep going!" });
+    }
+  } else if (!authenticated) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
