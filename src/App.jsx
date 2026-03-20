@@ -1949,7 +1949,7 @@ export default function WrenchBid() {
               <div className="ob-slide">
                 <div className="ob-icon">🎙</div>
                 <div className="ob-title">Quote any job<br/>in 60 seconds</div>
-                <div className="ob-sub">Speak the job out loud — your rates, your prices, your terms. WrenchBid formats it into a professional quote. You set all the prices.</div>
+                <div className="ob-sub">Speak the job out loud — client name, what you're doing, hours, rate, materials. WrenchBid turns it into a professional quote instantly.</div>
                 <div className="ob-demo">
                   <div className="ob-demo-label"><span style={{width:8,height:8,borderRadius:"50%",background:"#b03030",display:"inline-block"}}/>Recording…</div>
                   <div className="ob-demo-text">{onboardTyped}{onboardTyped.length<74&&<span className="ob-cursor"/>}</div>
@@ -1965,7 +1965,7 @@ export default function WrenchBid() {
               <div className="ob-slide">
                 <div className="ob-icon">⚡</div>
                 <div className="ob-title">You set the price.<br/>We do the paperwork.</div>
-                <div className="ob-sub">Say your rate, your hours, your materials cost. WrenchBid formats your numbers into a professional quote — you control every dollar.</div>
+                <div className="ob-sub">Say your rate, hours, and materials cost. WrenchBid formats everything into a clean, itemized quote — you control every dollar.</div>
                 <div className="ob-quote-preview">
                   <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,letterSpacing:2,color:"var(--amber)",marginBottom:10,textTransform:"uppercase"}}>Quote Preview</div>
                   {[["Water Heater Replacement",""],["Labor — 3 hrs @ $105/hr","$315.00"],["Parts & Materials","$380.00"],["TOTAL","$695.00"]].map(([d,a],i)=>(
@@ -1981,8 +1981,8 @@ export default function WrenchBid() {
               {/* Slide 3 — Send it */}
               <div className="ob-slide">
                 <div className="ob-icon">📱</div>
-                <div className="ob-title">Text it to your<br/>client instantly</div>
-                <div className="ob-sub">Send a professional quote via SMS with a tap. Your client gets a link to view and save the full quote as a PDF.</div>
+                <div className="ob-title">Send via SMS, email,<br/>or save as PDF</div>
+                <div className="ob-sub">Text or email the quote to your client in one tap. They get a link to view the full quote and save it as a PDF.</div>
                 <div className="ob-demo" style={{marginTop:20}}>
                   <div className="ob-demo-label" style={{color:"#4caf50"}}>✓ What your client receives</div>
                   <div style={{fontSize:13,color:"#e8e0d0",lineHeight:1.7}}>
@@ -1993,7 +1993,12 @@ export default function WrenchBid() {
                     🔗 <span style={{color:"#64b5f6",textDecoration:"underline"}}>View full quote →</span>
                   </div>
                 </div>
-                <div style={{fontSize:12,color:"#666",marginTop:12}}>Free to use. No credit card required.</div>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginTop:12,flexWrap:"wrap"}}>
+                  <span style={{fontSize:11,background:"#1a1a1a",border:"1px solid #333",borderRadius:4,padding:"3px 8px",color:"#aaa"}}>💬 SMS</span>
+                  <span style={{fontSize:11,background:"#1a1a1a",border:"1px solid #333",borderRadius:4,padding:"3px 8px",color:"#aaa"}}>📧 Email</span>
+                  <span style={{fontSize:11,background:"#1a1a1a",border:"1px solid #333",borderRadius:4,padding:"3px 8px",color:"#aaa"}}>📄 PDF</span>
+                </div>
+                <div style={{fontSize:12,color:"#666",marginTop:8}}>Free to use. No credit card required.</div>
               </div>
             </div>
 
