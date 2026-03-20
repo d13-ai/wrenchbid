@@ -1306,6 +1306,10 @@ export default function WrenchBid() {
     const dismissed=localStorage.getItem("wb_ios_install_dismissed");
     return isIos && isSafari && !isStandalone && !dismissed;
   });
+  const [showAllLangs,setShowAllLangs]=useState(()=>{
+    const lang=(() => { try { return JSON.parse(localStorage.getItem("wb_biz"))?.language; } catch { return "en"; } })();
+    return lang && !["en","es"].includes(lang);
+  });
   const [sharedQuote,setSharedQuote]=useState(null);
   const [sharedLoading,setSharedLoading]=useState(()=>!!new URLSearchParams(window.location.search).get("quote"));
   const [history,setHistory]=useState(()=>{ try{return JSON.parse(localStorage.getItem("wb_history"))||[];}catch{return[];} });
@@ -1994,12 +1998,22 @@ export default function WrenchBid() {
                   <div>{step==="recording"?"STOP":"SPEAK"}</div>
                 </button>
                 <div className="lang-bar">
-                  {LANGUAGES.map(l=>(
+                  {LANGUAGES.slice(0,2).map(l=>(
                     <button key={l.code} className={`lang-pill ${(biz.language||"en")===l.code?"on":""}`}
                       onClick={()=>{ setBiz(b=>({...b,language:l.code})); if(l.code!=="en") ping(`${l.flag} Switched to ${l.label}`); }}>
                       {l.flag} {l.label}
                     </button>
                   ))}
+                  {showAllLangs ? LANGUAGES.slice(2).map(l=>(
+                    <button key={l.code} className={`lang-pill ${(biz.language||"en")===l.code?"on":""}`}
+                      onClick={()=>{ setBiz(b=>({...b,language:l.code})); if(l.code!=="en") ping(`${l.flag} Switched to ${l.label}`); }}>
+                      {l.flag} {l.label}
+                    </button>
+                  )) : (
+                    <button className="lang-pill" onClick={()=>setShowAllLangs(true)} style={{fontSize:11}}>
+                      +{LANGUAGES.length-2} more
+                    </button>
+                  )}
                 </div>
               </div>
               <textarea className="tx-box" value={transcript} onChange={e=>{finalRef.current=e.target.value;interimRef.current="";displayRef.current=e.target.value;setTranscript(e.target.value);}} placeholder="Your words appear here as you speak... or type directly" rows={4} style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}/>
