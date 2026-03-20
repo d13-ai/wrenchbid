@@ -1980,7 +1980,7 @@ export default function WrenchBid() {
                   <span style={{fontSize:13,fontWeight:700,color:"var(--amber)"}}>🇲🇽 Español</span>
                   <span style={{fontSize:11,color:"#666"}}>+ 8 more</span>
                 </div>
-                <div style={{fontSize:12,color:"#888",marginTop:8}}>Speak in any language — your quote is always formatted in English</div>
+                <div style={{fontSize:12,color:"#888",marginTop:8,lineHeight:1.6}}>Speak in any language — your quote is always formatted in English<br/><span style={{color:"#666",fontStyle:"italic"}}>Habla en cualquier idioma — tu cotización siempre sale en inglés</span></div>
               </div>
 
               {/* Slide 2 — Show the output */}
