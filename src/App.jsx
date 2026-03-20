@@ -296,6 +296,7 @@ if (!document.getElementById("wb-css")) {
 }
 
 /* ─── Constants ───────────────────────────────────────────────────────────── */
+const esc = (s) => { if (!s) return ""; return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); };
 const $$ = (n) => `$${Number(n || 0).toFixed(2)}`;
 const todayStr = () => new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 const qNum = (history=[]) => { const n = history.length + 1; return "WB-" + String(n).padStart(4,"0"); };
@@ -1315,6 +1316,7 @@ export default function WrenchBid() {
   const interimRef=useRef("");
   const displayRef=useRef("");
   const accessTokenRef=useRef("");
+  const sharePromiseRef=useRef(null);
 
   useEffect(()=>{ try{localStorage.setItem("wb_history",JSON.stringify(history));}catch{} },[history]);
   useEffect(()=>{ try{localStorage.setItem("wb_biz",JSON.stringify(biz));}catch{} },[biz]);
@@ -1487,38 +1489,43 @@ export default function WrenchBid() {
     catch{ setStep("idle"); ping("Parse error — try again"); }
   };
 
-  const saveToHistory=(status)=>{ if(!quote)return; const entry={...quote,status,transcript,bizName:biz.name,savedAt:new Date().toISOString()}; setHistory(h=>[entry,...h]); return entry; };
+  const saveToHistory=(status)=>{ if(!quote)return; const entry={...quote,_id:quote._id||Math.random().toString(36).slice(2)+Date.now().toString(36),status,transcript,bizName:biz.name,savedAt:new Date().toISOString()}; setHistory(h=>[entry,...h]); return entry; };
 
   // Format phone number for display
   const fmtPhone=(p)=>{const d=p.replace(/\D/g,"");if(d.length===10)return`(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;if(d.length===11&&d[0]==="1")return`+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;return p;};
 
-  // Generate a public share URL and save quote to Supabase
+  // Generate a public share URL and save quote to Supabase (deduplicated)
   const getShareUrl=async()=>{
     if(shareUrl) return shareUrl;
-    setShareLoading(true);
-    try{
-      const token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
-      const payload={
-        share_token:token,
-        biz_name:biz.name, biz_trade:biz.trade, biz_phone:biz.phone, biz_email:biz.email, biz_license:biz.licenseNum,
-        client_name:quote.clientName, job_title:quote.jobTitle, quote_num:quote.qNum, quote_date:quote.date,
-        line_items:quote.lineItems, subtotal:quote.subtotal, tax:quote.tax, tax_rate:quote.taxRate,
-        grand_total:quote.grandTotal, valid_days:quote.validDays, notes:quote.notes,
-        payment_terms:biz.paymentTerms, warranty:biz.warranty, custom_terms:biz.customTerms,
-        created_at:new Date().toISOString()
-      };
-      const {error}=await supabase.from("shared_quotes").insert(payload);
-      if(error) throw error;
-      const url=`${window.location.origin}?quote=${token}`;
-      setShareUrl(url);
-      setShareLoading(false);
-      return url;
-    } catch(e){
-      setShareLoading(false);
-      // Fallback: encode compact quote in URL if Supabase fails
-      const compact=btoa(JSON.stringify({b:biz.name,t:quote.jobTitle,tot:quote.grandTotal,v:quote.validDays,n:quote.qNum})).slice(0,200);
-      return null;
-    }
+    if(sharePromiseRef.current) return sharePromiseRef.current;
+    const promise=(async()=>{
+      setShareLoading(true);
+      try{
+        const token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+        const payload={
+          share_token:token,
+          biz_name:biz.name, biz_trade:biz.trade, biz_phone:biz.phone, biz_email:biz.email, biz_license:biz.licenseNum,
+          client_name:quote.clientName, job_title:quote.jobTitle, quote_num:quote.qNum, quote_date:quote.date,
+          line_items:quote.lineItems, subtotal:quote.subtotal, tax:quote.tax, tax_rate:quote.taxRate,
+          grand_total:quote.grandTotal, valid_days:quote.validDays, notes:quote.notes,
+          payment_terms:biz.paymentTerms, warranty:biz.warranty, custom_terms:biz.customTerms,
+          created_at:new Date().toISOString()
+        };
+        const {error}=await supabase.from("shared_quotes").insert(payload);
+        if(error) throw error;
+        const url=`${window.location.origin}?quote=${token}`;
+        setShareUrl(url);
+        setShareLoading(false);
+        return url;
+      } catch(e){
+        setShareLoading(false);
+        return null;
+      } finally{
+        sharePromiseRef.current=null;
+      }
+    })();
+    sharePromiseRef.current=promise;
+    return promise;
   };
 
   const handlePrint=()=>{
@@ -1526,23 +1533,23 @@ export default function WrenchBid() {
     const li=(quote.lineItems||[]).filter(l=>l.desc&&l.total>0).map(l=>`
       <tr>
         <td class="td-desc">
-          <div class="li-name">${l.desc}</div>
-          ${l.qty&&l.rate&&l.unit!=="flat"?`<div class="li-detail">${l.qty} ${l.unit} &times; $${Number(l.rate).toFixed(2)}</div>`:""}
+          <div class="li-name">${esc(l.desc)}</div>
+          ${l.qty&&l.rate&&l.unit!=="flat"?`<div class="li-detail">${esc(l.qty)} ${esc(l.unit)} &times; $${Number(l.rate).toFixed(2)}</div>`:""}
         </td>
         <td class="td-amt">${$$n(l.total)}</td>
       </tr>`).join("");
     const terms=[
-      quote.notes?`<div class="term-row"><span class="term-lbl">Notes</span><span>${quote.notes}</span></div>`:"",
-      quote.paymentTerms?`<div class="term-row"><span class="term-lbl">Payment Terms</span><span>${quote.paymentTerms}</span></div>`:"",
-      quote.warranty?`<div class="term-row"><span class="term-lbl">Warranty</span><span>${quote.warranty}</span></div>`:"",
-      quote.customTerms?`<div class="term-row"><span class="term-lbl">Terms &amp; Conditions</span><span>${quote.customTerms}</span></div>`:"",
-      biz.licenseNum?`<div class="term-row"><span class="term-lbl">License #</span><span>${biz.licenseNum}</span></div>`:""
+      quote.notes?`<div class="term-row"><span class="term-lbl">Notes</span><span>${esc(quote.notes)}</span></div>`:"",
+      quote.paymentTerms?`<div class="term-row"><span class="term-lbl">Payment Terms</span><span>${esc(quote.paymentTerms)}</span></div>`:"",
+      quote.warranty?`<div class="term-row"><span class="term-lbl">Warranty</span><span>${esc(quote.warranty)}</span></div>`:"",
+      quote.customTerms?`<div class="term-row"><span class="term-lbl">Terms &amp; Conditions</span><span>${esc(quote.customTerms)}</span></div>`:"",
+      biz.licenseNum?`<div class="term-row"><span class="term-lbl">License #</span><span>${esc(biz.licenseNum)}</span></div>`:""
     ].filter(Boolean).join("");
     const html=`<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Quote ${quote.qNum} — ${biz.name}</title>
+<title>Quote ${esc(quote.qNum)} — ${esc(biz.name)}</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -1590,25 +1597,25 @@ export default function WrenchBid() {
 <div class="page">
   <div class="hdr">
     <div>
-      <div class="biz-name">${biz.name}</div>
-      <div class="biz-sub">${biz.trade||""}${biz.phone?` &nbsp;·&nbsp; ${biz.phone}`:""}${biz.email?` &nbsp;·&nbsp; ${biz.email}`:""}</div>
+      <div class="biz-name">${esc(biz.name)}</div>
+      <div class="biz-sub">${esc(biz.trade||"")}${biz.phone?` &nbsp;·&nbsp; ${esc(biz.phone)}`:""}${biz.email?` &nbsp;·&nbsp; ${esc(biz.email)}`:""}</div>
     </div>
     <div class="hdr-right">
       <div class="quote-label">Quote</div>
-      <div class="quote-num">#${quote.qNum}</div>
+      <div class="quote-num">#${esc(quote.qNum)}</div>
     </div>
   </div>
   <div class="stripe"></div>
   <div class="body">
     <div class="meta">
       <div class="meta-left">
-        ${quote.clientName?`<div class="to-label">Prepared for</div><div class="client-name">${quote.clientName}</div>`:""}
-        <div class="job-title">${quote.jobTitle||""}</div>
+        ${quote.clientName?`<div class="to-label">Prepared for</div><div class="client-name">${esc(quote.clientName)}</div>`:""}
+        <div class="job-title">${esc(quote.jobTitle||"")}</div>
       </div>
       <div class="meta-right">
-        <div><strong>Date</strong> &nbsp; ${quote.date}</div>
-        <div><strong>Valid</strong> &nbsp; ${quote.validDays} days</div>
-        ${biz.licenseNum?`<div><strong>Lic #</strong> &nbsp; ${biz.licenseNum}</div>`:""}
+        <div><strong>Date</strong> &nbsp; ${esc(quote.date)}</div>
+        <div><strong>Valid</strong> &nbsp; ${esc(quote.validDays)} days</div>
+        ${biz.licenseNum?`<div><strong>Lic #</strong> &nbsp; ${esc(biz.licenseNum)}</div>`:""}
       </div>
     </div>
     <table>
@@ -1747,18 +1754,18 @@ export default function WrenchBid() {
     const printShared=()=>{
       const li=(q.line_items||[]).filter(l=>l.desc&&l.total>0).map(l=>`
         <tr>
-          <td class="td-desc"><div class="li-name">${l.desc}</div>${l.qty&&l.rate&&l.unit!=="flat"?`<div class="li-detail">${l.qty} ${l.unit} &times; $${Number(l.rate).toFixed(2)}</div>`:""}</td>
+          <td class="td-desc"><div class="li-name">${esc(l.desc)}</div>${l.qty&&l.rate&&l.unit!=="flat"?`<div class="li-detail">${esc(l.qty)} ${esc(l.unit)} &times; $${Number(l.rate).toFixed(2)}</div>`:""}</td>
           <td class="td-amt">${$$n(l.total)}</td>
         </tr>`).join("");
       const terms=[
-        q.notes?`<div class="term-row"><span class="term-lbl">Notes</span><span>${q.notes}</span></div>`:"",
-        q.payment_terms?`<div class="term-row"><span class="term-lbl">Payment Terms</span><span>${q.payment_terms}</span></div>`:"",
-        q.warranty?`<div class="term-row"><span class="term-lbl">Warranty</span><span>${q.warranty}</span></div>`:"",
-        q.custom_terms?`<div class="term-row"><span class="term-lbl">Terms &amp; Conditions</span><span>${q.custom_terms}</span></div>`:"",
-        q.biz_license?`<div class="term-row"><span class="term-lbl">License #</span><span>${q.biz_license}</span></div>`:""
+        q.notes?`<div class="term-row"><span class="term-lbl">Notes</span><span>${esc(q.notes)}</span></div>`:"",
+        q.payment_terms?`<div class="term-row"><span class="term-lbl">Payment Terms</span><span>${esc(q.payment_terms)}</span></div>`:"",
+        q.warranty?`<div class="term-row"><span class="term-lbl">Warranty</span><span>${esc(q.warranty)}</span></div>`:"",
+        q.custom_terms?`<div class="term-row"><span class="term-lbl">Terms &amp; Conditions</span><span>${esc(q.custom_terms)}</span></div>`:"",
+        q.biz_license?`<div class="term-row"><span class="term-lbl">License #</span><span>${esc(q.biz_license)}</span></div>`:""
       ].filter(Boolean).join("");
       const css=`*{box-sizing:border-box;margin:0;padding:0}html,body{width:100%;background:#e8e0d0;font-family:'Barlow',sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}.page{max-width:680px;margin:32px auto;background:white;border-radius:6px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.12)}.hdr{background:#0d0d0d;padding:28px 32px;display:flex;justify-content:space-between;align-items:flex-start;-webkit-print-color-adjust:exact;print-color-adjust:exact}.biz-name{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;letter-spacing:3px;color:#e8a020;text-transform:uppercase;line-height:1}.biz-sub{font-size:13px;color:#888;margin-top:6px;line-height:1.5}.hdr-right{text-align:right}.quote-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:4px}.quote-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:#e8a020;letter-spacing:2px}.stripe{height:5px;background:#e8a020;-webkit-print-color-adjust:exact;print-color-adjust:exact}.body{padding:32px}.meta{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;margin-bottom:24px;border-bottom:1px solid #e0d8cc}.to-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0a890;margin-bottom:4px}.client-name{font-size:17px;font-weight:700;color:#0d0d0d;margin-bottom:4px}.job-title{font-size:22px;font-weight:900;font-family:'Barlow Condensed',sans-serif;color:#0d0d0d;letter-spacing:1px;text-transform:uppercase}.meta-right{text-align:right;font-size:12px;color:#7a7060;line-height:1.8}.meta-right strong{color:#0d0d0d;font-weight:700}table{width:100%;border-collapse:collapse;margin-bottom:0}.thead-row th{padding:8px 0;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0a890;border-bottom:2px solid #0d0d0d}.thead-row th:last-child{text-align:right}.td-desc{padding:14px 0;font-size:14px;color:#0d0d0d;border-bottom:1px solid #f0e8de;width:75%}.td-amt{padding:14px 0;font-size:15px;font-weight:700;text-align:right;color:#0d0d0d;border-bottom:1px solid #f0e8de;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}.li-name{font-weight:600}.li-detail{font-size:11px;color:#b0a890;margin-top:3px}.totals{background:#0d0d0d;margin:0 -32px -32px;padding:20px 32px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.subtotal-row{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:5px}.total-row{display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:6px;border-top:1px solid #333}.total-label{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase}.total-amt{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:#e8a020;letter-spacing:1px}.terms{margin-top:28px;padding-top:20px;border-top:1px solid #e0d8cc}.term-row{display:flex;gap:16px;margin-bottom:12px;font-size:12px;line-height:1.6}.term-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#e8a020;min-width:110px;padding-top:1px}.footer{margin-top:28px;padding-top:16px;border-top:1px solid #e0d8cc;font-size:10px;color:#c0b8a8;text-align:center;letter-spacing:1px;text-transform:uppercase}@media print{html,body{background:white!important}.page{margin:0;border-radius:0;box-shadow:none}}`;
-      const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Quote ${q.quote_num} — ${q.biz_name}</title><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body><div class="page"><div class="hdr"><div><div class="biz-name">${q.biz_name}</div><div class="biz-sub">${q.biz_trade||""}${q.biz_phone?` &nbsp;&middot;&nbsp; ${q.biz_phone}`:""}${q.biz_email?` &nbsp;&middot;&nbsp; ${q.biz_email}`:""}</div></div><div class="hdr-right"><div class="quote-label">Quote</div><div class="quote-num">#${q.quote_num}</div></div></div><div class="stripe"></div><div class="body"><div class="meta"><div class="meta-left">${q.client_name?`<div class="to-label">Prepared for</div><div class="client-name">${q.client_name}</div>`:""}<div class="job-title">${q.job_title||""}</div></div><div class="meta-right"><div><strong>Date</strong> &nbsp; ${q.quote_date}</div><div><strong>Valid</strong> &nbsp; ${q.valid_days} days</div></div></div><table><thead><tr class="thead-row"><th style="text-align:left">Description</th><th>Amount</th></tr></thead><tbody>${li}</tbody></table><div class="totals">${q.tax>0?`<div class="subtotal-row"><span>Subtotal</span><span>${$$n(q.subtotal)}</span></div><div class="subtotal-row"><span>Tax (${q.tax_rate}%)</span><span>${$$n(q.tax)}</span></div>`:""}<div class="total-row"><span class="total-label">Total</span><span class="total-amt">${$$n(q.grand_total)}</span></div></div>${terms?`<div class="terms">${terms}</div>`:""}<div class="footer">Quote generated via WrenchBid &nbsp;&middot;&nbsp; wrenchbid.app</div></div></div><script>window.onload=()=>{setTimeout(()=>window.print(),400);}</script></body></html>`;
+      const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Quote ${esc(q.quote_num)} — ${esc(q.biz_name)}</title><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body><div class="page"><div class="hdr"><div><div class="biz-name">${esc(q.biz_name)}</div><div class="biz-sub">${esc(q.biz_trade||"")}${q.biz_phone?` &nbsp;&middot;&nbsp; ${esc(q.biz_phone)}`:""}${q.biz_email?` &nbsp;&middot;&nbsp; ${esc(q.biz_email)}`:""}</div></div><div class="hdr-right"><div class="quote-label">Quote</div><div class="quote-num">#${esc(q.quote_num)}</div></div></div><div class="stripe"></div><div class="body"><div class="meta"><div class="meta-left">${q.client_name?`<div class="to-label">Prepared for</div><div class="client-name">${esc(q.client_name)}</div>`:""}<div class="job-title">${esc(q.job_title||"")}</div></div><div class="meta-right"><div><strong>Date</strong> &nbsp; ${esc(q.quote_date)}</div><div><strong>Valid</strong> &nbsp; ${esc(q.valid_days)} days</div></div></div><table><thead><tr class="thead-row"><th style="text-align:left">Description</th><th>Amount</th></tr></thead><tbody>${li}</tbody></table><div class="totals">${q.tax>0?`<div class="subtotal-row"><span>Subtotal</span><span>${$$n(q.subtotal)}</span></div><div class="subtotal-row"><span>Tax (${esc(q.tax_rate)}%)</span><span>${$$n(q.tax)}</span></div>`:""}<div class="total-row"><span class="total-label">Total</span><span class="total-amt">${$$n(q.grand_total)}</span></div></div>${terms?`<div class="terms">${terms}</div>`:""}<div class="footer">Quote generated via WrenchBid &nbsp;&middot;&nbsp; wrenchbid.app</div></div></div><script>window.onload=()=>{setTimeout(()=>window.print(),400);}</script></body></html>`;
       const w=window.open("","_blank");
       if(w){w.document.write(html);w.document.close();}
     };
@@ -2144,10 +2151,10 @@ export default function WrenchBid() {
                   return new Date(b.savedAt||0)-new Date(a.savedAt||0);
                 })
                 .map((q,i)=>{
-                  const realIdx=history.indexOf(q);
+                  const qId=q._id||i;
                   return(
-                  <div className="h-item" key={realIdx} style={{position:"relative"}}>
-                    <div onClick={()=>{setQuote({paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||"",...q});setStep("preview");setTab("new");}}>
+                  <div className="h-item" key={qId} style={{position:"relative"}}>
+                    <div onClick={()=>{setQuote({paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||"",...q});setStep("preview");setTab("new");setShareUrl(null);}}>
                       <div className="h-qnum">{q.qNum||""}</div>
                       <div className="h-top"><div className="h-client">{q.clientName||"No client name"}</div><div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div></div>
                       <div className="h-job">{q.jobTitle}</div>
@@ -2156,7 +2163,7 @@ export default function WrenchBid() {
                         <select
                           value={q.status||"saved"}
                           onClick={e=>e.stopPropagation()}
-                          onChange={e=>{e.stopPropagation();const next=e.target.value;setHistory(h=>{const n=[...h];n[realIdx]={...n[realIdx],status:next};return n;});}}
+                          onChange={e=>{e.stopPropagation();const next=e.target.value;setHistory(h=>h.map(item=>(item._id||item.qNum)===(q._id||q.qNum)?{...item,status:next}:item));}}
                           className={`chip ${q.status||"saved"}`}
                           style={{border:"1.5px solid currentColor",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",fontSize:10,padding:"2px 6px 2px 8px",borderRadius:2,outline:"none"}}
                         >
@@ -2168,7 +2175,7 @@ export default function WrenchBid() {
                         </select>
                       </div>
                     </div>
-                    <button onClick={e=>{e.stopPropagation();deleteQuote(realIdx);}} style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",padding:"4px 6px"}}>✕</button>
+                    <button onClick={e=>{e.stopPropagation();setHistory(h=>h.filter(item=>(item._id||item.qNum)!==(q._id||q.qNum)));if(user&&q?.qNum)supabase.from("quotes").delete().eq("user_id",user.id).eq("quote_num",q.qNum);}} style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontSize:15,color:"var(--muted)",padding:"4px 6px"}}>✕</button>
                   </div>
                   );
                 })
