@@ -1284,6 +1284,9 @@ export default function WrenchBid() {
   const [authReady,setAuthReady]=useState(false);
   const [authMode,setAuthMode]=useState("signin");
   const [onboardDone,setOnboardDone]=useState(false);
+  const [trialMode,setTrialMode]=useState(false);
+  const [showAuthWall,setShowAuthWall]=useState(false);
+  const [authPrompt,setAuthPrompt]=useState("");
   const [onboardStep,setOnboardStep]=useState(0);
   const [onboardTyped,setOnboardTyped]=useState("");
   const [authEmail,setAuthEmail]=useState("");
@@ -1925,20 +1928,22 @@ export default function WrenchBid() {
                 </>
               ):(
                 <>
-                  <button className="ob-btn-main" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>Get Started Free →</button>
-                  <button className="ob-btn-next" onClick={()=>{setOnboardDone(true);setAuthMode("signin");}}>Already have an account? Sign in</button>
+                  <button className="ob-btn-main" onClick={()=>{setOnboardDone(true);setTrialMode(true);}}>Try it free — no signup →</button>
+                  <button className="ob-btn-next" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>Create account</button>
+                  <button className="ob-btn-skip" onClick={()=>{setOnboardDone(true);setAuthMode("signin");}}>Already have an account? Sign in</button>
                 </>
               )}
             </div>
           </div>
         )}
 
-      {!user&&(
+      {!user&&(!trialMode||showAuthWall)&&(
         <div className="auth-overlay">
           <div className="auth-box">
             <div className="auth-hd">
                 <div className="auth-logo">Wrench<em>Bid</em></div>
                 <div className="auth-tagline">Voice-to-quote for tradespeople</div>
+                {authPrompt&&<div style={{marginTop:10,padding:"8px 12px",background:"rgba(218,165,32,0.12)",border:"1px solid rgba(218,165,32,0.3)",borderRadius:4,fontSize:13,color:"var(--amber)",fontWeight:600,textAlign:"center"}}>{authPrompt}</div>}
                 <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:4}}>
                   {["🎙 Speak the job — quote builds itself","📱 Text it to your client in one tap","💰 Free to use, works on any phone"].map((t,i)=>(
                     <div key={i} style={{fontSize:12,color:"#888",textAlign:"left",paddingLeft:8}}>{t}</div>
@@ -1947,6 +1952,16 @@ export default function WrenchBid() {
               </div>
             <div className="auth-stripe"/>
             <div className="auth-bd">
+              <div style={{fontSize:11,color:"var(--muted)",textAlign:"center",marginBottom:10,fontWeight:600}}>Trusted by plumbers, electricians, roofers & more</div>
+              <button onClick={handleGoogleSignIn} style={{width:"100%",padding:"13px 16px",background:"var(--white)",border:"1.5px solid var(--rule)",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",gap:10,cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",transition:"border-color .15s",marginBottom:4}} onMouseOver={e=>e.currentTarget.style.borderColor="var(--amber)"} onMouseOut={e=>e.currentTarget.style.borderColor="var(--rule)"}>
+                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+                Continue with Google
+              </button>
+              <div style={{display:"flex",alignItems:"center",gap:10,margin:"14px 0"}}>
+                <div style={{flex:1,height:1,background:"var(--rule)"}}/>
+                <span style={{fontSize:11,color:"var(--muted)",fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>or use email</span>
+                <div style={{flex:1,height:1,background:"var(--rule)"}}/>
+              </div>
               <div className="auth-tabs">
                 <button className={`auth-tab ${authMode==="signin"?"on":""}`} onClick={()=>{setAuthMode("signin");setAuthError("");}}>Sign In</button>
                 <button className={`auth-tab ${authMode==="signup"?"on":""}`} onClick={()=>{setAuthMode("signup");setAuthError("");}}>Create Account</button>
@@ -1955,16 +1970,8 @@ export default function WrenchBid() {
               <div className="auth-field"><label>Email</label><input type="email" value={authEmail} onChange={e=>setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email"/></div>
               <div className="auth-field"><label>Password</label><input type="password" value={authPassword} onChange={e=>setAuthPassword(e.target.value)} placeholder={authMode==="signup"?"Min 6 characters":"Your password"} autoComplete={authMode==="signup"?"new-password":"current-password"} onKeyDown={e=>e.key==="Enter"&&(authMode==="signup"?handleSignUp():handleSignIn())}/></div>
               <button className="btn btn-cta btn-full" onClick={authMode==="signup"?handleSignUp:handleSignIn} disabled={authLoading||!authEmail||!authPassword}>{authLoading?"Please wait...":authMode==="signup"?"Create Account":"Sign In"}</button>
-              <div style={{display:"flex",alignItems:"center",gap:10,margin:"14px 0"}}>
-                <div style={{flex:1,height:1,background:"var(--rule)"}}/>
-                <span style={{fontSize:11,color:"var(--muted)",fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>or</span>
-                <div style={{flex:1,height:1,background:"var(--rule)"}}/>
-              </div>
-              <button onClick={handleGoogleSignIn} style={{width:"100%",padding:"11px 16px",background:"var(--white)",border:"1.5px solid var(--rule)",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",gap:10,cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",transition:"border-color .15s"}} onMouseOver={e=>e.currentTarget.style.borderColor="var(--amber)"} onMouseOut={e=>e.currentTarget.style.borderColor="var(--rule)"}>
-                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
-                Continue with Google
-              </button>
               <div className="auth-foot">{authMode==="signin"?"New to WrenchBid? ":"Already have an account? "}<button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={()=>{setAuthMode(authMode==="signin"?"signup":"signin");setAuthError("");}}>{authMode==="signin"?"Create a free account":"Sign in"}</button></div>
+              {trialMode&&showAuthWall&&<button style={{background:"none",border:"none",color:"var(--muted)",fontSize:12,cursor:"pointer",marginTop:8,textDecoration:"underline"}} onClick={()=>{setShowAuthWall(false);setAuthPrompt("");}}>← Back to trying WrenchBid</button>}
             </div>
           </div>
         </div>
@@ -1972,12 +1979,12 @@ export default function WrenchBid() {
 
       <header className="hdr">
         <div className="logo">Wrench<em>Bid</em></div>
-        {user?<div className="user-bar"><span className="user-email">{user.email}</span><button className="btn-signout" onClick={handleSignOut}>Sign Out</button></div>:<div className="version">Beta</div>}
+        {user?<div className="user-bar"><span className="user-email">{user.email}</span><button className="btn-signout" onClick={handleSignOut}>Sign Out</button></div>:trialMode?<button className="btn-signout" style={{background:"var(--amber)",color:"var(--ink)",fontWeight:700,border:"none",padding:"5px 14px",borderRadius:3,cursor:"pointer",fontSize:12}} onClick={()=>{setShowAuthWall(true);setAuthMode("signup");setAuthPrompt("");}}>Sign Up Free</button>:<div className="version">Beta</div>}
       </header>
 
       <nav className="tabs">
         {[["new","⚡ Quote"],["history","📋 History"],["rebates","💰 Rebates"],["setup","⚙ Setup"]].map(([id,label])=>(
-          <button key={id} className={`tab ${tab===id?"on":""}`} onClick={()=>setTab(id)}>{label}</button>
+          <button key={id} className={`tab ${tab===id?"on":""}`} onClick={()=>{if(!user&&id!=="new"){setAuthPrompt("Create a free account to access "+label.replace(/^[^\s]+ /,""));setShowAuthWall(true);setAuthMode("signup");return;}setTab(id);}}>{label}</button>
         ))}
       </nav>
 
@@ -2004,12 +2011,16 @@ export default function WrenchBid() {
                       {l.flag} {l.label}
                     </button>
                   ))}
-                  {showAllLangs ? LANGUAGES.slice(2).map(l=>(
+                  {showAllLangs ? (<>{LANGUAGES.slice(2).map(l=>(
                     <button key={l.code} className={`lang-pill ${(biz.language||"en")===l.code?"on":""}`}
                       onClick={()=>{ setBiz(b=>({...b,language:l.code})); if(l.code!=="en") ping(`${l.flag} Switched to ${l.label}`); }}>
                       {l.flag} {l.label}
                     </button>
-                  )) : (
+                  ))}
+                    <button className="lang-pill" onClick={()=>setShowAllLangs(false)} style={{fontSize:11,opacity:.7}}>
+                      − less
+                    </button>
+                  </>) : (
                     <button className="lang-pill" onClick={()=>setShowAllLangs(true)} style={{fontSize:11}}>
                       +{LANGUAGES.length-2} more
                     </button>
@@ -2020,7 +2031,7 @@ export default function WrenchBid() {
               {step==="processing"&&<div className="loader"/>}
               <div className="btn-row">
                 <button className="btn btn-ghost" onClick={()=>{finalRef.current="";interimRef.current="";displayRef.current="";setTranscript("");}}>Clear</button>
-                <button className="btn btn-cta" onClick={generate} disabled={!transcript.trim()||step==="processing"||step==="recording"}>{step==="processing"?"Building...":"⚡ Build Quote"}</button>
+                <button className="btn btn-cta" onClick={()=>{if(!user){setAuthPrompt("Create a free account to build your quote");setShowAuthWall(true);setAuthMode("signup");return;}generate();}} disabled={!transcript.trim()||step==="processing"||step==="recording"}>{step==="processing"?"Building...":"⚡ Build Quote"}</button>
               </div>
               <div className="div"/>
               <div className="tip"><strong>Example phrases:</strong><br/>"Replace water heater for John Smith, 3 hours at $105/hr, parts cost $380"<br/><br/>"Paint exterior of house, flat rate $1400, client Maria Rodriguez"</div>
