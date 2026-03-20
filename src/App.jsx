@@ -313,6 +313,168 @@ const LANGUAGES = [
   {code:"pl",    flag:"🇵🇱", label:"PL",  model:"nova-3"},
   {code:"ru",    flag:"🇷🇺", label:"RU",  model:"nova-3"},
 ];
+/* ─── UI Translations ─────────────────────────────────────────────────── */
+const UI = {
+  en: {
+    // Tabs
+    tabQuote: "⚡ Quote", tabHistory: "📋 History", tabRebates: "💰 Rebates", tabSetup: "⚙ Setup",
+    // Header
+    signOut: "Sign Out", signUpFree: "Sign Up Free", beta: "Beta",
+    // Quote screen
+    howItWorks: "How it works:", howItWorksBody: "Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid formats it into a quote. You set all the prices.",
+    recording: "🔴 Recording — tap to stop", tapToSpeak: "Tap to start speaking", tapExample: "Tap to load an example quote",
+    recordingIn: "Recording in", tapToSpeakLang: "tap to speak",
+    stop: "STOP", speak: "SPEAK", less: "− less",
+    placeholder: "Your words appear here as you speak... or type directly",
+    clear: "Clear", buildQuote: "⚡ Build Quote", building: "Building...",
+    exampleTitle: "Example phrases:",
+    example1: '"Replace water heater for John Smith, 3 hours at $105/hr, parts cost $380"',
+    example2: '"Paint exterior of house, flat rate $1400, client Maria Rodriguez"',
+    // Quote preview
+    to: "To", quoteNum: "Quote #", date: "Date", valid: "Valid", days: "days",
+    scopeOfWork: "Scope of Work", lineItems: "Line Items", addLine: "+ Add Line",
+    notes: "Notes", notesPlaceholder: "Payment terms, warranty, etc.",
+    paymentTerms: "Payment Terms", paymentPlaceholder: "e.g. 50% deposit required. Balance due on completion.",
+    warranty: "Warranty", warrantyPlaceholder: "e.g. All labor warrantied for 1 year.",
+    termsConditions: "Terms & Conditions", termsPlaceholder: "e.g. Client responsible for permits.",
+    licenseNum: "License #",
+    disclaimer: "Review before sending.", disclaimerBody: "WrenchBid formats what you described — it does not set prices. You are responsible for all pricing.",
+    subtotal: "Subtotal", tax: "Tax", total: "TOTAL",
+    // Send section
+    sendToClient: "Send to Client", clientPhone: "Client phone number", clientEmail: "Client email address",
+    save: "💾 Save", pdf: "📄 PDF", copy: "📋 Copy", newQuote: "+ New",
+    quoteLinkLabel: "🔗 Quote Link (included in SMS)",
+    // Trial CTA
+    likeIt: "Like what you see?", likeItBody: "Create a free account to save this quote, send it to your client via SMS or email, and download as PDF.",
+    createFreeAccount: "Create Free Account →", tryAnother: "+ Try another quote",
+    // History
+    noQuotes: "No quotes yet.", tapQuote: 'Tap "Quote" to get started.',
+    totalLabel: "Total", sent: "Sent", accepted: "Accepted", won: "Won",
+    searchPlaceholder: "🔍 Search client or job…", newest: "Newest", amountDesc: "Amount ↓", status: "Status", clientAZ: "Client A–Z",
+    clearAll: "Clear All", noClientName: "No client name",
+    saved: "Saved", draft: "Draft", sentStatus: "Sent", acceptedStatus: "Accepted ✓", declinedStatus: "Declined ✗",
+    // Setup
+    yourBizProfile: "Your Business Profile", bizName: "Business Name", bizNamePlaceholder: "Mike's Plumbing LLC",
+    profession: "Your Profession", state: "State", selectState: "Select your state...",
+    stateHint: "Colorado has a full rebate database. Other states: we link you to DSIRE national database.",
+    phone: "Phone", email: "Email",
+    licenseLabel: "License #", licenseOptional: "(optional)", licensePlaceholder: "e.g. CO-PLB-12345",
+    voiceLang: "Voice Language", voiceLangHint: "(same as pill on Quote screen)",
+    voiceLangNote: "Speak in your language — quotes are always built in English.",
+    salesTax: "Sales Tax", applyTax: "Apply sales tax to quotes", taxRate: "% tax rate", noTax: "Tax will not appear on quotes.",
+    quoteTerms: "Quote Terms & Conditions", termsAutoNote: "These print on every quote automatically.",
+    addlTerms: "Additional Terms", saveProfile: "Save Profile",
+    roadmap: "Roadmap",
+    // Auth
+    tagline: "Voice-to-quote for tradespeople",
+    authBullets: ["🎙 Speak the job — quote builds itself","📱 Text it to your client in one tap","💰 Free to use, works on any phone"],
+    trustedBy: "Trusted by plumbers, electricians, roofers & more",
+    continueGoogle: "Continue with Google", orEmail: "or use email",
+    signIn: "Sign In", createAccount: "Create Account",
+    emailLabel: "Email", passwordLabel: "Password",
+    passwordPlaceholderNew: "Min 6 characters", passwordPlaceholderExisting: "Your password",
+    pleaseWait: "Please wait...",
+    newToWB: "New to WrenchBid? ", alreadyHave: "Already have an account? ",
+    createFree: "Create a free account", signInLink: "Sign in",
+    backToTrial: "← Back to trying WrenchBid",
+    // Onboarding
+    obTitle1: "Quote any job", obTitle1b: "in 60 seconds",
+    obSub1: "Speak the job out loud — client name, what you're doing, hours, rate, materials. WrenchBid turns it into a professional quote instantly.",
+    obLangCallout: "Speak in any language — your quote is always formatted in English",
+    obLangCalloutES: "Habla en cualquier idioma — tu cotización siempre sale en inglés",
+    obTitle2: "You set the price.", obTitle2b: "We do the paperwork.",
+    obSub2: "Say your rate, hours, and materials cost. WrenchBid formats everything into a clean, itemized quote — you control every dollar.",
+    obTitle3: "Send via SMS, email,", obTitle3b: "or save as PDF",
+    obSub3: "Text or email the quote to your client in one tap. They get a link to view the full quote and save it as a PDF.",
+    obFree: "Free to use. No credit card required.",
+    obNext: "Next →", obSkip: "Skip intro",
+    obTryFree: "Try it free — no signup →", obCreateAcct: "Create account", obSignIn: "Already have an account? Sign in",
+    // Footer
+    shareWB: "Share WrenchBid",
+    // Toasts / pings
+    pingProfileSaved: "Profile saved ✓", pingSmsCopied: "SMS ready ✓", pingEmailReady: "Email ready ✓",
+    pingSpeakFirst: "Speak a job description first", pingParseError: "Parse error — try again",
+    pingLinkCopied: "Link copied ✓", pingWelcome: "Welcome to WrenchBid! ✓", pingWelcomeBack: "Welcome back ✓",
+    pingMicBlocked: "Mic blocked — check browser settings to allow microphone",
+    pingNoMic: "No microphone found on this device",
+    pingSignIn: "Please sign in to use voice",
+  },
+  es: {
+    tabQuote: "⚡ Cotización", tabHistory: "📋 Historial", tabRebates: "💰 Reembolsos", tabSetup: "⚙ Ajustes",
+    signOut: "Cerrar sesión", signUpFree: "Regístrate gratis", beta: "Beta",
+    howItWorks: "Cómo funciona:", howItWorksBody: "Toca el micrófono y describe el trabajo en voz alta — nombre del cliente, qué harás, horas, tarifa y costo de materiales. WrenchBid lo convierte en una cotización. Tú pones todos los precios.",
+    recording: "🔴 Grabando — toca para parar", tapToSpeak: "Toca para hablar", tapExample: "Toca para cargar un ejemplo",
+    recordingIn: "Grabando en", tapToSpeakLang: "toca para hablar",
+    stop: "PARAR", speak: "HABLAR", less: "− menos",
+    placeholder: "Tus palabras aparecen aquí al hablar... o escribe directamente",
+    clear: "Borrar", buildQuote: "⚡ Crear Cotización", building: "Creando...",
+    exampleTitle: "Frases de ejemplo:",
+    example1: '"Reparar calentador de agua para Juan García, 3 horas a $105/hr, materiales $380"',
+    example2: '"Pintar exterior de casa, tarifa fija $1400, cliente María Rodríguez"',
+    to: "Para", quoteNum: "Cotización #", date: "Fecha", valid: "Válido", days: "días",
+    scopeOfWork: "Alcance del trabajo", lineItems: "Partidas", addLine: "+ Agregar línea",
+    notes: "Notas", notesPlaceholder: "Términos de pago, garantía, etc.",
+    paymentTerms: "Términos de pago", paymentPlaceholder: "Ej. 50% de anticipo. Saldo al finalizar.",
+    warranty: "Garantía", warrantyPlaceholder: "Ej. Mano de obra garantizada por 1 año.",
+    termsConditions: "Términos y condiciones", termsPlaceholder: "Ej. El cliente es responsable de los permisos.",
+    licenseNum: "Licencia #",
+    disclaimer: "Revisa antes de enviar.", disclaimerBody: "WrenchBid formatea lo que describiste — no fija precios. Tú eres responsable de todos los precios.",
+    subtotal: "Subtotal", tax: "Impuesto", total: "TOTAL",
+    sendToClient: "Enviar al cliente", clientPhone: "Teléfono del cliente", clientEmail: "Email del cliente",
+    save: "💾 Guardar", pdf: "📄 PDF", copy: "📋 Copiar", newQuote: "+ Nuevo",
+    quoteLinkLabel: "🔗 Enlace de cotización (incluido en SMS)",
+    likeIt: "¿Te gusta lo que ves?", likeItBody: "Crea una cuenta gratis para guardar esta cotización, enviarla por SMS o email, y descargar como PDF.",
+    createFreeAccount: "Crear cuenta gratis →", tryAnother: "+ Probar otra cotización",
+    noQuotes: "Sin cotizaciones aún.", tapQuote: 'Toca "Cotización" para comenzar.',
+    totalLabel: "Total", sent: "Enviadas", accepted: "Aceptadas", won: "Ganado",
+    searchPlaceholder: "🔍 Buscar cliente o trabajo…", newest: "Más reciente", amountDesc: "Monto ↓", status: "Estado", clientAZ: "Cliente A–Z",
+    clearAll: "Borrar todo", noClientName: "Sin nombre de cliente",
+    saved: "Guardado", draft: "Borrador", sentStatus: "Enviado", acceptedStatus: "Aceptado ✓", declinedStatus: "Rechazado ✗",
+    yourBizProfile: "Perfil de tu negocio", bizName: "Nombre del negocio", bizNamePlaceholder: "Plomería Mike LLC",
+    profession: "Tu profesión", state: "Estado", selectState: "Selecciona tu estado...",
+    stateHint: "Colorado tiene base de reembolsos completa. Otros estados: te enlazamos a la base nacional DSIRE.",
+    phone: "Teléfono", email: "Email",
+    licenseLabel: "Licencia #", licenseOptional: "(opcional)", licensePlaceholder: "Ej. CO-PLB-12345",
+    voiceLang: "Idioma de voz", voiceLangHint: "(mismo que en pantalla de Cotización)",
+    voiceLangNote: "Habla en tu idioma — las cotizaciones siempre se crean en inglés.",
+    salesTax: "Impuesto sobre ventas", applyTax: "Aplicar impuesto a cotizaciones", taxRate: "% de impuesto", noTax: "El impuesto no aparecerá en las cotizaciones.",
+    quoteTerms: "Términos y condiciones de cotización", termsAutoNote: "Estos se imprimen en cada cotización automáticamente.",
+    addlTerms: "Términos adicionales", saveProfile: "Guardar perfil",
+    roadmap: "Hoja de ruta",
+    tagline: "Cotizaciones por voz para profesionales",
+    authBullets: ["🎙 Describe el trabajo — la cotización se arma sola","📱 Envíala por SMS con un toque","💰 Gratis, funciona en cualquier teléfono"],
+    trustedBy: "Confiado por plomeros, electricistas, techadores y más",
+    continueGoogle: "Continuar con Google", orEmail: "o usa email",
+    signIn: "Iniciar sesión", createAccount: "Crear cuenta",
+    emailLabel: "Email", passwordLabel: "Contraseña",
+    passwordPlaceholderNew: "Mínimo 6 caracteres", passwordPlaceholderExisting: "Tu contraseña",
+    pleaseWait: "Espera...",
+    newToWB: "¿Nuevo en WrenchBid? ", alreadyHave: "¿Ya tienes cuenta? ",
+    createFree: "Crea una cuenta gratis", signInLink: "Inicia sesión",
+    backToTrial: "← Volver a probar WrenchBid",
+    obTitle1: "Cotiza cualquier trabajo", obTitle1b: "en 60 segundos",
+    obSub1: "Describe el trabajo en voz alta — nombre del cliente, qué harás, horas, tarifa, materiales. WrenchBid lo convierte en cotización al instante.",
+    obLangCallout: "Speak in any language — your quote is always formatted in English",
+    obLangCalloutES: "Habla en cualquier idioma — tu cotización siempre sale en inglés",
+    obTitle2: "Tú pones el precio.", obTitle2b: "Nosotros hacemos el papeleo.",
+    obSub2: "Di tu tarifa, horas y costo de materiales. WrenchBid formatea todo en una cotización profesional — tú controlas cada dólar.",
+    obTitle3: "Envía por SMS, email,", obTitle3b: "o guarda como PDF",
+    obSub3: "Envía la cotización a tu cliente por texto o email con un toque. Reciben un enlace para ver y guardar como PDF.",
+    obFree: "Gratis. Sin tarjeta de crédito.",
+    obNext: "Siguiente →", obSkip: "Saltar intro",
+    obTryFree: "Pruébalo gratis — sin registro →", obCreateAcct: "Crear cuenta", obSignIn: "¿Ya tienes cuenta? Inicia sesión",
+    shareWB: "Compartir WrenchBid",
+    pingProfileSaved: "Perfil guardado ✓", pingSmsCopied: "SMS listo ✓", pingEmailReady: "Email listo ✓",
+    pingSpeakFirst: "Describe un trabajo primero", pingParseError: "Error de análisis — intenta de nuevo",
+    pingLinkCopied: "Enlace copiado ✓", pingWelcome: "¡Bienvenido a WrenchBid! ✓", pingWelcomeBack: "Bienvenido de nuevo ✓",
+    pingMicBlocked: "Micrófono bloqueado — revisa los permisos del navegador",
+    pingNoMic: "No se encontró micrófono en este dispositivo",
+    pingSignIn: "Inicia sesión para usar la voz",
+  }
+};
+// For non-EN/ES languages, fall back to English UI
+const getUI = (lang) => UI[lang] || UI.en;
+
 const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1295,6 +1457,7 @@ export default function WrenchBid() {
     try{ const s=JSON.parse(localStorage.getItem("wb_biz")); return s||{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
     catch{ return{name:"Your Business",trade:"Plumber",phone:"",email:"",licenseNum:"",paymentTerms:"",warranty:"",customTerms:"",taxEnabled:false,taxRate:"0",language:"en",state:""}; }
   });
+  const L = getUI(biz.language||"en"); // UI translations — quote output stays English regardless
   const [user,setUser]=useState(null);
   const [authReady,setAuthReady]=useState(false);
   const [authMode,setAuthMode]=useState("signin");
@@ -1439,8 +1602,8 @@ export default function WrenchBid() {
   const loadCloudBiz=(u)=>{ const cb=u?.user_metadata?.biz; if(cb) setBiz(cb); };
   const saveBizToCloud=async(b)=>{ await supabase.auth.updateUser({data:{biz:b}}); };
 
-  const handleSignUp=async()=>{ setAuthError(""); setAuthLoading(true); const{error}=await supabase.auth.signUp({email:authEmail,password:authPassword}); setAuthLoading(false); if(error)setAuthError(error.message); else ping("Welcome to WrenchBid! ✓"); };
-  const handleSignIn=async()=>{ setAuthError(""); setAuthLoading(true); const{error}=await supabase.auth.signInWithPassword({email:authEmail,password:authPassword}); setAuthLoading(false); if(error)setAuthError(error.message); else ping("Welcome back ✓"); };
+  const handleSignUp=async()=>{ setAuthError(""); setAuthLoading(true); const{error}=await supabase.auth.signUp({email:authEmail,password:authPassword}); setAuthLoading(false); if(error)setAuthError(error.message); else ping(L.pingWelcome); };
+  const handleSignIn=async()=>{ setAuthError(""); setAuthLoading(true); const{error}=await supabase.auth.signInWithPassword({email:authEmail,password:authPassword}); setAuthLoading(false); if(error)setAuthError(error.message); else ping(L.pingWelcomeBack); };
   const handleSignOut=async()=>{ await supabase.auth.signOut(); ping("Signed out"); };
   const shareApp=()=>{
     const url="https://wrenchbid.vercel.app";
@@ -1589,7 +1752,7 @@ export default function WrenchBid() {
   const toggleMic=()=>step==="recording"?stopRec():startRec();
 
   const generate=async()=>{
-    if(!transcript.trim()){ping("Speak a job description first");return;}
+    if(!transcript.trim()){ping(L.pingSpeakFirst);return;}
     setStep("processing");
     try{ const data=await aiParseQuote(transcript,biz.name||"My Business",biz.trade||"General Contractor",biz.taxEnabled,biz.taxRate,accessTokenRef.current,!user&&trialMode); setQuote({...data,qNum:qNum(history),date:todayStr(),paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||""}); setStep("preview"); }
     catch(e){ setStep("idle"); if(e.message==="trial_limit"){setAuthPrompt("You've used your free trial quotes — create an account to keep going!");setShowAuthWall(true);setAuthMode("signup");}else{ping("Parse error — try again");} }
@@ -1969,8 +2132,8 @@ export default function WrenchBid() {
               {/* Slide 1 — The hook */}
               <div className="ob-slide">
                 <div className="ob-icon">🎙</div>
-                <div className="ob-title">Quote any job<br/>in 60 seconds</div>
-                <div className="ob-sub">Speak the job out loud — client name, what you're doing, hours, rate, materials. WrenchBid turns it into a professional quote instantly.</div>
+                <div className="ob-title">{L.obTitle1}<br/>{L.obTitle1b}</div>
+                <div className="ob-sub">{L.obSub1}</div>
                 <div className="ob-demo">
                   <div className="ob-demo-label"><span style={{width:8,height:8,borderRadius:"50%",background:"#b03030",display:"inline-block"}}/>{DEMO_TEXTS[demoIdx].lang} Recording…</div>
                   <div className="ob-demo-text">{onboardTyped}{demoPhase==="typing"&&<span className="ob-cursor"/>}</div>
@@ -1980,14 +2143,14 @@ export default function WrenchBid() {
                   <span style={{fontSize:13,fontWeight:700,color:"var(--amber)"}}>🇲🇽 Español</span>
                   <span style={{fontSize:11,color:"#666"}}>+ 8 more</span>
                 </div>
-                <div style={{fontSize:12,color:"#888",marginTop:8,lineHeight:1.6}}>Speak in any language — your quote is always formatted in English<br/><span style={{color:"#666",fontStyle:"italic"}}>Habla en cualquier idioma — tu cotización siempre sale en inglés</span></div>
+                <div style={{fontSize:12,color:"#888",marginTop:8,lineHeight:1.6}}>{L.obLangCallout}<br/><span style={{color:"#666",fontStyle:"italic"}}>{L.obLangCalloutES}</span></div>
               </div>
 
               {/* Slide 2 — Show the output */}
               <div className="ob-slide">
                 <div className="ob-icon">⚡</div>
-                <div className="ob-title">You set the price.<br/>We do the paperwork.</div>
-                <div className="ob-sub">Say your rate, hours, and materials cost. WrenchBid formats everything into a clean, itemized quote — you control every dollar.</div>
+                <div className="ob-title">{L.obTitle2}<br/>{L.obTitle2b}</div>
+                <div className="ob-sub">{L.obSub2}</div>
                 <div className="ob-quote-preview">
                   <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,letterSpacing:2,color:"var(--amber)",marginBottom:10,textTransform:"uppercase"}}>Quote Preview</div>
                   {[["Water Heater Replacement",""],["Labor — 3 hrs @ $105/hr","$315.00"],["Parts & Materials","$380.00"],["TOTAL","$695.00"]].map(([d,a],i)=>(
@@ -2003,8 +2166,8 @@ export default function WrenchBid() {
               {/* Slide 3 — Send it */}
               <div className="ob-slide">
                 <div className="ob-icon">📱</div>
-                <div className="ob-title">Send via SMS, email,<br/>or save as PDF</div>
-                <div className="ob-sub">Text or email the quote to your client in one tap. They get a link to view the full quote and save it as a PDF.</div>
+                <div className="ob-title">{L.obTitle3}<br/>{L.obTitle3b}</div>
+                <div className="ob-sub">{L.obSub3}</div>
                 <div className="ob-demo" style={{marginTop:20}}>
                   <div className="ob-demo-label" style={{color:"#4caf50"}}>✓ What your client receives</div>
                   <div style={{fontSize:13,color:"#e8e0d0",lineHeight:1.7}}>
@@ -2020,7 +2183,7 @@ export default function WrenchBid() {
                   <span style={{fontSize:11,background:"#1a1a1a",border:"1px solid #333",borderRadius:4,padding:"3px 8px",color:"#aaa"}}>📧 Email</span>
                   <span style={{fontSize:11,background:"#1a1a1a",border:"1px solid #333",borderRadius:4,padding:"3px 8px",color:"#aaa"}}>📄 PDF</span>
                 </div>
-                <div style={{fontSize:12,color:"#666",marginTop:8}}>Free to use. No credit card required.</div>
+                <div style={{fontSize:12,color:"#666",marginTop:8}}>{L.obFree}</div>
               </div>
             </div>
 
@@ -2033,14 +2196,14 @@ export default function WrenchBid() {
             <div className="ob-footer">
               {onboardStep<2?(
                 <>
-                  <button className="ob-btn-main" onClick={()=>setOnboardStep(s=>s+1)}>Next →</button>
-                  <button className="ob-btn-skip" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>Skip intro</button>
+                  <button className="ob-btn-main" onClick={()=>setOnboardStep(s=>s+1)}>{L.obNext}</button>
+                  <button className="ob-btn-skip" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>{L.obSkip}</button>
                 </>
               ):(
                 <>
-                  <button className="ob-btn-main" onClick={()=>{setOnboardDone(true);setTrialMode(true);}}>Try it free — no signup →</button>
-                  <button className="ob-btn-next" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>Create account</button>
-                  <button className="ob-btn-skip" onClick={()=>{setOnboardDone(true);setAuthMode("signin");}}>Already have an account? Sign in</button>
+                  <button className="ob-btn-main" onClick={()=>{setOnboardDone(true);setTrialMode(true);}}>{L.obTryFree}</button>
+                  <button className="ob-btn-next" onClick={()=>{setOnboardDone(true);setAuthMode("signup");}}>{L.obCreateAcct}</button>
+                  <button className="ob-btn-skip" onClick={()=>{setOnboardDone(true);setAuthMode("signin");}}>{L.obSignIn}</button>
                 </>
               )}
             </div>
@@ -2052,36 +2215,36 @@ export default function WrenchBid() {
           <div className="auth-box">
             <div className="auth-hd">
                 <div className="auth-logo">Wrench<em>Bid</em></div>
-                <div className="auth-tagline">Voice-to-quote for tradespeople</div>
+                <div className="auth-tagline">{L.tagline}</div>
                 {authPrompt&&<div style={{marginTop:10,padding:"8px 12px",background:"rgba(218,165,32,0.12)",border:"1px solid rgba(218,165,32,0.3)",borderRadius:4,fontSize:13,color:"var(--amber)",fontWeight:600,textAlign:"center"}}>{authPrompt}</div>}
                 <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:4}}>
-                  {["🎙 Speak the job — quote builds itself","📱 Text it to your client in one tap","💰 Free to use, works on any phone"].map((t,i)=>(
+                  {L.authBullets.map((t,i)=>(
                     <div key={i} style={{fontSize:12,color:"#888",textAlign:"left",paddingLeft:8}}>{t}</div>
                   ))}
                 </div>
               </div>
             <div className="auth-stripe"/>
             <div className="auth-bd">
-              <div style={{fontSize:11,color:"var(--muted)",textAlign:"center",marginBottom:10,fontWeight:600}}>Trusted by plumbers, electricians, roofers & more</div>
+              <div style={{fontSize:11,color:"var(--muted)",textAlign:"center",marginBottom:10,fontWeight:600}}>{L.trustedBy}</div>
               <button onClick={handleGoogleSignIn} style={{width:"100%",padding:"13px 16px",background:"var(--white)",border:"1.5px solid var(--rule)",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",gap:10,cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",transition:"border-color .15s",marginBottom:4}} onMouseOver={e=>e.currentTarget.style.borderColor="var(--amber)"} onMouseOut={e=>e.currentTarget.style.borderColor="var(--rule)"}>
                 <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
-                Continue with Google
+                {L.continueGoogle}
               </button>
               <div style={{display:"flex",alignItems:"center",gap:10,margin:"14px 0"}}>
                 <div style={{flex:1,height:1,background:"var(--rule)"}}/>
-                <span style={{fontSize:11,color:"var(--muted)",fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>or use email</span>
+                <span style={{fontSize:11,color:"var(--muted)",fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>{L.orEmail}</span>
                 <div style={{flex:1,height:1,background:"var(--rule)"}}/>
               </div>
               <div className="auth-tabs">
-                <button className={`auth-tab ${authMode==="signin"?"on":""}`} onClick={()=>{setAuthMode("signin");setAuthError("");}}>Sign In</button>
-                <button className={`auth-tab ${authMode==="signup"?"on":""}`} onClick={()=>{setAuthMode("signup");setAuthError("");}}>Create Account</button>
+                <button className={`auth-tab ${authMode==="signin"?"on":""}`} onClick={()=>{setAuthMode("signin");setAuthError("");}}>{L.signIn}</button>
+                <button className={`auth-tab ${authMode==="signup"?"on":""}`} onClick={()=>{setAuthMode("signup");setAuthError("");}}>{L.createAccount}</button>
               </div>
               {authError&&<div className="auth-err">{authError}</div>}
-              <div className="auth-field"><label>Email</label><input type="email" value={authEmail} onChange={e=>setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email"/></div>
-              <div className="auth-field"><label>Password</label><input type="password" value={authPassword} onChange={e=>setAuthPassword(e.target.value)} placeholder={authMode==="signup"?"Min 6 characters":"Your password"} autoComplete={authMode==="signup"?"new-password":"current-password"} onKeyDown={e=>e.key==="Enter"&&(authMode==="signup"?handleSignUp():handleSignIn())}/></div>
-              <button className="btn btn-cta btn-full" onClick={authMode==="signup"?handleSignUp:handleSignIn} disabled={authLoading||!authEmail||!authPassword}>{authLoading?"Please wait...":authMode==="signup"?"Create Account":"Sign In"}</button>
-              <div className="auth-foot">{authMode==="signin"?"New to WrenchBid? ":"Already have an account? "}<button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={()=>{setAuthMode(authMode==="signin"?"signup":"signin");setAuthError("");}}>{authMode==="signin"?"Create a free account":"Sign in"}</button></div>
-              {trialMode&&showAuthWall&&<button style={{background:"none",border:"none",color:"var(--muted)",fontSize:12,cursor:"pointer",marginTop:8,textDecoration:"underline"}} onClick={()=>{setShowAuthWall(false);setAuthPrompt("");}}>← Back to trying WrenchBid</button>}
+              <div className="auth-field"><label>{L.emailLabel}</label><input type="email" value={authEmail} onChange={e=>setAuthEmail(e.target.value)} placeholder="you@yourbusiness.com" autoComplete="email"/></div>
+              <div className="auth-field"><label>{L.passwordLabel}</label><input type="password" value={authPassword} onChange={e=>setAuthPassword(e.target.value)} placeholder={authMode==="signup"?L.passwordPlaceholderNew:L.passwordPlaceholderExisting} autoComplete={authMode==="signup"?"new-password":"current-password"} onKeyDown={e=>e.key==="Enter"&&(authMode==="signup"?handleSignUp():handleSignIn())}/></div>
+              <button className="btn btn-cta btn-full" onClick={authMode==="signup"?handleSignUp:handleSignIn} disabled={authLoading||!authEmail||!authPassword}>{authLoading?L.pleaseWait:authMode==="signup"?L.createAccount:L.signIn}</button>
+              <div className="auth-foot">{authMode==="signin"?L.newToWB:L.alreadyHave}<button style={{background:"none",border:"none",color:"var(--amber-deep)",fontWeight:700,cursor:"pointer",fontSize:12}} onClick={()=>{setAuthMode(authMode==="signin"?"signup":"signin");setAuthError("");}}>{authMode==="signin"?L.createFree:L.signInLink}</button></div>
+              {trialMode&&showAuthWall&&<button style={{background:"none",border:"none",color:"var(--muted)",fontSize:12,cursor:"pointer",marginTop:8,textDecoration:"underline"}} onClick={()=>{setShowAuthWall(false);setAuthPrompt("");}}>{L.backToTrial}</button>}
             </div>
           </div>
         </div>
@@ -2089,12 +2252,12 @@ export default function WrenchBid() {
 
       <header className="hdr">
         <div className="logo">Wrench<em>Bid</em></div>
-        {user?<div className="user-bar"><span className="user-email">{user.email}</span><button className="btn-signout" onClick={handleSignOut}>Sign Out</button></div>:trialMode?<button className="btn-signout" style={{background:"var(--amber)",color:"var(--ink)",fontWeight:700,border:"none",padding:"5px 14px",borderRadius:3,cursor:"pointer",fontSize:12}} onClick={()=>{setShowAuthWall(true);setAuthMode("signup");setAuthPrompt("");}}>Sign Up Free</button>:<div className="version">Beta</div>}
+        {user?<div className="user-bar"><span className="user-email">{user.email}</span><button className="btn-signout" onClick={handleSignOut}>{L.signOut}</button></div>:trialMode?<button className="btn-signout" style={{background:"var(--amber)",color:"var(--ink)",fontWeight:700,border:"none",padding:"5px 14px",borderRadius:3,cursor:"pointer",fontSize:12}} onClick={()=>{setShowAuthWall(true);setAuthMode("signup");setAuthPrompt("");}}>{L.signUpFree}</button>:<div className="version">{L.beta}</div>}
       </header>
 
       <nav className="tabs">
-        {[["new","⚡ Quote"],["history","📋 History"],["rebates","💰 Rebates"],["setup","⚙ Setup"]].map(([id,label])=>(
-          <button key={id} className={`tab ${tab===id?"on":""}`} onClick={()=>{if(!user&&id!=="new"){setAuthPrompt("Create a free account to access "+label.replace(/^[^\s]+ /,""));setShowAuthWall(true);setAuthMode("signup");return;}setTab(id);}}>{label}</button>
+        {[["new",L.tabQuote],["history",L.tabHistory],["rebates",L.tabRebates],["setup",L.tabSetup]].map(([id,label])=>(
+          <button key={id} className={`tab ${tab===id?"on":""}`} onClick={()=>{if(!user&&id!=="new"){setAuthPrompt(L.createFreeAccount);setShowAuthWall(true);setAuthMode("signup");return;}setTab(id);}}>{label}</button>
         ))}
       </nav>
 
@@ -2102,19 +2265,19 @@ export default function WrenchBid() {
         <div className="page">
           {step!=="preview"&&(
             <>
-              <div className="tip"><strong>How it works:</strong> Tap the mic and describe the job out loud — client name, what you're doing, hours & rate, materials cost. WrenchBid formats it into a quote. You set all the prices.</div>
+              <div className="tip"><strong>{L.howItWorks}</strong> {L.howItWorksBody}</div>
               <div className="mic-wrap">
                 <div className="mic-hint">
                   {step==="recording"
-                    ? "🔴 Recording — tap to stop"
+                    ? L.recording
                     : (!user&&trialMode)
-                      ? "Tap to load an example quote"
-                      : (() => { const l=LANGUAGES.find(x=>x.code===(biz.language||"en"))||LANGUAGES[0]; return l.code==="en" ? "Tap to start speaking" : `${l.flag} Recording in ${l.label} — tap to speak`; })()
+                      ? L.tapExample
+                      : (() => { const l=LANGUAGES.find(x=>x.code===(biz.language||"en"))||LANGUAGES[0]; return l.code==="en" ? L.tapToSpeak : `${l.flag} ${L.recordingIn} ${l.label} — ${L.tapToSpeakLang}`; })()
                   }
                 </div>
                 <button className={`mic-btn ${step==="recording"?"live":""}`} onClick={toggleMic}>
                   <div className="mic-icon">{step==="recording"?"⏹":"🎙"}</div>
-                  <div>{step==="recording"?"STOP":"SPEAK"}</div>
+                  <div>{step==="recording"?L.stop:L.speak}</div>
                 </button>
                 <div className="lang-bar">
                   {LANGUAGES.slice(0,2).map(l=>(
@@ -2130,7 +2293,7 @@ export default function WrenchBid() {
                     </button>
                   ))}
                     <button className="lang-pill" onClick={()=>setShowAllLangs(false)} style={{fontSize:11,opacity:.7}}>
-                      − less
+                      {L.less}
                     </button>
                   </>) : (
                     <button className="lang-pill" onClick={()=>setShowAllLangs(true)} style={{fontSize:11}}>
@@ -2139,14 +2302,14 @@ export default function WrenchBid() {
                   )}
                 </div>
               </div>
-              <textarea className="tx-box" value={transcript} onChange={e=>{finalRef.current=e.target.value;interimRef.current="";displayRef.current=e.target.value;setTranscript(e.target.value);}} placeholder="Your words appear here as you speak... or type directly" rows={4} style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}/>
+              <textarea className="tx-box" value={transcript} onChange={e=>{finalRef.current=e.target.value;interimRef.current="";displayRef.current=e.target.value;setTranscript(e.target.value);}} placeholder={L.placeholder} rows={4} style={{resize:"vertical",width:"100%",fontFamily:"inherit",fontSize:14,lineHeight:1.6,outline:"none",cursor:"text",border:"none",background:"var(--ink)",color:"var(--paper)"}}/>
               {step==="processing"&&<div className="loader"/>}
               <div className="btn-row">
-                <button className="btn btn-ghost" onClick={()=>{finalRef.current="";interimRef.current="";displayRef.current="";setTranscript("");}}>Clear</button>
-                <button className="btn btn-cta" onClick={generate} disabled={!transcript.trim()||step==="processing"||step==="recording"}>{step==="processing"?"Building...":"⚡ Build Quote"}</button>
+                <button className="btn btn-ghost" onClick={()=>{finalRef.current="";interimRef.current="";displayRef.current="";setTranscript("");}}>{L.clear}</button>
+                <button className="btn btn-cta" onClick={generate} disabled={!transcript.trim()||step==="processing"||step==="recording"}>{step==="processing"?L.building:L.buildQuote}</button>
               </div>
               <div className="div"/>
-              <div className="tip"><strong>Example phrases:</strong><br/>"Replace water heater for John Smith, 3 hours at $105/hr, parts cost $380"<br/><br/>"Paint exterior of house, flat rate $1400, client Maria Rodriguez"</div>
+              <div className="tip"><strong>{L.exampleTitle}</strong><br/>{L.example1}<br/><br/>{L.example2}</div>
             </>
           )}
           {step==="preview"&&quote&&(
@@ -2156,16 +2319,16 @@ export default function WrenchBid() {
                 <div className="qdoc-stripe"/>
                 <div className="qdoc-body">
                   <div className="qdoc-meta-row">
-                    <div className="qdoc-meta-cell">To<span><input className="editable editable-meta" value={quote.clientName||""} onChange={e=>setQuote(q=>({...q,clientName:e.target.value}))} placeholder="Client name"/></span></div>
-                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>Quote #<span><input className="editable editable-meta" value={quote.qNum||""} onChange={e=>setQuote(q=>({...q,qNum:e.target.value}))} style={{textAlign:"right",width:80}}/></span></div>
+                    <div className="qdoc-meta-cell">{L.to}<span><input className="editable editable-meta" value={quote.clientName||""} onChange={e=>setQuote(q=>({...q,clientName:e.target.value}))} placeholder={L.clientName||"Client name"}/></span></div>
+                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>{L.quoteNum}<span><input className="editable editable-meta" value={quote.qNum||""} onChange={e=>setQuote(q=>({...q,qNum:e.target.value}))} style={{textAlign:"right",width:80}}/></span></div>
                   </div>
                   <div className="qdoc-meta-row" style={{marginBottom:16}}>
-                    <div className="qdoc-meta-cell">Date<span>{quote.date}</span></div>
-                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>Valid<span style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:4,marginTop:3}}><input type="number" value={quote.validDays} onChange={e=>setQuote(q=>({...q,validDays:Number(e.target.value)}))} style={{width:44,padding:"2px 6px",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",background:"var(--paper)",border:"1.5px solid var(--rule)",borderRadius:3,outline:"none",textAlign:"center"}}/><span style={{fontWeight:600,fontSize:14,color:"var(--ink)"}}>days</span></span></div>
+                    <div className="qdoc-meta-cell">{L.date}<span>{quote.date}</span></div>
+                    <div className="qdoc-meta-cell" style={{textAlign:"right"}}>{L.valid}<span style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:4,marginTop:3}}><input type="number" value={quote.validDays} onChange={e=>setQuote(q=>({...q,validDays:Number(e.target.value)}))} style={{width:44,padding:"2px 6px",fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"var(--ink)",background:"var(--paper)",border:"1.5px solid var(--rule)",borderRadius:3,outline:"none",textAlign:"center"}}/><span style={{fontWeight:600,fontSize:14,color:"var(--ink)"}}>{L.days}</span></span></div>
                   </div>
-                  <div className="sec-label">Scope of Work</div>
+                  <div className="sec-label">{L.scopeOfWork}</div>
                   <div className="qdoc-job"><input className="editable editable-title" value={quote.jobTitle||""} onChange={e=>setQuote(q=>({...q,jobTitle:e.target.value}))} placeholder="Job title"/></div>
-                  <div className="sec-label">Line Items</div>
+                  <div className="sec-label">{L.lineItems}</div>
                   <div className="li-table">
                     {quote.lineItems.map((li,i)=>{
                       const recalc=(items)=>{const sub=items.reduce((s,l)=>s+l.total,0);const tax=sub>0?parseFloat((sub*(quote.taxRate/100)).toFixed(2)):0;return{subtotal:parseFloat(sub.toFixed(2)),tax,grandTotal:parseFloat((sub+tax).toFixed(2))};};
@@ -2188,67 +2351,67 @@ export default function WrenchBid() {
                       </div>
                       );
                     })}
-                    <button onClick={()=>setQuote(q=>{const items=[...q.lineItems,{desc:"",qty:1,unit:"hrs",rate:0,total:0}];return{...q,lineItems:items};})} style={{width:"100%",padding:"8px",marginTop:8,background:"none",border:"1.5px dashed var(--rule)",borderRadius:3,color:"var(--muted)",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:1,textTransform:"uppercase",cursor:"pointer",transition:"all .15s"}} onMouseOver={e=>{e.currentTarget.style.borderColor="var(--amber)";e.currentTarget.style.color="var(--ink)"}} onMouseOut={e=>{e.currentTarget.style.borderColor="var(--rule)";e.currentTarget.style.color="var(--muted)"}}>+ Add Line</button>
+                    <button onClick={()=>setQuote(q=>{const items=[...q.lineItems,{desc:"",qty:1,unit:"hrs",rate:0,total:0}];return{...q,lineItems:items};})} style={{width:"100%",padding:"8px",marginTop:8,background:"none",border:"1.5px dashed var(--rule)",borderRadius:3,color:"var(--muted)",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:1,textTransform:"uppercase",cursor:"pointer",transition:"all .15s"}} onMouseOver={e=>{e.currentTarget.style.borderColor="var(--amber)";e.currentTarget.style.color="var(--ink)"}} onMouseOut={e=>{e.currentTarget.style.borderColor="var(--rule)";e.currentTarget.style.color="var(--muted)"}}>{L.addLine}</button>
                   </div>
-                  <div className="qdoc-notes"><strong>Notes</strong><input className="editable" style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}} value={quote.notes||""} onChange={e=>setQuote(q=>({...q,notes:e.target.value}))} placeholder="Payment terms, warranty, etc."/></div>
+                  <div className="qdoc-notes"><strong>{L.notes}</strong><input className="editable" style={{fontSize:12,color:"var(--muted)",marginTop:4,width:"100%"}} value={quote.notes||""} onChange={e=>setQuote(q=>({...q,notes:e.target.value}))} placeholder={L.notesPlaceholder}/></div>
                   <div className="qdoc-terms">
                       <div className="qdoc-terms-row">
-                        <div className="qdoc-terms-label">Payment Terms</div>
-                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.paymentTerms||""} onChange={e=>setQuote(q=>({...q,paymentTerms:e.target.value}))} placeholder="e.g. 50% deposit required. Balance due on completion."/>
+                        <div className="qdoc-terms-label">{L.paymentTerms}</div>
+                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.paymentTerms||""} onChange={e=>setQuote(q=>({...q,paymentTerms:e.target.value}))} placeholder={L.paymentPlaceholder}/>
                       </div>
                       <div className="qdoc-terms-row">
-                        <div className="qdoc-terms-label">Warranty</div>
-                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.warranty||""} onChange={e=>setQuote(q=>({...q,warranty:e.target.value}))} placeholder="e.g. All labor warrantied for 1 year."/>
+                        <div className="qdoc-terms-label">{L.warranty}</div>
+                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.warranty||""} onChange={e=>setQuote(q=>({...q,warranty:e.target.value}))} placeholder={L.warrantyPlaceholder}/>
                       </div>
                       <div className="qdoc-terms-row">
-                        <div className="qdoc-terms-label">Terms & Conditions</div>
-                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.customTerms||""} onChange={e=>setQuote(q=>({...q,customTerms:e.target.value}))} placeholder="e.g. Client responsible for permits."/>
+                        <div className="qdoc-terms-label">{L.termsConditions}</div>
+                        <textarea className="editable" style={{fontSize:12,color:"var(--muted)",lineHeight:1.6,width:"100%",minHeight:36,resize:"vertical"}} value={quote.customTerms||""} onChange={e=>setQuote(q=>({...q,customTerms:e.target.value}))} placeholder={L.termsPlaceholder}/>
                       </div>
                       {biz.licenseNum&&<div className="qdoc-terms-row"><div className="qdoc-terms-label">License #</div><div className="qdoc-terms-text">{biz.licenseNum}</div></div>}
                     </div>
-                  <div className="disclaimer"><strong>Review before sending.</strong> WrenchBid formats what you described — it does not set prices. You are responsible for all pricing.</div>
+                  <div className="disclaimer"><strong>{L.disclaimer}</strong> {L.disclaimerBody}</div>
                   <div className="totals">
-                    <div className="total-row"><span>Subtotal</span><span>{$$(quote.subtotal)}</span></div>
-                    {quote.tax>0&&<div className="total-row"><span>Tax ({quote.taxRate}%)</span><span>{$$(quote.tax)}</span></div>}
-                    <div className="total-final"><span>TOTAL</span><span>{$$(quote.grandTotal)}</span></div>
+                    <div className="total-row"><span>{L.subtotal}</span><span>{$$(quote.subtotal)}</span></div>
+                    {quote.tax>0&&<div className="total-row"><span>{L.tax} ({quote.taxRate}%)</span><span>{$$(quote.tax)}</span></div>}
+                    <div className="total-final"><span>{L.total}</span><span>{$$(quote.grandTotal)}</span></div>
                   </div>
                 </div>
               </div>
               {!user&&trialMode?(
                 <div style={{textAlign:"center",padding:"16px 12px",background:"rgba(218,165,32,0.08)",border:"1.5px solid rgba(218,165,32,0.3)",borderRadius:6,marginBottom:8}}>
-                  <div style={{fontSize:15,fontWeight:700,color:"var(--amber)",marginBottom:6}}>Like what you see?</div>
-                  <div style={{fontSize:13,color:"var(--muted)",marginBottom:12,lineHeight:1.5}}>Create a free account to save this quote, send it to your client via SMS or email, and download as PDF.</div>
-                  <button className="btn btn-cta btn-full" onClick={()=>{setAuthPrompt("Sign up to save and send this quote");setShowAuthWall(true);setAuthMode("signup");}}>Create Free Account →</button>
+                  <div style={{fontSize:15,fontWeight:700,color:"var(--amber)",marginBottom:6}}>{L.likeIt}</div>
+                  <div style={{fontSize:13,color:"var(--muted)",marginBottom:12,lineHeight:1.5}}>{L.likeItBody}</div>
+                  <button className="btn btn-cta btn-full" onClick={()=>{setAuthPrompt("");setShowAuthWall(true);setAuthMode("signup");}}>{L.createFreeAccount}</button>
                   <div style={{marginTop:10}}>
-                    <button className="btn btn-ghost" onClick={newQuote} style={{fontSize:12}}>+ Try another quote</button>
+                    <button className="btn btn-ghost" onClick={newQuote} style={{fontSize:12}}>{L.tryAnother}</button>
                   </div>
                 </div>
               ):(
                 <>
-                  <div className="send-lbl">Send to Client</div>
+                  <div className="send-lbl">{L.sendToClient}</div>
                   <div className="send-row">
-                    <input className="ph-input" type="tel" placeholder="Client phone number" value={clientPhone} onChange={e=>{setClientPhone(e.target.value);setShareUrl(null);}}/>
+                    <input className="ph-input" type="tel" placeholder={L.clientPhone} value={clientPhone} onChange={e=>{setClientPhone(e.target.value);setShareUrl(null);}}/>
                     <button className="btn-sms" onClick={sendSMS} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1}}>
                       {shareLoading?"…":"📱 SMS"}
                     </button>
                   </div>
                   <div className="send-row" style={{marginTop:8}}>
-                    <input className="ph-input" type="email" placeholder="Client email address" value={clientEmail} onChange={e=>setClientEmail(e.target.value)}/>
+                    <input className="ph-input" type="email" placeholder={L.clientEmail} value={clientEmail} onChange={e=>setClientEmail(e.target.value)}/>
                     <button className="btn-sms" onClick={sendEmail} disabled={shareLoading} style={{minWidth:80,opacity:shareLoading?0.6:1,background:"var(--steel)",color:"var(--white)"}}>
                       {shareLoading?"…":"✉️ Email"}
                     </button>
                   </div>
                   {shareUrl&&(
                     <div style={{background:"#e8f5e9",border:"1px solid #81c784",borderRadius:4,padding:"8px 12px",marginBottom:8,fontSize:12,wordBreak:"break-all"}}>
-                      <div style={{fontWeight:700,fontSize:10,letterSpacing:1,textTransform:"uppercase",color:"#2d7a4a",marginBottom:3}}>🔗 Quote Link (included in SMS)</div>
+                      <div style={{fontWeight:700,fontSize:10,letterSpacing:1,textTransform:"uppercase",color:"#2d7a4a",marginBottom:3}}>{L.quoteLinkLabel}</div>
                       <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#1a4a8a",textDecoration:"underline"}}>{shareUrl}</a>
                     </div>
                   )}
                   <div className="btn-row" style={{marginBottom:8}}>
-                    <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>💾 Save</button>
-                    <button className="btn btn-ghost" onClick={handlePrint}>📄 PDF</button>
-                    <button className="btn btn-ghost" onClick={copyText} disabled={shareLoading}>{shareLoading?"…":"📋 Copy"}</button>
-                    <button className="btn btn-ghost" onClick={newQuote}>+ New</button>
+                    <button className="btn btn-cta" style={{flex:1}} onClick={saveQuote}>{L.save}</button>
+                    <button className="btn btn-ghost" onClick={handlePrint}>{L.pdf}</button>
+                    <button className="btn btn-ghost" onClick={copyText} disabled={shareLoading}>{shareLoading?"…":L.copy}</button>
+                    <button className="btn btn-ghost" onClick={newQuote}>{L.newQuote}</button>
                   </div>
                 </>
               )}
@@ -2260,15 +2423,15 @@ export default function WrenchBid() {
       {tab==="history"&&(
         <div className="page" style={{width:"100%"}}>
           {history.length===0
-            ?<div className="empty"><div className="empty-icon">📋</div><p>No quotes yet.<br/><strong>Tap "Quote"</strong> to get started.</p></div>
+            ?<div className="empty"><div className="empty-icon">📋</div><p>{L.noQuotes}<br/><strong>{L.tapQuote}</strong></p></div>
             :<>
               {/* Summary bar */}
               <div className="h-summary">
                 {[
-                  {val:history.length, lbl:"Total"},
-                  {val:history.filter(q=>q.status==="sent").length, lbl:"Sent"},
-                  {val:history.filter(q=>q.status==="accepted").length, lbl:"Accepted"},
-                  {val:"$"+history.filter(q=>q.status==="accepted").reduce((s,q)=>s+(q.grandTotal||0),0).toFixed(0), lbl:"Won"},
+                  {val:history.length, lbl:L.totalLabel},
+                  {val:history.filter(q=>q.status==="sent").length, lbl:L.sent},
+                  {val:history.filter(q=>q.status==="accepted").length, lbl:L.accepted},
+                  {val:"$"+history.filter(q=>q.status==="accepted").reduce((s,q)=>s+(q.grandTotal||0),0).toFixed(0), lbl:L.won},
                 ].map((s,i)=>(
                   <div className="h-summary-stat" key={i}>
                     <div className="h-summary-val">{s.val}</div>
@@ -2278,14 +2441,14 @@ export default function WrenchBid() {
               </div>
               {/* Search + Sort + Clear */}
               <div className="h-controls">
-                <input className="h-search" placeholder="🔍 Search client or job…" value={histSearch} onChange={e=>setHistSearch(e.target.value)}/>
+                <input className="h-search" placeholder={L.searchPlaceholder} value={histSearch} onChange={e=>setHistSearch(e.target.value)}/>
                 <select className="h-sort" value={histSort} onChange={e=>setHistSort(e.target.value)}>
-                  <option value="date">Newest</option>
-                  <option value="amount">Amount ↓</option>
-                  <option value="status">Status</option>
-                  <option value="client">Client A–Z</option>
+                  <option value="date">{L.newest}</option>
+                  <option value="amount">{L.amountDesc}</option>
+                  <option value="status">{L.status}</option>
+                  <option value="client">{L.clientAZ}</option>
                 </select>
-                <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 12px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>Clear All</button>
+                <button className="btn btn-ghost" style={{fontSize:12,padding:"6px 12px",color:"var(--red)",borderColor:"var(--red)"}} onClick={clearHistory}>{L.clearAll}</button>
               </div>
               {/* Cards */}
               {[...history]
@@ -2306,7 +2469,7 @@ export default function WrenchBid() {
                   <div className="h-item" key={qId} style={{position:"relative"}}>
                     <div onClick={()=>{setQuote({paymentTerms:biz.paymentTerms||"",warranty:biz.warranty||"",customTerms:biz.customTerms||"",...q});setStep("preview");setTab("new");setShareUrl(null);}}>
                       <div className="h-qnum">{q.qNum||""}</div>
-                      <div className="h-top"><div className="h-client">{q.clientName||"No client name"}</div><div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div></div>
+                      <div className="h-top"><div className="h-client">{q.clientName||L.noClientName}</div><div className="h-total" style={{paddingRight:24}}>{$$(q.grandTotal)}</div></div>
                       <div className="h-job">{q.jobTitle}</div>
                       <div className="h-foot">
                         <div className="h-date">{new Date(q.savedAt).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
@@ -2317,11 +2480,11 @@ export default function WrenchBid() {
                           className={`chip ${q.status||"saved"}`}
                           style={{border:"1.5px solid currentColor",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",fontSize:10,padding:"2px 6px 2px 8px",borderRadius:2,outline:"none"}}
                         >
-                          <option value="saved">Saved</option>
-                          <option value="draft">Draft</option>
-                          <option value="sent">Sent</option>
-                          <option value="accepted">Accepted ✓</option>
-                          <option value="declined">Declined ✗</option>
+                          <option value="saved">{L.saved}</option>
+                          <option value="draft">{L.draft}</option>
+                          <option value="sent">{L.sentStatus}</option>
+                          <option value="accepted">{L.acceptedStatus}</option>
+                          <option value="declined">{L.declinedStatus}</option>
                         </select>
                       </div>
                     </div>
@@ -2342,23 +2505,23 @@ export default function WrenchBid() {
       {tab==="setup"&&(
         <div className="page">
           <div className="card">
-            <div className="card-hd">Your Business Profile</div>
+            <div className="card-hd">{L.yourBizProfile}</div>
             <div className="card-bd">
-              <div className="field"><label>Business Name</label><input value={biz.name} onChange={e=>setBiz(b=>({...b,name:e.target.value}))} placeholder="Mike's Plumbing LLC"/></div>
-              <div className="field"><label>Your Profession</label><select value={biz.trade} onChange={e=>setBiz(b=>({...b,trade:e.target.value}))}>{TRADES.map(t=><option key={t}>{t}</option>)}</select></div>
+              <div className="field"><label>{L.bizName}</label><input value={biz.name} onChange={e=>setBiz(b=>({...b,name:e.target.value}))} placeholder={L.bizNamePlaceholder}/></div>
+              <div className="field"><label>{L.profession}</label><select value={biz.trade} onChange={e=>setBiz(b=>({...b,trade:e.target.value}))}>{TRADES.map(t=><option key={t}>{t}</option>)}</select></div>
               <div className="field">
-                <label>State</label>
+                <label>{L.state}</label>
                 <select value={biz.state||""} onChange={e=>setBiz(b=>({...b,state:e.target.value}))}>
-                  <option value="">Select your state...</option>
+                  <option value="">{L.selectState}</option>
                   {US_STATES.map(s=><option key={s} value={s}>{s}</option>)}
                 </select>
-                <div className="field-hint">Colorado has a full rebate database. Other states: we link you to DSIRE national database.</div>
+                <div className="field-hint">{L.stateHint}</div>
               </div>
-              <div className="field"><label>Phone</label><input type="tel" value={biz.phone} onChange={e=>setBiz(b=>({...b,phone:e.target.value}))} placeholder="(720) 555-0100"/></div>
-              <div className="field"><label>Email</label><input type="email" value={biz.email} onChange={e=>setBiz(b=>({...b,email:e.target.value}))} placeholder="you@yourbusiness.com"/></div>
-              <div className="field"><label>License # <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>(optional)</span></label><input value={biz.licenseNum} onChange={e=>setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder="e.g. CO-PLB-12345"/></div>
+              <div className="field"><label>{L.phone}</label><input type="tel" value={biz.phone} onChange={e=>setBiz(b=>({...b,phone:e.target.value}))} placeholder="(720) 555-0100"/></div>
+              <div className="field"><label>{L.email}</label><input type="email" value={biz.email} onChange={e=>setBiz(b=>({...b,email:e.target.value}))} placeholder="you@yourbusiness.com"/></div>
+              <div className="field"><label>{L.licenseLabel} <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11}}>{L.licenseOptional}</span></label><input value={biz.licenseNum} onChange={e=>setBiz(b=>({...b,licenseNum:e.target.value}))} placeholder={L.licensePlaceholder}/></div>
               <div className="field">
-                <label>Voice Language <span style={{fontWeight:400,fontSize:11,textTransform:"none",letterSpacing:0}}>(same as pill on Quote screen)</span></label>
+                <label>{L.voiceLang} <span style={{fontWeight:400,fontSize:11,textTransform:"none",letterSpacing:0}}>{L.voiceLangHint}</span></label>
                 <select value={biz.language||"en"} onChange={e=>setBiz(b=>({...b,language:e.target.value}))}>
                   <option value="en">🇺🇸 English</option>
                   <option value="es">🇲🇽 Spanish / Español</option>
@@ -2371,34 +2534,34 @@ export default function WrenchBid() {
                   <option value="pl">🇵🇱 Polish / Polski</option>
                   <option value="ru">🇷🇺 Russian / Русский</option>
                 </select>
-                <div className="field-hint">Speak in your language — quotes are always built in English.</div>
+                <div className="field-hint">{L.voiceLangNote}</div>
               </div>
               <div className="field">
-                <label>Sales Tax</label>
+                <label>{L.salesTax}</label>
                 <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}>
                   <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:14,fontWeight:500,letterSpacing:0,textTransform:"none",color:"var(--ink)",margin:0}}>
                     <input type="checkbox" checked={!!biz.taxEnabled} onChange={e=>setBiz(b=>({...b,taxEnabled:e.target.checked}))} style={{width:16,height:16,accentColor:"var(--amber)",cursor:"pointer"}}/>
-                    Apply sales tax to quotes
+                    {L.applyTax}
                   </label>
                 </div>
-                {biz.taxEnabled&&<div style={{display:"flex",alignItems:"center",gap:8}}><input type="number" min="0" max="30" step="0.1" value={biz.taxRate} onChange={e=>setBiz(b=>({...b,taxRate:e.target.value}))} style={{width:90}}/><span style={{fontSize:14,color:"var(--muted)",fontWeight:500}}>% tax rate</span></div>}
-                {!biz.taxEnabled&&<div className="field-hint">Tax will not appear on quotes.</div>}
+                {biz.taxEnabled&&<div style={{display:"flex",alignItems:"center",gap:8}}><input type="number" min="0" max="30" step="0.1" value={biz.taxRate} onChange={e=>setBiz(b=>({...b,taxRate:e.target.value}))} style={{width:90}}/><span style={{fontSize:14,color:"var(--muted)",fontWeight:500}}>{L.taxRate}</span></div>}
+                {!biz.taxEnabled&&<div className="field-hint">{L.noTax}</div>}
               </div>
             </div>
           </div>
           <div className="card">
-            <div className="card-hd">Quote Terms & Conditions</div>
+            <div className="card-hd">{L.quoteTerms}</div>
             <div className="card-bd">
-              <div className="tip" style={{marginBottom:14}}><strong>These print on every quote automatically.</strong></div>
-              <div className="field"><label>Payment Terms</label><textarea value={biz.paymentTerms} onChange={e=>setBiz(b=>({...b,paymentTerms:e.target.value}))} placeholder="e.g. 50% deposit required. Balance due upon completion."/></div>
-              <div className="field"><label>Warranty</label><textarea value={biz.warranty} onChange={e=>setBiz(b=>({...b,warranty:e.target.value}))} placeholder="e.g. All labor warrantied for 1 year."/></div>
-              <div className="field"><label>Additional Terms</label><textarea value={biz.customTerms} onChange={e=>setBiz(b=>({...b,customTerms:e.target.value}))} placeholder="e.g. Client responsible for permits."/></div>
-              <button className="btn btn-cta btn-full" onClick={()=>{setTab("new");saveBizToCloud(biz);ping("Profile saved ✓");}}>Save Profile</button>
+              <div className="tip" style={{marginBottom:14}}><strong>{L.termsAutoNote}</strong></div>
+              <div className="field"><label>{L.paymentTerms}</label><textarea value={biz.paymentTerms} onChange={e=>setBiz(b=>({...b,paymentTerms:e.target.value}))} placeholder={L.paymentPlaceholder}/></div>
+              <div className="field"><label>{L.warranty}</label><textarea value={biz.warranty} onChange={e=>setBiz(b=>({...b,warranty:e.target.value}))} placeholder={L.warrantyPlaceholder}/></div>
+              <div className="field"><label>{L.addlTerms}</label><textarea value={biz.customTerms} onChange={e=>setBiz(b=>({...b,customTerms:e.target.value}))} placeholder={L.termsPlaceholder}/></div>
+              <button className="btn btn-cta btn-full" onClick={()=>{setTab("new");saveBizToCloud(biz);ping(L.pingProfileSaved);}}>{L.saveProfile}</button>
             </div>
           </div>
           <div className="div"/>
           <div style={{fontSize:12,color:"var(--muted)",lineHeight:1.8}}>
-            <strong style={{display:"block",fontSize:10,letterSpacing:"2px",textTransform:"uppercase",color:"var(--amber-deep)",marginBottom:6}}>Roadmap</strong>
+            <strong style={{display:"block",fontSize:10,letterSpacing:"2px",textTransform:"uppercase",color:"var(--amber-deep)",marginBottom:6}}>{L.roadmap}</strong>
             ✅ Voice-to-quote via AI<br/>
             ✅ Quote preview + history<br/>
             ✅ SMS delivery<br/>
@@ -2416,7 +2579,7 @@ export default function WrenchBid() {
       <footer className="app-footer">
         <button onClick={shareApp} style={{background:"var(--amber)",border:"none",borderRadius:4,padding:"10px 18px",cursor:"pointer",color:"var(--ink)",marginBottom:12,width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:10,transition:"background .15s"}} onMouseOver={e=>e.currentTarget.style.background="var(--amber-deep)"} onMouseOut={e=>e.currentTarget.style.background="var(--amber)"}>
           <img src="/logo.png" alt="WrenchBid" style={{width:28,height:28,objectFit:"contain"}}/>
-          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,letterSpacing:1,textTransform:"uppercase"}}>Share WrenchBid</span>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,letterSpacing:1,textTransform:"uppercase"}}>{L.shareWB}</span>
         </button>
         © 2026 WrenchBid &nbsp;·&nbsp;
         <a href="https://wrenchbid.vercel.app/terms" target="_blank" rel="noopener noreferrer">Terms</a>
