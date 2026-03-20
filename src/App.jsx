@@ -1446,25 +1446,26 @@ export default function WrenchBid() {
   // Fix common Deepgram number/currency misinterpretations — must be defined before startRec
   const fixTranscript=(text)=>{
     let t=text;
-    // === DECIMAL-DOLLAR FIXES (smart_format turns "one oh five" → "$1.05") ===
-    // "$1.05 an hour" → "$105 an hour" — small decimal near rate words is really 3-digit rate
-    t=t.replace(/\$(\d)\.(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora|a hour)/gi,(_,a,b,suffix)=>"$"+a+b+" "+suffix);
-    // "cost $3.80" → "cost $380" — small decimal near cost words is really 3-digit amount
-    t=t.replace(/(cost|costs|parts|materials|price|total|rate|flat rate|charge|deposit)\s+\$(\d)\.(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+a+b);
-    // "$3.80." at end or before comma/period → "$380" (standalone, contractor context = likely 3-digit)
-    t=t.replace(/\$(\d)\.(\d{2})(?=\s*[.,]|\s*$)/g,(_,a,b)=>"$"+a+b);
-    // === COLON FIXES (numerals turns "one oh five" → "01:05") ===
+    // === COLON FIXES first (before bare-number rules eat the digits) ===
     // "01:05 an hour" → "$105 an hour"
-    t=t.replace(/\b0?(\d{1,2}):(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
+    t=t.replace(/\b0?(\d{1,2}):(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora|por hora)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
     // Standalone "01:05" → "$105"
     t=t.replace(/\b0(\d):(\d{2})\b/g,(_,a,b)=>"$"+parseInt(a+b,10));
+    // === SPLIT-DOLLAR FIXES ("$1.00 5" = Deepgram split $105 as "$1.00" + "5") ===
+    t=t.replace(/\$(\d)\.00\s+(\d)\b/g,(_,a,b)=>"$"+a+"0"+b);
+    // === DECIMAL-DOLLAR FIXES (smart_format turns "one oh five" → "$1.05") ===
+    t=t.replace(/\$(\d)\.(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora|a hour|por hora)/gi,(_,a,b,suffix)=>"$"+a+b+" "+suffix);
+    t=t.replace(/\bat\s+\$(\d)\.(\d{2})\b/gi,(_,a,b)=>"at $"+a+b);
+    t=t.replace(/(cost|costs|parts|materials|price|total|rate|flat rate|charge|deposit)\s+\$(\d)\.(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+a+b);
+    t=t.replace(/\$(\d)\.(\d{2})(?=\s*[.,]|\s*$)/g,(_,a,b)=>"$"+a+b);
+    // === BARE NUMBER + RATE WORDS (missing dollar sign — only when no $ already) ===
+    t=t.replace(/\bat\s+(?!\$)(\d{2,3})\s*(an hour|per hour|\/hr|\/hour|la hora|a hour|por hora)/gi,(_,num,suffix)=>"at $"+num+" "+suffix);
+    t=t.replace(/(?<!\$)\b(\d{2,3})\s+(an hour|per hour|\/hr|\/hour|la hora|a hour|por hora)/gi,(_,num,suffix)=>"$"+num+" "+suffix);
+    t=t.replace(/\bat\s+(?!\$)(\d{2,3})(?=\s*[.,]|\s*$)/gi,(_,num)=>"at $"+num);
     // === SPLIT-NUMBER FIXES ("3 80" or "3, 80") ===
-    // "cost 3 80" → "cost $380"
     t=t.replace(/(cost|costs|parts|materials|price|total|rate|flat rate|charge)\s*,?\s*(\d{1,2})\s+(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
     t=t.replace(/(cost|costs|parts|materials|price|total|rate|charge)\s*,?\s*(\d{1,2}),\s*(\d{2})\b/gi,(_,pre,a,b)=>pre+" $"+parseInt(a+b,10));
-    // "1 05 an hour" → "$105 an hour"
-    t=t.replace(/\b(\d{1})\s+(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora|a hour)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
-    // "$3 80" → "$380"
+    t=t.replace(/(?<!\$)\b(\d{1})\s+(\d{2})\s*(an hour|per hour|\/hr|\/hour|la hora|a hour)/gi,(_,a,b,suffix)=>"$"+parseInt(a+b,10)+" "+suffix);
     t=t.replace(/\$\s*(\d{1,2})\s+(\d{2})\b/g,(_,a,b)=>"$"+parseInt(a+b,10));
     return t;
   };
