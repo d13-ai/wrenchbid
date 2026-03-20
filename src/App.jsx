@@ -2162,6 +2162,13 @@ export default function WrenchBid() {
                   <span style={{fontSize:11,color:"#666"}}>+ 8 more</span>
                 </div>
                 <div style={{fontSize:12,color:"#888",marginTop:8,lineHeight:1.6}}>{L.obLangCallout}<br/><span style={{color:"#666",fontStyle:"italic"}}>{L.obLangCalloutES}</span></div>
+                {(biz.language||"en")==="en"&&<div style={{marginTop:12,background:"linear-gradient(135deg,#1a1a2e,#16213e)",border:"1px solid #2a3a5c",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{fontSize:22}}>🇲🇽</span>
+                  <div style={{fontSize:11,color:"#c0c0c0",lineHeight:1.5,textAlign:"left"}}>
+                    <strong style={{color:"#e0d6c2"}}>¿Hablas español?</strong> ¡La app está disponible en español!<br/>
+                    <span style={{color:"#888"}}>Las cotizaciones siempre salen en inglés. Cambia en ⚙ Ajustes.</span>
+                  </div>
+                </div>}
               </div>
 
               {/* Slide 2 — Show the output */}
